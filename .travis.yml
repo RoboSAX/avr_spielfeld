@@ -1,0 +1,7 @@
+language: C
+sudo: required
+
+before_install:
+before_script:
+script:
+  - cd travis/ && . 0_travis_main.sh
