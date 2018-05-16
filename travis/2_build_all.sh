@@ -12,6 +12,7 @@ echo "### Sourcing robolib"
 
 echo ""
 echo "### Building"
+cd ../
 PATH_SOFTWARE="$(pwd)/"
 PATH_DEVEL="${PATH_SOFTWARE}devel/"
 
