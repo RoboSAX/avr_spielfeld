@@ -1,9 +1,13 @@
-#ifndef __LICHTER_INI
-#define __LICHTER_INI
+#ifndef __ROBOLIB_INI
+#define __ROBOLIB_INI
 
+//**************************<visual studio code>*******************************
+#ifndef MCU
+  #define MCU atmega328p
+#endif
 
 //**************************<Precompiler switches>*****************************
-#define F_CPU 16000000
+#define F_CPU 20000000
 
 //**************************<Included files>***********************************
 #include<robolib/delay.h>
@@ -11,4 +15,4 @@
 #include<robolib/assembler.h>
 
 
-#endif //#ifndef __LICHTER_INI
+#endif //#ifndef __ROBOLIB_INI

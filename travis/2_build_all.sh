@@ -22,13 +22,8 @@ echo ""
 echo "## Peter"
 PATH_PETER="${PATH_DEVEL}peter/"
 
-echo "# Teamprobe (Licht)"
-cd ${PATH_PETER}licht_teamprobe/
-robolib_all
-if [ $? -ne 0 ]; then exit -1; fi
-
-echo "# Test (Licht)"
-cd ${PATH_PETER}licht_test/
+echo "# Test master"
+cd ${PATH_PETER}master_test/
 robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
 
@@ -40,7 +35,7 @@ PATH_LEANDER="${PATH_DEVEL}leander/"
 
 echo "# Spielfeld"
 cd ${PATH_LEANDER}Spielfeld/
-robolib_all
+#robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
 
 
