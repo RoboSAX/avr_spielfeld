@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "master.h": "c",
+        "spielfeld.h": "c",
+        "io.h": "c",
+        "features.h": "c"
+    }
+}
