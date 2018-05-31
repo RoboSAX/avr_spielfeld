@@ -35,6 +35,17 @@ if [ $? -ne 0 ]; then exit -1; fi
 
 
 echo ""
+echo "## Leander"
+PATH_LEANDER="${PATH_DEVEL}leander/"
+
+echo "# Spielfeld"
+cd ${PATH_LEANDER}Spielfeld/
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
+
+
+
+echo ""
 echo "## Main"
 PATH_MAIN="${PATH_SOFTWARE}/"
 
