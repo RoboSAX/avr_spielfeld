@@ -2,7 +2,7 @@
 * gloabel.h                                                                   *
 * =========                                                                   *
 *                                                                             *
-* Version: 1.0.0                                                              *
+* Version: 1.0.1                                                              *
 * Date   : 31.05.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *
@@ -17,6 +17,24 @@
 
 
 //**************************<Types and Variables>******************************
+
+// leds
+enum eColor {
+    clBlack  = 0,
+    clRed    = 1,
+    clGreen  = 2,
+    clYellow = 3,
+    clBlue   = 4,
+    clPurple = 5,
+    clCyan   = 6,
+    clWhite  = 7
+};
+
+struct sRGB {
+    uint8_t r; ///< red
+    uint8_t g; ///< green
+    uint8_t b; ///< blue
+};
 
 // buttons
 struct sButtonState {

@@ -2,7 +2,7 @@
 * master.h                                                                    *
 * ========                                                                    *
 *                                                                             *
-* Version: 1.0.0                                                              *
+* Version: 1.0.1                                                              *
 * Date   : 31.05.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *
@@ -22,17 +22,19 @@
 
 //**************************<Macros>*******************************************
 // leds (only for testing - will be removed)
-#define LED1_PORT      PORTD
-#define LED1_DDR       DDRD
-#define LED1_PIN       _BV(1)
-#define debug_led1(x)  (x ? (LED1_PORT&= ~LED1_PIN) : (LED1_PORT|= LED1_PIN))
-#define _debug_led1_enable() (LED1_DDR|= LED1_PIN)
+#define MASTER_LED1_PORT      PORTD
+#define MASTER_LED1_DDR       DDRD
+#define MASTER_LED1_PIN       _BV(1)
+#define debug_led1(x)        (x ? (MASTER_LED1_PORT&= ~MASTER_LED1_PIN) : \
+                             (MASTER_LED1_PORT|= MASTER_LED1_PIN))
+#define _debug_led1_enable() (MASTER_LED1_DDR|= MASTER_LED1_PIN)
 
-#define LED2_PORT      PORTD
-#define LED2_DDR       DDRD
-#define LED2_PIN       _BV(4)
-#define debug_led2(x)  (x ? (LED2_PORT|= LED2_PIN) : (LED2_PORT&= ~LED2_PIN))
-#define _debug_led2_enable() (LED2_DDR|= LED2_PIN)
+#define MASTER_LED2_PORT      PORTD
+#define MASTER_LED2_DDR       DDRD
+#define MASTER_LED2_PIN       _BV(4)
+#define debug_led2(x)        (x ? (MASTER_LED2_PORT|= MASTER_LED2_PIN) : \
+                             (MASTER_LED2_PORT&= ~MASTER_LED2_PIN))
+#define _debug_led2_enable() (MASTER_LED2_DDR|= MASTER_LED2_PIN)
 
 // buttons
 #define MASTER_BUTTONS_DEBOUNCE_TIME 25
@@ -43,6 +45,8 @@
 
 
 //**************************<Prototypes>***************************************
+
+// init
 void master_init(void);
 
 //buttons
@@ -50,5 +54,7 @@ void master_buttons_reset(void);
 void master_buttons_clear(void);
 uint8_t master_buttons_get(uint8_t number);
 
+// update
 void _master_buttons_update(void);
+
 #endif //#ifndef __MASTER_H
