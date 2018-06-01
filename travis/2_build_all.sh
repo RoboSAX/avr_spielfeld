@@ -27,6 +27,11 @@ cd ${PATH_PETER}master_test/
 robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
 
+echo "# Test ledbox simple"
+cd ${PATH_PETER}rgb_test_simple/
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
+
 
 
 echo ""
