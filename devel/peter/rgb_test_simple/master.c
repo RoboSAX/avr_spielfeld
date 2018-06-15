@@ -1,1 +1,1 @@
-../modules/master.c
+../../modules/master.c

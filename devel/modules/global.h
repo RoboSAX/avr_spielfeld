@@ -2,8 +2,8 @@
 * gloabel.h                                                                   *
 * =========                                                                   *
 *                                                                             *
-* Version: 1.0.1                                                              *
-* Date   : 31.05.18                                                           *
+* Version: 1.1.0                                                              *
+* Date   : 02.06.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *
 ******************************************************************************/
@@ -27,13 +27,15 @@ enum eColor {
     clBlue   = 4,
     clPurple = 5,
     clCyan   = 6,
-    clWhite  = 7
+    clWhite  = 7,
+    clRain  = 8
 };
 
 struct sRGB {
     uint8_t r; ///< red
     uint8_t g; ///< green
     uint8_t b; ///< blue
+    uint8_t dataOut[8];///< data for the USART
 };
 
 // buttons

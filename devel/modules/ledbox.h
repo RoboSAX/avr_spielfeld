@@ -2,8 +2,8 @@
 * ledbox.h                                                                    *
 * ========                                                                    *
 *                                                                             *
-* Version: 1.0.0                                                              *
-* Date   : 01.06.18                                                           *
+* Version: 1.1.0                                                              *
+* Date   : 02.06.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *
 ******************************************************************************/
@@ -24,7 +24,7 @@
 #define LEDBOX_COUNT_MAX 24
 
 // buttons
-#define LEDBOX_BUTTONS_DEBOUNCE_TIME 50
+#define LEDBOX_BUTTONS_DEBOUNCE_TIME 60
 
 
 //**************************<Prototypes>***************************************

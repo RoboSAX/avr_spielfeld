@@ -2,8 +2,8 @@
 * ledbox.c                                                                    *
 * ========                                                                    *
 *                                                                             *
-* Version: 1.0.0                                                              *
-* Date   : 01.06.18                                                           *
+* Version: 1.1.0                                                              *
+* Date   : 02.06.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *
 ******************************************************************************/
@@ -88,7 +88,6 @@ volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
 
 // rgb leds
 volatile struct sRGB ledbox_rgb[LEDBOX_COUNT_MAX];
-uint8_t ledbox_rgb_data[LEDBOX_COUNT_MAX * 8];
 
 // ir leds (order is invers!)
 volatile uint8_t ledbox_ir[LEDBOX_COUNT_MAX];
@@ -131,7 +130,7 @@ void ledbox_init(void) {
                   //_BV(RXEN0)   // disable receiver
                   //_BV(UCSZ02)  // 7 bits in UART frame (UCSZ0x = 0x010)
                   //_BV(TXB80)   // 9th data bit for transmission
-        UCSR0C  = _BV(UCSZ01);  // 7 bits in UART frame (UCSZ0x = 0x010)
+        UCSR0C  = _BV(UCSZ01);   // 7 bits in UART frame (UCSZ0x = 0x010)
                   //_BV(UMSEL01) // asynchronous mode (UMSEL0x = 0x00)
                   //_BV(UMSEL00) // asynchronous mode (UMSEL0x = 0x00)
                   //_BV(UPM01)   // no parity check (UPM0x = 0x00)
@@ -145,6 +144,23 @@ void ledbox_init(void) {
 
         DDRD|= _BV(1); // activate strong drivers for TX
 
+        //Timer 0 -> IR led basetakt(38KHz)
+        TCCR0A  = 0
+                 //|_BV(COM0A1)  // OC0A disconnected
+                 //|_BV(COM0A0)  // OC0A disconnected
+                 //|_BV(COM0B1)  // OC0B toggel mode
+                 |_BV(COM0B0)    // OC0B toggel mode
+                 |_BV(WGM01)     // Timer modus CTC top at OCR0A
+                 //|_BV(WGM00)   // =Mode 2
+                 ;
+        TCCR0B  = 0
+                 //|_BV(WGM02)   // Timer modus CTC top at OCR0A
+                 //|_BV(CS02)    // Speed = 38KHz
+                 |_BV(CS01)      // => 20MHz/2(half speed by toggeling)/38KHz~aller 263 takte
+                 //|_BV(CS00)    // => prescaler=8,OCRA=32=>37,87KHz
+                 ;
+        OCR0A   = 32;
+
     // variables
         // leds
         rgb_clearAll();
@@ -152,6 +168,7 @@ void ledbox_init(void) {
 
         // buttons
         buttons_reset();
+    sei();
 }
 
 
@@ -172,6 +189,8 @@ void rgb_set(uint8_t number, enum eColor color) {
         case clPurple: rgb_set2(number, 255,   0, 255); break;
         case clCyan  : rgb_set2(number,   0, 255, 255); break;
         case clWhite : rgb_set2(number, 255, 255, 255); break;
+        case clRain  : rgb_set (number, number%8)     ; break;
+        default      :                                  break;
     }
 }
 
@@ -185,6 +204,63 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
     ledbox_rgb[number].r = r;
     ledbox_rgb[number].g = g;
     ledbox_rgb[number].b = b;
+
+
+    uint8_t j;
+
+    // init data bytes
+    // set all needed "1" (which will be "0" on the bus)
+    for (j = 0; j < 8; j++){
+        ledbox_rgb[number].dataOut[j] = 0x12;
+        // S = 0  ==> 1 (high       part of databit 1)-
+        // 0 = x  ==> !x(adjustable part of databit 1)?
+        // 1 = 1  ==> 0 (low        part of databit 1)0x02
+        // 2 = 0  ==> 1 (high       part of databit 2)0
+        // 3 = x  ==> !x(adjustable part of databit 2)?
+        // 4 = 1  ==> 0 (low        part of databit 2)0x10
+        // 5 = 0  ==> 1 (high       part of databit 3)0
+        // 6 = x  ==> !x(adjustable part of databit 3)?
+        // P = 1  ==> 0 (low        part of databit 3)-
+    }
+
+    // load needed bits
+    uint8_t d;
+
+    d = ledbox_rgb[number].g;
+
+    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x01;}
+    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x08;}
+    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x40;}
+
+    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x01;}
+    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x08;}
+    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x40;}
+
+    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x01;}
+    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x08;}
+    d = ledbox_rgb[number].r;
+    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x40;}
+
+    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x01;}
+    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x08;}
+    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x40;}
+
+    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x01;}
+    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x08;}
+    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x40;}
+
+    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x01;}
+    d = ledbox_rgb[number].b;
+    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x08;}
+    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x40;}
+
+    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x01;}
+    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x08;}
+    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x40;}
+
+    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x01;}
+    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x08;}
+    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x40;}
 }
 
 //**************************[rgb_setAll]***************************************
@@ -219,7 +295,7 @@ void rgb_clearAll() {
 
 
 
-//**************************[ir_clearAll]**************************************
+//**************************[ir_set]*******************************************
 void ir_set(uint8_t number, uint8_t x) {
 
     if (number >= LEDBOX_COUNT_MAX) {
@@ -230,7 +306,7 @@ void ir_set(uint8_t number, uint8_t x) {
     ledbox_ir[LEDBOX_COUNT_MAX - number - 1] = x;
 }
 
-//**************************[ir_clearAll]**************************************
+//**************************[ir_setAll]****************************************
 void ir_setAll(uint8_t x) {
 
     uint8_t i;
@@ -243,11 +319,7 @@ void ir_setAll(uint8_t x) {
 //**************************[ir_clearAll]**************************************
 void ir_clearAll(void) {
 
-    uint8_t i;
-
-    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-        ir_set(i, 0x00);
-    }
+    ir_setAll(0);
 }
 
 
@@ -294,78 +366,16 @@ void _ledbox_rgb_update(void) {
 
     bus_rgb(0);
 
-
-    uint8_t i, j;
-
-    // init data bytes
-    // set all needed "1" (which will be "0" on the bus)
-    for (j = 0; j < LEDBOX_COUNT_MAX * 8; j++){
-        ledbox_rgb_data[j] = 0x12;
-        // S = 0  ==> 1 (high       part of databit 1)
-        // 0 = x  ==> !x(adjustable part of databit 1)
-        // 1 = 1  ==> 0 (low        part of databit 1)
-        // 2 = 0  ==> 1 (high       part of databit 2)
-        // 3 = x  ==> !x(adjustable part of databit 2)
-        // 4 = 1  ==> 0 (low        part of databit 2)
-        // 5 = 0  ==> 1 (high       part of databit 3)
-        // 6 = x  ==> !x(adjustable part of databit 3)
-        // P = 1  ==> 0 (low        part of databit 3)
-    }
-
-    // load needed bits
-    for (i = 0, j = 0; i < 1; i++) {
-        uint8_t d;
-
-        d = ledbox_rgb[i].g;
-        if ((d & 0x80) == 0x00) {ledbox_rgb_data[j]|= 0x01;}
-        if ((d & 0x40) == 0x00) {ledbox_rgb_data[j]|= 0x08;}
-        if ((d & 0x20) == 0x00) {ledbox_rgb_data[j]|= 0x40;}
-
-        j++;
-        if ((d & 0x10) == 0x00) {ledbox_rgb_data[j]|= 0x01;}
-        if ((d & 0x08) == 0x00) {ledbox_rgb_data[j]|= 0x08;}
-        if ((d & 0x04) == 0x00) {ledbox_rgb_data[j]|= 0x40;}
-
-        j++;
-        if ((d & 0x02) == 0x00) {ledbox_rgb_data[j]|= 0x01;}
-        if ((d & 0x01) == 0x00) {ledbox_rgb_data[j]|= 0x08;}
-        d = ledbox_rgb[i].r;
-        if ((d & 0x80) == 0x00) {ledbox_rgb_data[j]|= 0x40;}
-
-        j++;
-        if ((d & 0x40) == 0x00) {ledbox_rgb_data[j]|= 0x01;}
-        if ((d & 0x20) == 0x00) {ledbox_rgb_data[j]|= 0x08;}
-        if ((d & 0x10) == 0x00) {ledbox_rgb_data[j]|= 0x40;}
-
-        j++;
-        if ((d & 0x08) == 0x00) {ledbox_rgb_data[j]|= 0x01;}
-        if ((d & 0x04) == 0x00) {ledbox_rgb_data[j]|= 0x08;}
-        if ((d & 0x02) == 0x00) {ledbox_rgb_data[j]|= 0x40;}
-
-        j++;
-        if ((d & 0x01) == 0x00) {ledbox_rgb_data[j]|= 0x01;}
-        d = ledbox_rgb[i].b;
-        if ((d & 0x80) == 0x00) {ledbox_rgb_data[j]|= 0x08;}
-        if ((d & 0x40) == 0x00) {ledbox_rgb_data[j]|= 0x40;}
-
-        j++;
-        if ((d & 0x20) == 0x00) {ledbox_rgb_data[j]|= 0x01;}
-        if ((d & 0x10) == 0x00) {ledbox_rgb_data[j]|= 0x08;}
-        if ((d & 0x08) == 0x00) {ledbox_rgb_data[j]|= 0x40;}
-
-        j++;
-        if ((d & 0x04) == 0x00) {ledbox_rgb_data[j]|= 0x01;}
-        if ((d & 0x02) == 0x00) {ledbox_rgb_data[j]|= 0x08;}
-        if ((d & 0x01) == 0x00) {ledbox_rgb_data[j]|= 0x40;}
-    }
-
     // transmit data
     cli();
-    for (j = 0; j < LEDBOX_COUNT_MAX * 8; j++) {
-        while ((UCSR0A & _BV(UDRE0)) == 0) {
-            nop();
+    uint8_t i,j;
+    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+        for (j = 0; j < 8; j++) {
+            while ((UCSR0A & _BV(UDRE0)) == 0) {
+                nop();
+            }
+            UDR0 = ledbox_rgb[i].dataOut[j];
         }
-        UDR0 = ledbox_rgb_data[j];
     }
     sei();
 
@@ -379,9 +389,6 @@ void _ledbox_buttons_and_ir_update(void) {
 
     bus_btn_load(1);
     delay_us(1);
-
-    // debugging - turn on ir-ledbox
-    bus_ir_clk(1);
 
     uint8_t i;
     uint8_t state;
