@@ -38,9 +38,9 @@ echo ""
 echo "## Leander"
 PATH_LEANDER="${PATH_DEVEL}leander/"
 
-echo "# Spielfeld"
-cd ${PATH_LEANDER}Spielfeld/
-#robolib_all
+echo "# Final Version"
+cd ${PATH_LEANDER}THE_GAME/
+robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
 
 
@@ -48,12 +48,6 @@ if [ $? -ne 0 ]; then exit -1; fi
 echo ""
 echo "## Main"
 PATH_MAIN="${PATH_SOFTWARE}/"
-
-echo "# Countdown"
-cd ${PATH_MAIN}Countdown/
-echo "... nothing to do"
-#robolib_all
-if [ $? -ne 0 ]; then exit -1; fi
 
 echo "# Robosax 2018"
 cd ${PATH_MAIN}RoboSAX2018/
