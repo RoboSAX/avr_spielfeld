@@ -2,7 +2,7 @@
 * ledbox.c                                                                    *
 * ========                                                                    *
 *                                                                             *
-* Version: 1.1.0                                                              *
+* Version: 1.2.0                                                              *
 * Date   : 02.06.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *
@@ -190,6 +190,8 @@ void rgb_set(uint8_t number, enum eColor color) {
         case clCyan  : rgb_set2(number,   0, 255, 255); break;
         case clWhite : rgb_set2(number, 255, 255, 255); break;
         case clRain  : rgb_set (number, number%8)     ; break;
+        case clLBlue : rgb_set2(number,  10,  10,  50); break;
+        case clLGreen: rgb_set2(number,  10,  50,  10); break;
         default      :                                  break;
     }
 }

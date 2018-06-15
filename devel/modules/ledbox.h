@@ -2,7 +2,7 @@
 * ledbox.h                                                                    *
 * ========                                                                    *
 *                                                                             *
-* Version: 1.1.0                                                              *
+* Version: 1.2.0                                                              *
 * Date   : 02.06.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *

@@ -2,7 +2,7 @@
 * gloabel.h                                                                   *
 * =========                                                                   *
 *                                                                             *
-* Version: 1.1.0                                                              *
+* Version: 1.2.1                                                              *
 * Date   : 02.06.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *
@@ -28,7 +28,9 @@ enum eColor {
     clPurple = 5,
     clCyan   = 6,
     clWhite  = 7,
-    clRain  = 8
+    clRain   = 8,
+    clLBlue  = 9,
+    clLGreen = 10
 };
 
 struct sRGB {
