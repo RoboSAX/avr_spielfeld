@@ -1,6 +1,6 @@
 /******************************************************************************
-* gamemodes.c                                                                    *
-* ========                                                                    *
+* gamemodes.c                                                                 *
+* ===========                                                                 *
 *                                                                             *
 * Version: 1.0.0                                                              *
 * Date   : 01.06.18                                                           *
@@ -22,6 +22,7 @@
 #define NEUTRALCOLOR clBlack
 #define LED_TEAM1_0_to 4
 #define PUNISHERRORTIMER (LEDBOX_BUTTONS_DEBOUNCE_TIME*4)
+
 //**************************<Types and Variables>******************************
 struct sTeam {
     uint8_t error_timer;
@@ -30,6 +31,7 @@ struct sTeam {
     uint8_t activate_LEDS[LED_PER_TEAM];
 };
 struct sTeam team1,team2;
+
 //**************************<Methods>******************************************
 uint8_t punishment(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
 void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
@@ -105,6 +107,7 @@ void pushButton(uint8_t number){
     }
     if (!punishment(myteam,enemy,mynumber))switchLED(myteam,enemy,mynumber);
 }
+
 uint8_t punishment(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber){
     if ((gamemode==gmPunishAndEnemy)&&myteam->activate_LEDS[mynumber]){
         myteam->error_countdown++;
@@ -128,6 +131,7 @@ uint8_t punishment(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber){
     }
     return 0;
 }
+
 void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber){
     myteam->activate_LEDS[mynumber]=1;
     if ((gamemode==gmPunishAndEnemy)||(gamemode==gmEnemy))enemy->activate_LEDS[mynumber]=0;

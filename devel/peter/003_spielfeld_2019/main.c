@@ -1,10 +1,10 @@
 /******************************************************************************
-* rgb_test_simple/main.c                                                      *
-* ======================                                                      *
+* main.c                                                                      *
+* ======                                                                      *
 *                                                                             *
-* Version: 1.0.0                                                              *
-* Date   : 01.06.18                                                           *
-* Author : Peter Weissig                                                      *
+* Version: 1.0.1                                                              *
+* Date   : 27.12.18                                                           *
+* Author : Leander Herr, Peter Weissig                                        *
 *                                                                             *
 ******************************************************************************/
 //ms per round
@@ -28,26 +28,25 @@ void init(void);
 uint8_t *numbers[10]={num0,num1,num2,num3,num4,num5,num6,num7,num8,num9};
 
 //**************************<Methods>******************************************
-void showtime (uint16_t time,uint8_t dot) {
+void showtime (uint16_t time, uint8_t dot) {
 
-if(dot)
-{
-    display_double_dot=1;
-    display_setSegment(numbers[time%10],2);
-    time/=10;
-    display_setSegment(numbers[time%6],1);
-    time/=6;
-    display_setSegment(numbers[time%10],0);
-}
-else
-{
-    display_double_dot=0;
-    display_setSegment(numbers[time%10],2);
-    time/=10;
-    display_setSegment(numbers[time%10],1);
-    time/=10;
-    display_setSegment(numbers[time%10],0);
-}
+    if(dot) {
+        display_double_dot=1;
+        display_setSegment(numbers[time%10],3);
+        time/=10;
+        display_setSegment(numbers[time% 6],2);
+        time/=6;
+        display_setSegment(numbers[time%10],1);
+        display_setSegment(numbers[0]      ,0);
+    } else {
+        display_double_dot=0;
+        display_setSegment(numbers[time%10],3);
+        time/=10;
+        display_setSegment(numbers[time%10],2);
+        time/=10;
+        display_setSegment(numbers[time%10],1);
+        display_setSegment(numbers[0]      ,0);
+    }
 }
 
 
@@ -73,9 +72,10 @@ int main () {
 
 
     display_double_dot=0;
-    display_setSegment(pic0,0);
-    display_setSegment(Smile,1);
+    display_setSegment(Robol,0);
+    display_setSegment(Robor,1);
     display_setSegment(space,2);
+    display_setSegment(Smile,3);
     rgb_setAll(clRain);
 
 
@@ -129,16 +129,18 @@ int main () {
                 switch (menuemode){
                     case 1:
                         display_double_dot=0;
-                        display_setSegment(Smile,0);
-                        display_setSegment(alpaS,1);
-                        display_setSegment(qestM,2);
+                        display_setSegment(Robol,0);
+                        display_setSegment(Robor,1);
+                        display_setSegment(space,2);
+                        display_setSegment(alpaS,3);
                     break;
                     case 2:
                     default:
                         display_double_dot=0;
-                        display_setSegment(alpaT,0);
-                        display_setSegment(Robol,1);
-                        display_setSegment(Robor,2);
+                        display_setSegment(Robol,0);
+                        display_setSegment(Robor,1);
+                        display_setSegment(space,2);
+                        display_setSegment(alpaT,3);
                         menuemode=0;
                     break;
 
@@ -160,9 +162,10 @@ int main () {
             if(ROUNDTIME+starttime<systick_get()){
                 menuemode=45;
                 display_double_dot=0;
-                display_setSegment(Smile,0);
-                display_setSegment(Robol,1);
-                display_setSegment(Robor,2);
+                display_setSegment(Robol,0);
+                display_setSegment(Robor,1);
+                display_setSegment(space,2);
+                display_setSegment(alpaW,3);
             }
         }
 
