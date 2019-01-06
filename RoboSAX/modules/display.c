@@ -1,9 +1,9 @@
 /******************************************************************************
-* display.c                                                                    *
-* ========                                                                    *
+* display.c                                                                   *
+* =========                                                                   *
 *                                                                             *
-* Version: 1.0.0                                                              *
-* Date   : 01.06.18                                                           *
+* Version: 1.1.0                                                              *
+* Date   : 27.12.18                                                           *
 * Author : Peter Weissig, Leander Herr                                        *
 *                                                                             *
 ******************************************************************************/
@@ -19,44 +19,44 @@
 #define DISPLAY_ONTIME 5
 
 //display
-#define DISP_ROW_SER_PORT   PORTC
-#define DISP_ROW_SER_DDR    DDRC
-#define DISP_ROW_SER_PIN    _BV(0)
+#define DISP_ROW_SER_PORT PORTC
+#define DISP_ROW_SER_DDR  DDRC
+#define DISP_ROW_SER_PIN  _BV(0)
 #define disp_row_ser(x)   (x ? (DISP_ROW_SER_PORT|= DISP_ROW_SER_PIN) : \
                           (DISP_ROW_SER_PORT&= ~DISP_ROW_SER_PIN))
 #define _disp_row_ser_enable() (DISP_ROW_SER_DDR|= DISP_ROW_SER_PIN)
 
-#define DISP_ROW_SCK_PORT   PORTC
-#define DISP_ROW_SCK_DDR    DDRC
-#define DISP_ROW_SCK_PIN    _BV(1)
+#define DISP_ROW_SCK_PORT PORTC
+#define DISP_ROW_SCK_DDR  DDRC
+#define DISP_ROW_SCK_PIN  _BV(1)
 #define disp_row_sck(x)   (x ? (DISP_ROW_SCK_PORT|= DISP_ROW_SCK_PIN) : \
                           (DISP_ROW_SCK_PORT&= ~DISP_ROW_SCK_PIN))
 #define _disp_row_sck_enable() (DISP_ROW_SCK_DDR|= DISP_ROW_SCK_PIN)
 
-#define DISP_RCK_PORT       PORTC
-#define DISP_RCK_DDR        DDRC
-#define DISP_RCK_PIN        _BV(2)
-#define disp_rck(x)   (x ? (DISP_RCK_PORT|= DISP_RCK_PIN) : \
+#define DISP_RCK_PORT     PORTC
+#define DISP_RCK_DDR      DDRC
+#define DISP_RCK_PIN      _BV(2)
+#define disp_rck(x)       (x ? (DISP_RCK_PORT|= DISP_RCK_PIN) : \
                           (DISP_RCK_PORT&= ~DISP_RCK_PIN))
 #define _disp_rck_enable() (DISP_RCK_DDR|= DISP_RCK_PIN)
 
-#define DISP_ENABLE_PORT    PORTC
-#define DISP_ENABLE_DDR     DDRC
-#define DISP_ENABLE_PIN     _BV(3)
-#define disp_enable(x)   (x ? (DISP_ENABLE_PORT|= DISP_ENABLE_PIN) : \
+#define DISP_ENABLE_PORT  PORTC
+#define DISP_ENABLE_DDR   DDRC
+#define DISP_ENABLE_PIN   _BV(3)
+#define disp_enable(x)    (x ? (DISP_ENABLE_PORT|= DISP_ENABLE_PIN) : \
                           (DISP_ENABLE_PORT&= ~DISP_ENABLE_PIN))
 #define _disp_enable_enable() (DISP_ENABLE_DDR|= DISP_ENABLE_PIN)
 
-#define DISP_COL_SER_PORT   PORTB
-#define DISP_COL_SER_DDR    DDRB
-#define DISP_COL_SER_PIN    _BV(3)
+#define DISP_COL_SER_PORT PORTB
+#define DISP_COL_SER_DDR  DDRB
+#define DISP_COL_SER_PIN  _BV(3)
 #define disp_col_ser(x)   (x ? (DISP_COL_SER_PORT|= DISP_COL_SER_PIN) : \
                           (DISP_COL_SER_PORT&= ~DISP_COL_SER_PIN))
 #define _disp_col_ser_enable() (DISP_COL_SER_DDR|= DISP_COL_SER_PIN)
 
-#define DISP_COL_SCK_PORT   PORTB
-#define DISP_COL_SCK_DDR    DDRB
-#define DISP_COL_SCK_PIN    _BV(5)
+#define DISP_COL_SCK_PORT PORTB
+#define DISP_COL_SCK_DDR  DDRB
+#define DISP_COL_SCK_PIN  _BV(5)
 #define disp_col_sck(x)   (x ? (DISP_COL_SCK_PORT|= DISP_COL_SCK_PIN) : \
                           (DISP_COL_SCK_PORT&= ~DISP_COL_SCK_PIN))
 #define _disp_col_sck_enable() (DISP_COL_SCK_DDR|= DISP_COL_SCK_PIN)
@@ -80,7 +80,7 @@ void toggle_rck(void);
 
 
 //**************************[ledbox_init]**************************************
-//**************************[init_display]************************************
+//**************************[init_display]*************************************
 void init_display(void) {
     _disp_row_ser_enable();
     _disp_row_sck_enable();
@@ -90,13 +90,13 @@ void init_display(void) {
     _disp_enable_enable();
     display_double_dot=0;
 }
-//**************************[display]**************************************
-//**************************[display::seter]************************************
+//**************************[display]******************************************
+//**************************[display::seter]***********************************
 void display_setSegment(uint8_t *pict,uint8_t segmentnumber){
     if ((segmentnumber>=0)&&(segmentnumber<SEGMENTS_COUNT)){
         int8_t i;
         for(i=0;i<7;i++){
-            display_segmentbuffer[SEGMENTS_COUNT-1-segmentnumber][i]=pict[i]<<3;
+            display_segmentbuffer[segmentnumber][i]=pict[i]<<3;
         }
     }
 }
@@ -119,7 +119,7 @@ void display_shiftleft(uint8_t number){
     }
 }
 
-//**************************[display::shower]***********************************
+//**************************[display::shower]**********************************
 void display_fill_col(uint8_t row, uint8_t col, uint8_t seg){
     if ((display_segmentbuffer[seg][row]&_BV(col))){
         disp_col_ser(1);
@@ -144,7 +144,7 @@ void display_row_reset(void){
     for(select=0;select<=7;select++){
         if (select==7){
             disp_row_ser(1);
-        }else{
+        } else {
             disp_row_ser(0);
         }
         toggle_row_sck();
@@ -153,9 +153,9 @@ void display_row_reset(void){
 void display_fill_current_row(void){
     int8_t seg;
     if (display_current_row==7){
-        //double dot is out-> dont show it by shift row out,next is anyhow newstart
+        //double dot is out -> dont show it by shift row out, next is anyhow newstart
         if(display_double_dot)toggle_rck();
-    } else{
+    } else {
         for(seg=0;seg<SEGMENTS_COUNT;seg++){
             int8_t col;
             for(col=0;col<8;col++){
@@ -181,7 +181,9 @@ void display_show(){
 
     delay_ms(DISPLAY_ONTIME);
 }
-//**************************[toggle_col_sck]***************************************
+
+
+//**************************[toggle_col_sck]***********************************
 void toggle_col_sck() {
 
     // 1 MHz
@@ -194,7 +196,7 @@ void toggle_col_sck() {
     nop(); nop(); nop(); nop(); nop();
 }
 
-//**************************[toggle_row_sck]***************************************
+//**************************[toggle_row_sck]***********************************
 void toggle_row_sck() {
 
     // 1 MHz
@@ -207,7 +209,7 @@ void toggle_row_sck() {
     nop(); nop(); nop(); nop(); nop();
 }
 
-//**************************[toggle_rck]**********************************
+//**************************[toggle_rck]***************************************
 void toggle_rck() {
 
     // 1 MHz
