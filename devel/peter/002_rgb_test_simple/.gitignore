@@ -1,8 +1,2 @@
-# robolib - directories
-lib
-tmp
-data
-
-# robolib - files
-spielfeld.h
-out.hex
+# robolib - ini-files are project dependent
+robolib.h
