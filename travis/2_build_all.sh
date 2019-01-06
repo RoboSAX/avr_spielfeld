@@ -35,6 +35,13 @@ if [ $? -ne 0 ]; then exit -1; fi
 robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
 
+echo "# Devel Spielfeld 2019"
+cd ${PATH_PETER}003_spielfeld_2019/
+if [ $? -ne 0 ]; then exit -1; fi
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
+
+
 
 
 echo ""
