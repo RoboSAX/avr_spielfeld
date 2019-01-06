@@ -15,6 +15,7 @@ echo "### Building"
 cd ../
 PATH_SOFTWARE="$(pwd)/"
 PATH_DEVEL="${PATH_SOFTWARE}devel/"
+PATH_MAIN="${PATH_SOFTWARE}RoboSAX/"
 
 
 
@@ -23,13 +24,13 @@ echo "## Peter"
 PATH_PETER="${PATH_DEVEL}peter/"
 
 echo "# Test master"
-cd ${PATH_PETER}master_test/
+cd ${PATH_PETER}001_master_test/
 if [ $? -ne 0 ]; then exit -1; fi
 robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
 
 echo "# Test ledbox simple"
-cd ${PATH_PETER}rgb_test_simple/
+cd ${PATH_PETER}002_rgb_test_simple/
 if [ $? -ne 0 ]; then exit -1; fi
 robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
@@ -40,8 +41,14 @@ echo ""
 echo "## Leander"
 PATH_LEANDER="${PATH_DEVEL}leander/"
 
-echo "# Final Version"
-cd ${PATH_LEANDER}THE_GAME/
+echo "# Test Licht"
+cd ${PATH_LEANDER}001_licht_test/
+if [ $? -ne 0 ]; then exit -1; fi
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
+
+echo "# Test Spielfeld"
+cd ${PATH_LEANDER}002_spielfeld/
 if [ $? -ne 0 ]; then exit -1; fi
 robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
@@ -49,11 +56,23 @@ if [ $? -ne 0 ]; then exit -1; fi
 
 
 echo ""
-echo "## Main"
-PATH_MAIN="${PATH_SOFTWARE}/"
+echo "## RoboSAX 2018"
+PATH_ROBOSAX2018="${PATH_MAIN}2018/"
 
-echo "# Robosax 2018"
-#cd ${PATH_MAIN}RoboSAX2018/
-echo "... nothing to do"
-#robolib_all
+echo "# Spielfeld 2018"
+cd ${PATH_ROBOSAX2018}Spielfeld/src/
+if [ $? -ne 0 ]; then exit -1; fi
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
+
+echo "# Teamprobe 2018 - Main"
+cd ${PATH_ROBOSAX2018}Teamprobe/Main/src/
+if [ $? -ne 0 ]; then exit -1; fi
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
+
+echo "# Teamprobe 2018 - Test"
+cd ${PATH_ROBOSAX2018}Teamprobe/Test/src/
+if [ $? -ne 0 ]; then exit -1; fi
+robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
