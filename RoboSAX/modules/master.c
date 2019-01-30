@@ -88,7 +88,7 @@ void master_buttons_clear(void) {
 }
 
 //**************************[master_buttons_get]*******************************
-uint8_t master_buttons_get(uint8_t number) {
+uint8_t master_buttons_get_pushed(uint8_t number) {
 
     number--;
     if (number >= MASTER_BUTTONS_COUNT) {
@@ -99,6 +99,29 @@ uint8_t master_buttons_get(uint8_t number) {
     master_buttons[number].flank = 0;
 
     return result;
+}
+
+uint8_t master_buttons_get_push_and_released(uint8_t number) {
+
+    number--;
+    if (number >= MASTER_BUTTONS_COUNT) {
+        return 0x00;
+    }
+
+    uint8_t result = (master_buttons[number].flank)&&(!master_buttons[number].state);
+    if (result) master_buttons[number].flank = 0;
+
+    return result;
+}
+
+uint8_t master_buttons_get_state(uint8_t number) {
+
+    number--;
+    if (number >= MASTER_BUTTONS_COUNT) {
+        return 0x00;
+    }
+
+    return master_buttons[number].state;
 }
 
 //**************************[_master_buttons_update]***************************
@@ -113,7 +136,8 @@ void _master_buttons_update(void) {
         switch (i) {
             case  0: state = button1(); break;
             case  1: state = button2(); break;
-            default: state = button3(); break;
+            case  2: state = button3(); break;
+            default: return;
         }
 
         // check for changed state

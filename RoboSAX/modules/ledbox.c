@@ -181,17 +181,22 @@ void rgb_set(uint8_t number, enum eColor color) {
     }
 
     switch (color) {
-        case clBlack : rgb_set2(number,   0,   0,   0); break;
-        case clRed   : rgb_set2(number, 255,   0,   0); break;
+        case clPurple: rgb_set2(number, 255,   0, 255); break;
+        case clBlue  : rgb_set2(number,   0,   0, 255); break;
+        case clCyan  : rgb_set2(number,   0, 255, 255); break;
         case clGreen : rgb_set2(number,   0, 255,   0); break;
         case clYellow: rgb_set2(number, 255, 255,   0); break;
-        case clBlue  : rgb_set2(number,   0,   0, 255); break;
-        case clPurple: rgb_set2(number, 255,   0, 255); break;
-        case clCyan  : rgb_set2(number,   0, 255, 255); break;
+        case clRed   : rgb_set2(number, 255,   0,   0); break;
+        case clBlack : rgb_set2(number,   0,   0,   0); break;
         case clWhite : rgb_set2(number, 255, 255, 255); break;
-        case clRain  : rgb_set (number, number%8)     ; break;
         case clLBlue : rgb_set2(number,  10,  10,  50); break;
         case clLGreen: rgb_set2(number,  10,  50,  10); break;
+        case clRain0 : rgb_set (number,(number + 0)%6); break;
+        case clRain1 : rgb_set (number,(number + 1)%6); break;
+        case clRain2 : rgb_set (number,(number + 2)%6); break;
+        case clRain3 : rgb_set (number,(number + 3)%6); break;
+        case clRain4 : rgb_set (number,(number + 4)%6); break;
+        case clRain5 : rgb_set (number,(number + 5)%6); break;
         default      :                                  break;
     }
 }

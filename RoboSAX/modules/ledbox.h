@@ -15,6 +15,7 @@
 //**************************<Included files>***********************************
 #include "robolib.h"
 #include "global.h"
+#include "systick.h"
 
 #include <avr/io.h>
 #include <inttypes.h>
@@ -25,7 +26,6 @@
 
 // buttons
 #define LEDBOX_BUTTONS_DEBOUNCE_TIME 60
-
 
 //**************************<Prototypes>***************************************
 
@@ -38,6 +38,7 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b);
 void rgb_setAll(enum eColor color);
 void rgb_setAll2(uint8_t r, uint8_t g, uint8_t b);
 void rgb_clearAll(void);
+void rgb_setRollingRainbow(void);
 
 // ir leds
 void ir_set(uint8_t number, uint8_t x);

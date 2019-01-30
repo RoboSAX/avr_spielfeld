@@ -39,10 +39,17 @@
 // buttons
 #define MASTER_BUTTONS_DEBOUNCE_TIME 25
 
-#define master_button1() (master_buttons_get(1))
-#define master_button2() (master_buttons_get(2))
-#define master_button3() (master_buttons_get(3))
+#define master_button1() (master_buttons_get_pushed(1))
+#define master_button2() (master_buttons_get_pushed(2))
+#define master_button3() (master_buttons_get_pushed(3))
 
+#define master_button_full1() (master_buttons_get_pushed(1))
+#define master_button_full2() (master_buttons_get_pushed(2))
+#define master_button_full3() (master_buttons_get_pushed(3))
+
+#define master_button_state1() (master_buttons_get_state(1))
+#define master_button_state2() (master_buttons_get_state(2))
+#define master_button_state3() (master_buttons_get_state(3))
 
 //**************************<Prototypes>***************************************
 
@@ -52,7 +59,9 @@ void master_init(void);
 //buttons
 void master_buttons_reset(void);
 void master_buttons_clear(void);
-uint8_t master_buttons_get(uint8_t number);
+uint8_t master_buttons_get_pushed(uint8_t number);
+uint8_t master_buttons_get_push_and_released(uint8_t number);
+uint8_t master_buttons_get_state(uint8_t number);
 
 // update
 void _master_buttons_update(void);

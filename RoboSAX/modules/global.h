@@ -20,17 +20,23 @@
 
 // leds
 enum eColor {
-    clBlack  = 0,
-    clRed    = 1,
-    clGreen  = 2,
-    clYellow = 3,
-    clBlue   = 4,
-    clPurple = 5,
-    clCyan   = 6,
-    clWhite  = 7,
-    clRain   = 8,
-    clLBlue  = 9,
-    clLGreen = 10
+    clPurple = 0,
+    clBlue   = 1,
+    clCyan   = 2,
+    clGreen  = 3,
+    clYellow = 4,
+    clRed    = 5,
+    clWhite  = 6,
+    clBlack  = 7,
+    clLBlue  = 8,
+    clLGreen = 9,
+    clRain0  = 10,
+    clRain1  = 11,
+    clRain2  = 12,
+    clRain3  = 13,
+    clRain4  = 14,
+    clRain5  = 15,
+    clRain   = clRain0
 };
 
 struct sRGB {
