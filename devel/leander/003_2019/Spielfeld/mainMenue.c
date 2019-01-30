@@ -18,10 +18,10 @@ void showtime (uint16_t time,uint8_t dot) {
         display_double_dot=1;
         display_setSegment(numbers[time%10],3);
         time/=10;
-        display_setSegment(numbers[time%10],2);
-        time/=10;
-        display_setSegment(numbers[time%6],1);
+        display_setSegment(numbers[time%6],2);
         time/=6;
+        display_setSegment(numbers[time%10],1);
+        time/=10;
         display_setSegment(numbers[time%10],0);
     }
     else

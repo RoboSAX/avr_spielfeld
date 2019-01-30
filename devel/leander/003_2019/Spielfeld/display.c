@@ -178,8 +178,6 @@ void display_show(){
 
     display_row_next();
     display_fill_current_row();
-
-    delay_ms(DISPLAY_ONTIME);
 }
 
 

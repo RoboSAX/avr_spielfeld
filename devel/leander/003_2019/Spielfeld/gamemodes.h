@@ -27,17 +27,15 @@
 //**************************<Types and Variables>******************************
 // leds
 enum eGamemodes {
-    gmNothing        = 0,
-    gmEnemy          ,
-    gmPunishAndEnemy ,
+    gmStd        = 0,
     MaxGameModes
 };
 
 //**************************<Prototypes>***************************************
 void gamemode_init(void);
 void gamemode_start(enum eGamemodes gameMode);
-void gamemode_update();
-void gamemode_finalize();
+void gamemode_update(void);
+void gamemode_finalize(void);
 
 
 #endif //#ifndef __GAMEMODES_H
