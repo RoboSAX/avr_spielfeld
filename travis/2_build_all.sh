@@ -45,6 +45,19 @@ if [ $? -ne 0 ]; then exit -1; fi
 
 
 echo ""
+echo "## Daniel"
+PATH_DANIEL="${PATH_DEVEL}daniel/"
+
+echo "# Test Teamprobe 2019"
+cd ${PATH_DANIEL}001_teamprobe_2019/
+if [ $? -ne 0 ]; then exit -1; fi
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
+
+
+
+
+echo ""
 echo "## Leander"
 PATH_LEANDER="${PATH_DEVEL}leander/"
 
