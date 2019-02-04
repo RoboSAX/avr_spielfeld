@@ -15,7 +15,6 @@
 //**************************<Included files>***********************************
 #include "robolib.h"
 #include "global.h"
-#include "systick.h"
 
 #include <avr/io.h>
 #include <inttypes.h>
