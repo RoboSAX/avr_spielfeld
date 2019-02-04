@@ -92,11 +92,20 @@ void init_display(void) {
 }
 //**************************[display]******************************************
 //**************************[display::seter]***********************************
-void display_setSegment(uint8_t *pict,uint8_t segmentnumber){
+void display_setSegment(const uint8_t *pict,uint8_t segmentnumber){
     if ((segmentnumber>=0)&&(segmentnumber<SEGMENTS_COUNT)){
         int8_t i;
         for(i=0;i<7;i++){
             display_segmentbuffer[segmentnumber][i]=pict[i]<<3;
+        }
+    }
+}
+
+void display_invertSegment(uint8_t segmentnumber){
+    if ((segmentnumber>=0)&&(segmentnumber<SEGMENTS_COUNT)){
+        int8_t i;
+        for(i=0;i<7;i++){
+            display_segmentbuffer[segmentnumber][i]=~display_segmentbuffer[segmentnumber][i] & 0xF8;
         }
     }
 }
@@ -178,8 +187,6 @@ void display_show(){
 
     display_row_next();
     display_fill_current_row();
-
-    delay_ms(DISPLAY_ONTIME);
 }
 
 

@@ -15,8 +15,8 @@
 
 //*******************************<Included files>*******************************
 #include <avr/io.h>
+#include "robolib.h"
 #include <inttypes.h>
-#include <master.h>
 
 
 
@@ -40,9 +40,16 @@
 void systick_init(void);
 void systick_reset(void);
 
+void systick_freezUpdate(void);
+void systick_unFreezUpdate(void);
+
 void systick_delay(uint16_t mseconds);
 
 uint32_t systick_get(void);
+uint8_t systick_toHour (uint32_t time);
+uint8_t systick_toMin  (uint32_t time);
+uint8_t systick_toSec  (uint32_t time);
+uint16_t systick_toMsec(uint32_t time);
 
 
 
