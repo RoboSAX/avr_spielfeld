@@ -70,9 +70,8 @@ if [ $? -ne 0 ]; then exit -1; fi
 echo "# Test Spielfeld"
 cd ${PATH_LEANDER}002_spielfeld/
 if [ $? -ne 0 ]; then exit -1; fi
-# Build Error!
-#robolib_all
-#if [ $? -ne 0 ]; then exit -1; fi
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
 
 
 
