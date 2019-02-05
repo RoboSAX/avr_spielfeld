@@ -10,12 +10,10 @@
 //ms per round
 #define ROUNDTIME ((uint32_t)(3UL*60UL*1000UL))
 #define STARTTIME ((uint32_t)(10UL*1000UL))
-#define POINTSTIME ((uint32_t)(0UL*1000UL))
-#define CURRENTTIME ((uint32_t)(1UL*1000UL))
 //ms for blinking of activ changed elements
-#define BLINKTIMEON ((uint32_t)(200UL))
-#define BLINKTIMEOFF ((uint32_t)(100UL))
-#define LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS 100
+#define BLINKTIMEON ((uint32_t)(420UL))
+#define BLINKTIMEOFF ((uint32_t)(200UL))
+#define LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS 500
 
 //**************************<Included files>***********************************
 #include "master.h"
@@ -69,13 +67,13 @@ int main () {
     uint32_t currentTime = systick_get();
     enum eRunningState menuemode=rsNone;
     uint32_t starttime = currentTime;
-    uint32_t runtime = currentTime;
     uint32_t rainbowStartTime = currentTime;
     enum eGamemodes gamemode = 0;
     enum eMasterModes masterMode = 0;
     uint32_t display_blink_time = currentTime;
     uint8_t display_blink_status = 0;
     uint8_t rainbowNumber = 0;
+    uint8_t gameRunningShowPoints = 0;
     while (1) {
         switch (menuemode){
             case rsNone:
@@ -92,7 +90,7 @@ int main () {
             break;
             case rsStartMode:
             case rsGameModeRunning:
-	    default:
+            case rsTestModeRunning:
             break;
         }
         currentTime = systick_get();
@@ -115,6 +113,9 @@ int main () {
                     if(master_button_state1() && master_button_state2()){
                         menuemode = rsSelectMasterMode;
                     }
+		    else{
+			gameRunningShowPoints=!gameRunningShowPoints;
+		    }
                 break;
             }
         }
@@ -172,12 +173,15 @@ int main () {
             case rsGameModeRunning:
                 systick_freezUpdate();
                 gamemode_update();
-                if(POINTSTIME+runtime < currentTime){
+                if(!gameRunningShowPoints){
                     showtime((ROUNDTIME+starttime-currentTime)/(1000UL),1);
                 }
-                if(CURRENTTIME+POINTSTIME+runtime < currentTime){
-                    runtime = currentTime;
-                }
+		else{
+		    gameRunningShowPoints(0);
+		    gameRunningShowPoints(1);
+		    gameRunningShowPoints(2);
+		    gameRunningShowPoints(3);
+		}
                 if(ROUNDTIME+starttime<currentTime){
                     menuemode=7;
                     display_double_dot=0;

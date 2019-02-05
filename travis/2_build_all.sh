@@ -101,3 +101,15 @@ cd ${PATH_ROBOSAX2018}Teamprobe/Test/src/
 if [ $? -ne 0 ]; then exit -1; fi
 robolib_all
 if [ $? -ne 0 ]; then exit -1; fi
+
+echo ""
+echo "## RoboSAX 2019"
+PATH_ROBOSAX2018="${PATH_MAIN}2019/"
+
+echo "# Spielfeld 2019"
+cd ${PATH_ROBOSAX2018}Spielfeld/src/
+if [ $? -ne 0 ]; then exit -1; fi
+robolib_all
+if [ $? -ne 0 ]; then exit -1; fi
+
+
