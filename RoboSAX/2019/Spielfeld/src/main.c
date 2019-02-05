@@ -177,10 +177,10 @@ int main () {
                     showtime((ROUNDTIME+starttime-currentTime)/(1000UL),1);
                 }
 		else{
-		    gameRunningShowPoints(0);
-		    gameRunningShowPoints(1);
-		    gameRunningShowPoints(2);
-		    gameRunningShowPoints(3);
+		    display_invertSegment(0);
+		    display_invertSegment(1);
+		    display_invertSegment(2);
+		    display_invertSegment(3);
 		}
                 if(ROUNDTIME+starttime<currentTime){
                     menuemode=7;
