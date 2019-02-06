@@ -39,6 +39,8 @@
 //**************************<Prototypes>***************************************
 void init_hardware(void);
 void leds_clearAll(void);
+void leds_clearLED(uint8_t led_num);
+void leds_setLED(uint8_t led_num, uint8_t color, uint8_t set_IR);
 void leds_initTest(void);
 
 void led1_setIr(uint8_t state);

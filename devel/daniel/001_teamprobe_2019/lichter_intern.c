@@ -104,6 +104,65 @@ void leds_clearAll(void) {
     led2_setIr(0);
 }
 
+//**************************[leds_clearLED]************************************
+void leds_clearLED(uint8_t led_num) {
+
+    // schaltet LED in Farbe an
+    // led_num: 1, 2
+    
+    switch(led_num) {
+        case 1:
+            led1_setGreen(0);
+            led1_setRed(0);
+            led1_setBlue(0);
+            led1_setIr(0);
+        case 2:
+            led2_setGreen(0);
+            led2_setRed(0);
+            led2_setBlue(0);
+            led2_setIr(0);
+    }
+}
+
+//**************************[leds_setLED]************************************
+void leds_setLED(uint8_t led_num, uint8_t color, uint8_t set_IR) {
+
+    // schaltet LED in Farbe an
+    // led_num: 1, 2
+    // color: Green = 0, Red = 1, Blue = 2, Weiß = 3
+
+    leds_clearLED(led_num);
+    switch(led_num) {
+        case 1:
+            switch(color) {
+                case 0: led1_setGreen(1);
+                case 1: led1_setRed(1);
+                case 2: led1_setBlue(1);
+                case 3: 
+                    led1_setGreen(1);
+                    led1_setRed(1);
+                    led1_setBlue(1);
+            }
+            if (set_IR) { 
+                led1_setIr(1); 
+            }
+            
+        case 2:
+            switch(color) {
+                case 0: led2_setGreen(1);
+                case 1: led2_setRed(1);
+                case 2: led2_setBlue(1);
+                case 3: 
+                    led2_setGreen(1);
+                    led2_setRed(1);
+                    led2_setBlue(1);
+            }
+            if (set_IR) { 
+                led2_setIr(1); 
+            }
+    }
+}
+
 //**************************[leds_initTest]************************************
 void leds_initTest(void) {
 

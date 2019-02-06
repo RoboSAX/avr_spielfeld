@@ -2,9 +2,9 @@
 * Teamprobe/tht/lichter_probe.c                                               *
 * =============================                                               *
 *                                                                             *
-* Version: 1.0.1                                                              *
-* Date   : 26.01.18                                                           *
-* Author : Peter Weissig, Tina Lenk                                           *
+* Version: 2.0.0                                                              *
+* Date   : 06.02.19                                                           *
+* Author : Peter Weissig, Tina Lenk, Daniel Gunkel                            *
 *                                                                             *
 ******************************************************************************/
 
@@ -15,7 +15,7 @@
 
 #include "lichter.h"
 #include "lichter_intern.h"
-
+//#include "random.h"
 
 //**************************<Prototypes>***************************************
 void modus_competition(void);
@@ -31,6 +31,149 @@ int main (void);
 
 //**************************<Methods>******************************************
 
+//**************************[modus_setcolor]********************************
+void modus_setcolor(uint8_t color_led1, uint8_t color_led2) {
+
+    //color_led: Green = 0, Red = 1, Blue = 2
+
+    uint8_t error_led1 = 0;
+    uint8_t error_led2 = 0;
+    uint8_t countdown_led1 = 0;
+    uint8_t countdown_led2 = 0;
+    uint8_t state_led1 = 1;
+    uint8_t state_led2 = 1; 
+
+    // 0 = led1 & led2 on; 1 = led1 off; 2 = led2 off; 3 = both led off
+    uint8_t state = 0; 
+
+    buttons_clearAll();
+    leds_setLED(1, color_led1, 1);
+    leds_setLED(1, color_led2, 1);
+
+    while (!buttonMode_readFlank()) {
+
+        // check buttons
+        uint8_t flank_led1 = button1_readFlank();
+        uint8_t flank_led2 = button2_readFlank();
+
+        switch (state) {
+            
+            case 1:
+                if (flank_led1) {
+                    error_led1++;
+                    if (error_led1 >= 3) {
+                        error_led1 = 0;
+                        
+                        // extinguish another TeamLED 
+                        if (color_led1 == color_led2) {
+                            // insert random check here
+                            state_led2 = 0;
+                            state = 3;
+                        }
+                    }
+
+                    countdown_led1 = 25;
+                }
+                if (flank_led2) {
+                    state = 3;
+                    state_led2 = 0;
+                }
+                break;
+
+            case 2:
+                if (flank_led1) {
+                    state = 3;
+                    state_led1 = 0;
+                }
+                if (flank_led2) {
+                    error_led2++;
+                    if (error_led2 >= 3) {
+                        error_led2 = 0;
+
+                        // extinguish another TeamLED
+                        if (color_led1 == color_led2) {
+                            // insert random check here
+                            state_led1 = 0;
+                            state = 3;
+                        }
+                    }
+
+                    countdown_led2 = 25;
+                }
+                break;
+
+            case 3:
+                // only error output and count 
+                if (flank_led1) {
+                    error_led1++;
+                    if (error_led1 >= 3) {
+                        error_led1 = 0;
+                    }
+
+                    countdown_led1 = 25;
+                }
+                if (flank_led2) {
+                    error_led2++;
+                    if (error_led2 >= 3) {
+                        error_led2 = 0;
+                    }
+
+                    countdown_led2 = 25;
+                }
+                break;
+
+            default:
+                if (flank_led2 && flank_led1) {
+                    break;
+                }
+                if (flank_led1) {
+                    state = 1;
+                    state_led1 = 0;
+                } 
+                if (flank_led2) {
+                    state = 2;
+                    state_led2 = 0;
+                }
+                break;
+        }
+
+        // output warnings
+        if (countdown_led1) {
+            countdown_led1--;
+
+            if (error_led1 > 0) {
+                leds_setLED(1, 3, 0);
+            }
+
+            // switch(error_led1) {
+            //     case  1: led1_setBlue (1); led1_setRed(1); break;
+            //     case  2: led1_setGreen(1); led1_setRed(1); break;
+            //     default:                   led1_setRed(1); break;
+            // }
+        } else if (!state_led1) {
+            leds_clearLED(1);
+        }
+
+        if (countdown_led2) {
+            countdown_led2--;
+
+            if (error_led1 > 0) {
+                leds_setLED(2, 3, 0);
+            }
+
+            // switch(error_led2) {
+            //     case  1: led2_setGreen(1); led2_setRed(1); break;
+            //     case  2: led2_setBlue (1); led2_setRed(1); break;
+            //     default:                   led2_setRed(1); break;
+            // }
+
+        } else if (!state_led2) {
+            leds_clearLED(2);
+        }
+
+        delay_licht(0); // 10ms ;-)
+    }
+}
 
 //**************************[modus_competition]********************************
 void modus_competition() {
@@ -316,9 +459,12 @@ int main (void) {
         // initial test
         leds_initTest();
 
-        uint8_t error = 0;
+        //random generated colors
+        uint8_t led1 = 0;
+        uint8_t led2 = 0;
+
         while (1) {
-            error = modus_single_field(error);
+            modus_setcolor(led1, led2);
         }
     }
 
