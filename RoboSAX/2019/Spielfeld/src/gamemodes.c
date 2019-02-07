@@ -99,6 +99,34 @@ void gamemode_init(void){
         LEDToTeam[i].teamNr = 4;
         rgb_set(i,NOCOLOR);
     }
+
+    uint8_t  teamNr=0;
+    uint8_t  ledNr=0;
+//default
+    for(i=0;i<LEDBOX_COUNT_MAX;i++){
+        switch (teamNr){
+            case team1:
+                team[teamNr].teamColor = TEAM1COLOR;
+            break;
+            case team2:
+                team[teamNr].teamColor = TEAM2COLOR;
+            break;
+            case teamNeutral:
+                team[teamNr].teamColor = TEAMNCOLOR;
+            break;
+        }
+        team[teamNr].LEDs[ledNr].globalNumber = i;
+        LEDToTeam[j].teamNr = teamNr;
+        LEDToTeam[i].LEDNr = ledNr;
+        team[teamNr].LEDs[ledNr].activ = 1;
+
+    	teamNr++;
+       	ledNr+=teamNr/3;
+       	teamNr%=3;
+    }
+
+//special
+/*
     uint8_t teamNr;
     for (teamNr=0;teamNr<3;teamNr++){
         switch (teamNr){
@@ -155,6 +183,7 @@ void gamemode_init(void){
             }
         }
     }
+    */
 }
 
 void gamemode_start(enum eGamemodes gameMode){
