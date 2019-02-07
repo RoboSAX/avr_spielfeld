@@ -1,2 +1,5 @@
 # local directories
-Datenblaetter/
+/Datenblaetter/
+
+# temporary directories
+/travis/
