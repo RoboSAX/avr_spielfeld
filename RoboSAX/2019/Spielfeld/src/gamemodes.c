@@ -116,7 +116,7 @@ void gamemode_init(void){
             break;
         }
         team[teamNr].LEDs[ledNr].globalNumber = i;
-        LEDToTeam[j].teamNr = teamNr;
+        LEDToTeam[i].teamNr = teamNr;
         LEDToTeam[i].LEDNr = ledNr;
         team[teamNr].LEDs[ledNr].activ = 1;
 
