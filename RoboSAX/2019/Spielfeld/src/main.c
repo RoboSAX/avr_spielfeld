@@ -208,17 +208,23 @@ int main () {
             if((display_blink_time+BLINKTIMEON<currentTime)||(currentTime<display_blink_time)){
                 switch (menuemode){
                     case rsSelectMasterMode:
-//                        display_setSegment(qestM,0);
-//                        display_setSegment(qestM,1);
-                        display_setSegment(space,0);
-                        display_setSegment(space,1);
+                        writeModesToDisplay(masterMode, gamemode);
+		        display_invertSegment(0);
+		        display_invertSegment(1);
+                        //display_setSegment(qestM,0);
+                        //display_setSegment(qestM,1);
+                        //display_setSegment(space,0);
+                        //display_setSegment(space,1);
                         display_blink_status = 0;
                     break;
                     case rsSelectSubMode:
-//                        display_setSegment(qestM,2);
-//                        display_setSegment(qestM,3);
-                        display_setSegment(space,2);
-                        display_setSegment(space,3);
+                        writeModesToDisplay(masterMode, gamemode);
+		        display_invertSegment(2);
+		        display_invertSegment(3);
+                        //display_setSegment(qestM,2);
+                        //display_setSegment(qestM,3);
+                        //display_setSegment(space,2);
+                        //display_setSegment(space,3);
                         display_blink_status = 0;
                     break;
                     case rsNone:
