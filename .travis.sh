@@ -12,21 +12,26 @@ mkdir -p travis/ && cd travis/
 echo ""
 echo "### Downloading robolib"
 echo ""
-git clone https://github.com/RoboAG/avr_robolib robolib
-if [ $? -ne 0 ]; then return -1; exit -1; fi
+if [ -d robolib ]; then
+    echo "robolib already downloaded"
+else
+    git clone https://github.com/RoboAG/avr_robolib robolib
+    if [ $? -ne 0 ]; then cd "${PWD_temp}"; return -1; exit -1; fi
+fi
 
 echo ""
 echo "### Configuring robolib"
 echo ""
 cd robolib
 make install_prerequisites
-if [ $? -ne 0 ]; then return -1; exit -1; fi
+if [ $? -ne 0 ]; then cd "${PWD_temp}"; return -1; exit -1; fi
+
 
 echo ""
 echo "### Sourcing robolib"
 echo ""
 . scripts/bashrc.sh
-if [ $? -ne 0 ]; then return -1; exit -1; fi
+if [ $? -ne 0 ]; then cd "${PWD_temp}"; return -1; exit -1; fi
 
 
 
