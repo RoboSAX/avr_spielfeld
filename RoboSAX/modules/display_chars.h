@@ -22,7 +22,7 @@
 0b00000000,
 0b00000000};
 
- static const uint8_t pic0[7]={
+ static const uint8_t pic0[8]={
 0b00011111,
 0b00010101,
 0b00011111,
@@ -32,7 +32,7 @@
 0b00011011,
 (7<<4)|5};
 
- static const uint8_t Smile[7]={
+ static const uint8_t Smile[8]={
 0b00001010,
 0b00001010,
 0b00001010,
@@ -42,7 +42,17 @@
 0b00001110,
 (7<<4)|5};
 
- static const uint8_t Robol[7]={
+ static const uint16_t RoboF[8]={
+0b0000000001111000,
+0b0000000001111000,
+0b0000001010110010,
+0b0000000111111100,
+0b0000000000110010,
+0b0000000001001000,
+0b0000000110000110,
+(7<<8)|10};
+
+ static const uint8_t Robol[8]={
 0b00000011,
 0b00000011,
 0b00010101,
@@ -52,7 +62,7 @@
 0b00001100,
 (7<<4)|5};
 
- static const uint8_t Robor[7]={
+ static const uint8_t Robor[8]={
 0b00011000,
 0b00011000,
 0b00010010,
@@ -63,7 +73,7 @@
 (7<<4)|5};
 
 //letters
- static const uint8_t alpaG[7]={
+ static const uint8_t alpaG[8]={
 0b00000111,
 0b00001001,
 0b00001000,
@@ -73,7 +83,7 @@
 0b00000111,
 (7<<4)|4};
 
- static const uint8_t alpaI[7]={
+ static const uint8_t alpaI[8]={
 0b00001111,
 0b00000110,
 0b00000110,
@@ -83,7 +93,7 @@
 0b00001111,
 (7<<4)|4};
 
- static const uint8_t alpaM[7]={
+ static const uint8_t alpaM[8]={
 0b00010001,
 0b00011011,
 0b00011111,
@@ -93,7 +103,7 @@
 0b00010001,
 (7<<4)|5};
 
- static const uint8_t alpaN[7]={
+ static const uint8_t alpaN[8]={
 0b00010001,
 0b00011001,
 0b00011101,
@@ -103,7 +113,7 @@
 0b00010001,
 (7<<4)|5};
 
- static const uint8_t alpaS[7]={
+ static const uint8_t alpaS[8]={
 0b00000110,
 0b00001001,
 0b00001000,
@@ -113,7 +123,7 @@
 0b00000110,
 (7<<4)|4};
 
- static const uint8_t alpaT[7]={
+ static const uint8_t alpaT[8]={
 0b00011111,
 0b00010101,
 0b00000100,
@@ -123,7 +133,7 @@
 0b00000100,
 (7<<4)|5};
 
- static const uint8_t alpaW[7]={
+ static const uint8_t alpaW[8]={
 0b00010001,
 0b00010001,
 0b00010001,
@@ -134,7 +144,7 @@
 (7<<4)|5};
 
 //others
-static const uint8_t qestM[7]={
+static const uint8_t qestM[8]={
 0b00000110,
 0b00001001,
 0b00000001,
@@ -145,7 +155,7 @@ static const uint8_t qestM[7]={
 (7<<4)|4};
 
 //numbers
- static const uint8_t num1[7]={
+ static const uint8_t num1[8]={
 0b00000010,
 0b00000110,
 0b00001010,
@@ -155,7 +165,7 @@ static const uint8_t qestM[7]={
 0b00000010,
 (7<<4)|4};
 
- static const uint8_t num2[7]={
+ static const uint8_t num2[8]={
 0b00000110,
 0b00001001,
 0b00000001,
@@ -165,7 +175,7 @@ static const uint8_t qestM[7]={
 0b00001111,
 (7<<4)|4};
 
- static const uint8_t num3[7]={
+ static const uint8_t num3[8]={
 0b00000110,
 0b00001001,
 0b00000001,
@@ -175,7 +185,7 @@ static const uint8_t qestM[7]={
 0b00000110,
 (7<<4)|4};
 
- static const uint8_t num4[7]={
+ static const uint8_t num4[8]={
 0b00000010,
 0b00000100,
 0b00001010,
@@ -185,7 +195,7 @@ static const uint8_t qestM[7]={
 0b00000010,
 (7<<4)|4};
 
- static const uint8_t num5[7]={
+ static const uint8_t num5[8]={
 0b00001111,
 0b00001000,
 0b00001110,
@@ -195,7 +205,7 @@ static const uint8_t qestM[7]={
 0b00000110,
 (7<<4)|4};
 
- static const uint8_t num6[7]={
+ static const uint8_t num6[8]={
 0b00000110,
 0b00001000,
 0b00001000,
@@ -205,7 +215,7 @@ static const uint8_t qestM[7]={
 0b00000110,
 (7<<4)|4};
 
- static const uint8_t num7[7]={
+ static const uint8_t num7[8]={
 0b00001111,
 0b00000010,
 0b00000100,
@@ -215,7 +225,7 @@ static const uint8_t qestM[7]={
 0b00000100,
 (7<<4)|4};
 
- static const uint8_t num8[7]={
+ static const uint8_t num8[8]={
 0b00000110,
 0b00001001,
 0b00001001,
@@ -225,7 +235,7 @@ static const uint8_t qestM[7]={
 0b00000110,
 (7<<4)|4};
 
- static const uint8_t num9[7]={
+ static const uint8_t num9[8]={
 0b00000110,
 0b00001001,
 0b00001001,
@@ -235,7 +245,7 @@ static const uint8_t qestM[7]={
 0b00000110,
 (7<<4)|4};
 
- static const uint8_t num0[7]={
+ static const uint8_t num0[8]={
 0b00000110,
 0b00001001,
 0b00001001,
