@@ -113,8 +113,8 @@ void display_setSegment(const uint8_t *pict,uint8_t segmentnumber){
             uint8_t pos0 = display_superSegWindowStart[superSeg]
                          + display_superSegOffset[segmentnumber];
             uint16_t mask = ~(((1<<5)-1)<<(pos0-5));
-            display_supersegmentbuffer[supersegmentnumber][i]&=mask;
-            display_supersegmentbuffer[supersegmentnumber][i]|=(pict[i]<<3)<<pos0;
+            display_supersegmentbuffer[superSegr][i]&=mask;
+            display_supersegmentbuffer[superSeg][i]|=(pict[i]<<3)<<pos0;
         }
     }
 }
@@ -127,9 +127,9 @@ void display_invertSegment(uint8_t segmentnumber){
             uint8_t pos0 = display_superSegWindowStart[superSeg]
                          + display_superSegOffset[segmentnumber];
             uint16_t mask = ~(((1<<5)-1)<<(pos0-5));
-            display_supersegmentbuffer[supersegmentnumber][i]=
-                    (display_supersegmentbuffer[supersegmentnumber][i] & mask)
-                    | ~ (display_supersegmentbuffer[supersegmentnumber][i] & ~mask);
+            display_supersegmentbuffer[superSeg][i]=
+                    (display_supersegmentbuffer[superSeg][i] & mask)
+                    | ~ (display_supersegmentbuffer[superSeg][i] & ~mask);
         }
     }
 }
@@ -158,7 +158,7 @@ void display_setSuperSegment(const uint16_t *pict,uint8_t supersegmentnumber){
         int8_t i;
         uint8_t width=0x00FF & pict[8];
         uint8_t hight=0xFF00 & pict[8]>>8;
-        if((higth<=7)&&(width<=16)){
+        if((hight<=7)&&(width<=16)){
             display_supersegmentbuffer[supersegmentnumber][8]=pict[8];
             for(i=0;i<7;i++){
                 display_supersegmentbuffer[supersegmentnumber][i]=pict[i]<<(16-width);
@@ -171,7 +171,7 @@ void display_setSuperSegment(const uint16_t *pict,uint8_t supersegmentnumber){
     }
 }
 
-void display_setSuperSegment(uint8_t supersegmentnumber){
+void display_clearSuperSegment(uint8_t supersegmentnumber){
     if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
         int8_t i;
         for(i=0;i<8;i++){
@@ -196,12 +196,12 @@ void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spar
         uint8_t oldwidth=0x00FF & display_supersegmentbuffer[supersegmentnumber][8];
         uint8_t oldhight=0xFF00 & display_supersegmentbuffer[supersegmentnumber][8]>>8;
 
-        uint8_t movewidth += (sparse & oldwidth)?1:0;
+        uint8_t movewidth = (sparse & oldwidth)?1:0;
 
         uint8_t newwidth=oldwidth + movewidth;
-        uint8_t newhight=(oldhight>hight)?oldhigth:higth;
+        uint8_t newhight=(oldhight>hight)?oldhight:hight;
 
-        if((newhigth<=7)&&(newwidth<=16)){
+        if((newhight<=7)&&(newwidth<=16)){
             display_supersegmentbuffer[supersegmentnumber][8]=(((uint16_t)(newhight))<<8)&(newwidth);
             for(i=0;i<7;i++){
                 display_supersegmentbuffer[supersegmentnumber][i]=display_supersegmentbuffer[supersegmentnumber][i]>>movewidth;
@@ -222,9 +222,9 @@ void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spa
         oldwidth += (sparse & oldwidth)?1:0;
 
         uint8_t newwidth=oldwidth + width;
-        uint8_t newhight=(oldhight>hight)?oldhigth:higth;
+        uint8_t newhight=(oldhight>hight)?oldhight:hight;
 
-        if((newhigth<=7)&&(newwidth<=16)){
+        if((newhight<=7)&&(newwidth<=16)){
             display_supersegmentbuffer[supersegmentnumber][8]=(((uint16_t)(newhight))<<8)&(newwidth);
             for(i=0;i<7;i++){
                 display_supersegmentbuffer[supersegmentnumber][i]|=(uint16_t)(pict[i])<<(oldwidth-width);

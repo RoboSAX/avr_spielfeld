@@ -24,6 +24,7 @@
 //**************************<Macros>*******************************************
 
 #define SEGMENTS_COUNT 4
+#define SUPER_SEGMENTS_COUNT 2
 
 //**************************<Types and Variables>******************************
 uint8_t display_double_dot;
@@ -67,12 +68,12 @@ void display_invertSegment(uint8_t segmentnumber);
 //!         00000001,
 //!         (5<<4)|3],0);
 void display_setSuperSegment(const uint16_t *pict,uint8_t supersegmentnumber);
-void display_setSuperSegment(uint8_t supersegmentnumber);
+void display_clearSuperSegment(uint8_t supersegmentnumber);
 void display_invertSuperSegment(uint8_t supersegmentnumber);
-void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse=1);
-void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse=1);
-//void display_addAbove(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse=1);
-//void display_addBelow(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse=1);
+void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse);
+void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse);
+//void display_addAbove(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse);
+//void display_addBelow(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse);
 //void display_windowShiftright(uint8_t number);
 //void display_windowShiftleft (uint8_t number);
 
