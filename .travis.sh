@@ -2,8 +2,9 @@
 
 
 
-### pwd
+### config
 PWD_temp="$(pwd)"
+mkdir -p travis/ && cd travis/
 
 
 
@@ -11,22 +12,21 @@ PWD_temp="$(pwd)"
 echo ""
 echo "### Downloading robolib"
 echo ""
-cd "${PWD_temp}/../../"
 git clone https://github.com/RoboAG/avr_robolib robolib
-if [ $? -ne 0 ]; then exit -1; fi
+if [ $? -ne 0 ]; then return -1; exit -1; fi
 
 echo ""
 echo "### Configuring robolib"
 echo ""
 cd robolib
 make install_prerequisites
-if [ $? -ne 0 ]; then exit -1; fi
+if [ $? -ne 0 ]; then return -1; exit -1; fi
 
 echo ""
 echo "### Sourcing robolib"
 echo ""
 . scripts/bashrc.sh
-if [ $? -ne 0 ]; then exit -1; fi
+if [ $? -ne 0 ]; then return -1; exit -1; fi
 
 
 
@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then exit -1; fi
 echo ""
 echo "### Building"
 echo ""
-cd "${PWD_temp}/../"
+cd "${PWD_temp}"
 make
 
 
