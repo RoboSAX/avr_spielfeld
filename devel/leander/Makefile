@@ -1,0 +1,43 @@
+###############################################################################
+#                                                                             #
+# devel/.../Makefile                                                          #
+# ==================                                                          #
+#                                                                             #
+# Version: 1.0.2                                                              #
+# Date   : 07.02.19                                                           #
+# Author : Peter Weissig                                                      #
+#                                                                             #
+# Source code was taken from:                                                 #
+#   https://github.com/RoboAG/avr_robolib                                     #
+#                                                                             #
+# See also:                                                                   #
+#   https://github.com/RoboSAX/avr_spielfeld                                  #
+###############################################################################
+
+CURRENTDIR = leander
+
+SUBDIRS = 001_licht_test 003_2019/Spielfeld
+# unfixed build error for 002_spielfeld
+
+###############################################################################
+# define phony targets for make commands
+.PHONY: all all_init  $(SUBDIRS)  clean
+
+all: all_init $(SUBDIRS)
+
+all_init:
+	@echo "# building $(CURRENTDIR) #"
+
+
+$(SUBDIRS):
+	$(MAKE) -C $@ -f "$(ROBOLIB_MAKEFILE)"
+
+
+clean:
+	@echo
+	@echo "# clean $(CURRENTDIR) #"
+	@for dir in $(SUBDIRS); do \
+	    $(MAKE) -C $$dir -f "$(ROBOLIB_MAKEFILE)" clean; \
+	done
+
+###############################################################################
