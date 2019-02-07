@@ -99,7 +99,7 @@ void init_display(void) {
     display_double_dot=0;
 
     int8_t i;
-    for(i=0;i<SUPER_SEGMENT_COUNT;i++){
+    for(i=0;i<SUPER_SEGMENTS_COUNT;i++){
         display_superSegWindowStart[i]=0;
     }
 }
@@ -113,7 +113,7 @@ void display_setSegment(const uint8_t *pict,uint8_t segmentnumber){
             uint8_t pos0 = display_superSegWindowStart[superSeg]
                          + display_superSegOffset[segmentnumber];
             uint16_t mask = ~(((1<<5)-1)<<(pos0-5));
-            display_supersegmentbuffer[superSegr][i]&=mask;
+            display_supersegmentbuffer[superSeg][i]&=mask;
             display_supersegmentbuffer[superSeg][i]|=(pict[i]<<3)<<pos0;
         }
     }
