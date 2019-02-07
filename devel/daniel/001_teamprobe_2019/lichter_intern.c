@@ -1,11 +1,16 @@
 /******************************************************************************
-* Teamprobe/tht/lichter_intern.c                                              *
-* ==============================                                              *
+* lichter_intern.c                                                            *
+* ================                                                            *
 *                                                                             *
-* Version: 1.0.2                                                              *
-* Date   : 09.02.18                                                           *
-* Author : Peter Weissig, Tina Lenk, Leander Herr                             *
+* Version: 1.1.0                                                              *
+* Date   : 07.02.19                                                           *
+* Author : Peter Weissig, Daniel Gunkel, Tina Lenk, Leander Herr              *
 *                                                                             *
+* Original source code was taken and modified from:                           *
+*   https://github.com/RoboAG/projekt_gluecksrad                              *
+*                                                                             *
+* See also:                                                                   *
+*   https://github.com/RoboSAX/avr_spielfeld                                  *
 ******************************************************************************/
 
 
@@ -102,6 +107,149 @@ void leds_clearAll(void) {
     led2_setGreen(0);
     led2_setBlue(0);
     led2_setIr(0);
+}
+
+//**************************[leds_clearLED]************************************
+void leds_clearLED(uint8_t led_num) {
+
+    // schaltet LED in Farbe an
+    // led_num: 1, 2
+    
+    switch(led_num) {
+        case 1:
+            led1_setGreen(0);
+            led1_setRed  (0);
+            led1_setBlue (0);
+            led1_setIr(0);
+            break;
+        case 2:
+            led2_setGreen(0);
+            led2_setRed  (0);
+            led2_setBlue (0);
+            led2_setIr(0);
+            break;
+    }
+}
+
+//**************************[leds_setLED]**************************************
+void leds_setLED(uint8_t led_num, uint8_t color, uint8_t invert) {
+
+    // schaltet LED in Farbe an
+    // led_num: 1, 2
+    // color: Green = 0, Red = 1, Blue = 2, Weiß = 3
+
+    switch(led_num) {
+        case 1:
+            switch(color) {
+                case 0: 
+                    if (invert){
+                        led1_setRed  (1); 
+                        led1_setGreen(0); 
+                        led1_setBlue (1); 
+                        break; 
+                    } else {
+                        led1_setRed  (0); 
+                        led1_setGreen(1); 
+                        led1_setBlue (0); 
+                        led1_setIr(1); 
+                        break; 
+                    }
+                case 1: 
+                    if (invert){
+                        led1_setRed  (1); 
+                        led1_setGreen(1); 
+                        led1_setBlue (1); 
+                        break; 
+                    } else {
+                        led1_setRed  (1); 
+                        led1_setGreen(0); 
+                        led1_setBlue (0); 
+                        led1_setIr(1); 
+                        break; 
+                    }
+                case 2: 
+                    if (invert){
+                        led1_setRed  (1); 
+                        led1_setGreen(1); 
+                        led1_setBlue (0); 
+                        break; 
+                    } else {
+                        led1_setRed  (0); 
+                        led1_setGreen(0); 
+                        led1_setBlue (1); 
+                        led1_setIr(1); 
+                        break; 
+                    }
+                case 3: 
+                    if (invert){
+                        led1_setRed  (0); 
+                        led1_setGreen(0); 
+                        led1_setBlue (0); 
+                        break; 
+                    } else {
+                        led1_setRed  (1); 
+                        led1_setGreen(1); 
+                        led1_setBlue (1); 
+                        break; 
+                    }
+            }
+            break;
+            
+        case 2:
+            switch(color) {
+                case 0: 
+                    if (invert){
+                        led2_setRed  (1); 
+                        led2_setGreen(0); 
+                        led2_setBlue (1); 
+                        break; 
+                    } else {
+                        led2_setRed  (0); 
+                        led2_setGreen(1); 
+                        led2_setBlue (0); 
+                        led2_setIr(1); 
+                        break; 
+                    }
+                case 1: 
+                    if (invert){
+                        led2_setRed  (1); 
+                        led2_setGreen(1); 
+                        led2_setBlue (1); 
+                        break; 
+                    } else {
+                        led2_setRed  (1); 
+                        led2_setGreen(0); 
+                        led2_setBlue (0); 
+                        led2_setIr(1); 
+                        break; 
+                    }
+                case 2: 
+                    if (invert){
+                        led2_setRed  (1); 
+                        led2_setGreen(1); 
+                        led2_setBlue (0); 
+                        break; 
+                    } else {
+                        led2_setRed  (0); 
+                        led2_setGreen(0); 
+                        led2_setBlue (1); 
+                        led2_setIr(1); 
+                        break; 
+                    }
+                case 3: 
+                    if (invert){
+                        led2_setRed  (0); 
+                        led2_setGreen(0); 
+                        led2_setBlue (0); 
+                        break; 
+                    } else {
+                        led2_setRed  (1); 
+                        led2_setGreen(1); 
+                        led2_setBlue (1); 
+                        break; 
+                    }            
+            }
+    }
 }
 
 //**************************[leds_initTest]************************************

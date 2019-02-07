@@ -1,11 +1,16 @@
 /******************************************************************************
-* Teamprobe/tht/lichter_intern.h                                              *
-* ==============================                                              *
+* lichter_intern.h                                                            *
+* ================                                                            *
 *                                                                             *
-* Version: 1.0.2                                                              *
-* Date   : 09.02.18                                                           *
-* Author : Peter Weissig, Tina Lenk, Leander Herr                             *
+* Version: 1.1.0                                                              *
+* Date   : 07.02.19                                                           *
+* Author : Peter Weissig, Daniel Gunkel, Tina Lenk, Leander Herr              *
 *                                                                             *
+* Original source code was taken and modified from:                           *
+*   https://github.com/RoboAG/projekt_gluecksrad                              *
+*                                                                             *
+* See also:                                                                   *
+*   https://github.com/RoboSAX/avr_spielfeld                                  *
 ******************************************************************************/
 
 #ifndef __LICHTER_INTERN_H
@@ -15,7 +20,7 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-#include "lichter.h"
+#include "robolib.h"
 
 
 //**************************<Macros>*******************************************
@@ -39,11 +44,14 @@
 //**************************<Prototypes>***************************************
 void init_hardware(void);
 void leds_clearAll(void);
+void leds_clearLED(uint8_t led_num);
+void leds_setLED(uint8_t led_num, uint8_t color, uint8_t invert);
 void leds_initTest(void);
 
 void led1_setIr(uint8_t state);
 void led2_setIr(uint8_t state);
 
+void buttons_reset(void);
 void buttons_clearAll(void);
 
 uint8_t button1_readFlank(void);
