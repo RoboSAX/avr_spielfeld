@@ -64,9 +64,13 @@
 //**************************<Types and Variables>******************************
 
 //display
-uint8_t display_segmentbuffer[SEGMENTS_COUNT][7];
+uint16_t display_supersegmentbuffer[SUPER_SEGMENTS_COUNT][8];
 uint8_t display_double_dot;
 uint8_t display_current_row;
+
+const uint8_t display_segToSuperSeg[SEGMENTS_COUNT]={0,0,1,1};
+const uint8_t display_superSegOffset[SEGMENTS_COUNT]={0,5,0,5};
+uint8_t display_superSegWindowStart[SUPER_SEGMENTS_COUNT];
 
 
 
@@ -78,6 +82,10 @@ void toggle_row_sck(void);
 void toggle_rck(void);
 
 
+void display_fill_col(uint8_t row, uint8_t col, uint8_t seg);
+void display_row_reset(void);
+void display_row_next(void);
+void display_fill_current_row(void);
 
 //**************************[ledbox_init]**************************************
 //**************************[init_display]*************************************
@@ -89,6 +97,11 @@ void init_display(void) {
     _disp_rck_enable();
     _disp_enable_enable();
     display_double_dot=0;
+
+    int8_t i;
+    for(i=0;i<SUPER_SEGMENT_COUNT;i++){
+        display_superSegWindowStart[i]=0;
+    }
 }
 //**************************[display]******************************************
 //**************************[display::seter]***********************************
@@ -96,7 +109,12 @@ void display_setSegment(const uint8_t *pict,uint8_t segmentnumber){
     if ((segmentnumber>=0)&&(segmentnumber<SEGMENTS_COUNT)){
         int8_t i;
         for(i=0;i<7;i++){
-            display_segmentbuffer[segmentnumber][i]=pict[i]<<3;
+            uint8_t superSeg = display_segToSuperSeg[segmentnumber];
+            uint8_t pos0 = display_superSegWindowStart[superSeg]
+                         + display_superSegOffset[segmentnumber];
+            uint16_t mask = ~(((1<<5)-1)<<(pos0-5));
+            display_supersegmentbuffer[superSegr][i]&=mask;
+            display_supersegmentbuffer[superSeg][i]|=(pict[i]<<3)<<pos0;
         }
     }
 }
@@ -105,11 +123,17 @@ void display_invertSegment(uint8_t segmentnumber){
     if ((segmentnumber>=0)&&(segmentnumber<SEGMENTS_COUNT)){
         int8_t i;
         for(i=0;i<7;i++){
-            display_segmentbuffer[segmentnumber][i]=~display_segmentbuffer[segmentnumber][i] & 0xF8;
+            uint8_t superSeg = display_segToSuperSeg[segmentnumber];
+            uint8_t pos0 = display_superSegWindowStart[superSeg]
+                         + display_superSegOffset[segmentnumber];
+            uint16_t mask = ~(((1<<5)-1)<<(pos0-5));
+            display_supersegmentbuffer[superSeg][i]=
+                    (display_supersegmentbuffer[superSeg][i] & mask)
+                    | ~ (display_supersegmentbuffer[superSeg][i] & ~mask);
         }
     }
 }
-void display_shiftright(uint8_t number){
+/*void display_shiftright(uint8_t number){
     int8_t i;
     for(i=SEGMENTS_COUNT-1;i>=number;i--){
         int8_t j;
@@ -127,17 +151,105 @@ void display_shiftleft(uint8_t number){
         }
     }
 }
+*/
+ 
+void display_setSuperSegment(const uint16_t *pict,uint8_t supersegmentnumber){
+    if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
+        int8_t i;
+        uint8_t width=0x00FF & pict[8];
+        uint8_t hight=0xFF00 & pict[8]>>8;
+        if((hight<=7)&&(width<=16)){
+            display_supersegmentbuffer[supersegmentnumber][8]=pict[8];
+            for(i=0;i<7;i++){
+                display_supersegmentbuffer[supersegmentnumber][i]=pict[i]<<(16-width);
+            }
+        } else {
+            for(i=0;i<8;i++){
+                display_supersegmentbuffer[supersegmentnumber][i]=0x0000;
+            }
+        }
+    }
+}
+
+void display_clearSuperSegment(uint8_t supersegmentnumber){
+    if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
+        int8_t i;
+        for(i=0;i<8;i++){
+            display_supersegmentbuffer[supersegmentnumber][i]=0x0000;
+        }
+    }
+}
+
+void display_invertSuperSegment(uint8_t supersegmentnumber){
+    if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
+        int8_t i;
+        for(i=0;i<7;i++){
+            display_supersegmentbuffer[supersegmentnumber][i]= ~display_supersegmentbuffer[supersegmentnumber][i];
+        }
+    }
+}
+void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse){
+    if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
+        int8_t i;
+        uint8_t width=0x0F & pict[8];
+        uint8_t hight=0xF0 & pict[8]>>4;
+        uint8_t oldwidth=0x00FF & display_supersegmentbuffer[supersegmentnumber][8];
+        uint8_t oldhight=0xFF00 & display_supersegmentbuffer[supersegmentnumber][8]>>8;
+
+        uint8_t movewidth = (sparse & oldwidth)?1:0;
+
+        uint8_t newwidth=oldwidth + movewidth;
+        uint8_t newhight=(oldhight>hight)?oldhight:hight;
+
+        if((newhight<=7)&&(newwidth<=16)){
+            display_supersegmentbuffer[supersegmentnumber][8]=(((uint16_t)(newhight))<<8)&(newwidth);
+            for(i=0;i<7;i++){
+                display_supersegmentbuffer[supersegmentnumber][i]=display_supersegmentbuffer[supersegmentnumber][i]>>movewidth;
+                display_supersegmentbuffer[supersegmentnumber][i]|=(uint16_t)(pict[i])<<(16-width);
+            }
+        }
+    }
+}
+
+void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse){
+    if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
+        int8_t i;
+        uint8_t width=0x0F & pict[8];
+        uint8_t hight=0xF0 & pict[8]>>4;
+        uint8_t oldwidth=0x00FF & display_supersegmentbuffer[supersegmentnumber][8];
+        uint8_t oldhight=0xFF00 & display_supersegmentbuffer[supersegmentnumber][8]>>8;
+
+        oldwidth += (sparse & oldwidth)?1:0;
+
+        uint8_t newwidth=oldwidth + width;
+        uint8_t newhight=(oldhight>hight)?oldhight:hight;
+
+        if((newhight<=7)&&(newwidth<=16)){
+            display_supersegmentbuffer[supersegmentnumber][8]=(((uint16_t)(newhight))<<8)&(newwidth);
+            for(i=0;i<7;i++){
+                display_supersegmentbuffer[supersegmentnumber][i]|=(uint16_t)(pict[i])<<(oldwidth-width);
+            }
+        }
+    }
+}
+
+//void display_addAbove(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse){}
+//void display_addBelow(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse){}
+//void display_windowShiftright(uint8_t number);
+//void display_windowShiftleft (uint8_t number);
 
 //**************************[display::shower]**********************************
 void display_fill_col(uint8_t row, uint8_t col, uint8_t seg){
-    if ((display_segmentbuffer[seg][row]&_BV(col))){
+    if(col>=16){
+        disp_col_ser(0);
+    }else if ((display_supersegmentbuffer[seg][row]&_BV(col))){
         disp_col_ser(1);
     }else{
         disp_col_ser(0);
     }
     toggle_col_sck();
 }
-void  display_row_next(void){
+void display_row_next(void){
     display_current_row++;
     if(display_current_row>=8){
         display_current_row=0;
@@ -168,7 +280,10 @@ void display_fill_current_row(void){
         for(seg=0;seg<SEGMENTS_COUNT;seg++){
             int8_t col;
             for(col=0;col<8;col++){
-                display_fill_col(display_current_row,col,seg);
+                display_fill_col(
+                                display_current_row,
+                                col + display_superSegWindowStart[display_segToSuperSeg[seg]] + display_superSegOffset[seg],
+                                display_segToSuperSeg[seg]);
             }
         }
         toggle_rck();
