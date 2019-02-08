@@ -25,6 +25,7 @@
 
 #define SEGMENTS_COUNT 4
 #define SUPER_SEGMENTS_COUNT 2
+#define INVERT_DISPLAY
 
 //**************************<Types and Variables>******************************
 uint8_t display_double_dot;
@@ -78,6 +79,7 @@ void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spa
 //void display_windowShiftleft (uint8_t number);
 
 void display_show(void);
+void display_switchBuffer(void);
 void display_show_ms(uint16_t ms);
 
 #endif //#ifndef __DISPLAY_H

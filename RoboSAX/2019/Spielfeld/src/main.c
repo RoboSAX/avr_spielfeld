@@ -27,10 +27,9 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-enum eColor clRainbows[6]={clRain0,clRain1,clRain2,clRain3,clRain4,clRain5};
-
 //**************************<Prototypes>***************************************
 int main(void);
+void updateBuffer(void);
 void init(void);
 
 enum eRunningState {
@@ -49,20 +48,34 @@ void init () {
     master_init();
     ledbox_init();
     init_display();
+    updateBuffer();
     systick_init();
+    gamemode_init();
 
     display_double_dot=0;
-    display_setSegment(pic0,0);
-    display_setSegment(Smile,1);
-    display_setSegment(space,2);
+    display_setSuperSegment(RoboSax,0);
+    display_setSuperSegment(Pokeball,1);
     rgb_setAll(clRain);
+}
+//**************************[update]*********************************************
+void updateBuffer () {
+
+    // update asyncron mode
+    // switch working and showing buffers
+    systick_freezUpdate(update_Display);
+    display_switchBuffer();
+    systick_unFreezUpdate(update_Display);
+    systick_freezUpdate(update_others);
+    _ledbox_switchBuffer();
+    systick_unFreezUpdate(update_others);
+
+
 }
 //**************************[main]*********************************************
 int main () {
 
     init();
 
-    gamemode_init();
 
     uint32_t currentTime = systick_get();
     enum eRunningState menuemode=rsNone;
@@ -79,18 +92,18 @@ int main () {
             case rsNone:
             case rsSelectMasterMode:
             case rsSelectSubMode:
-            case rsGameModeFinished:
-            case rsGameModeStarting:
                 if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)||(currentTime<rainbowStartTime)){
                     rainbowNumber++;
-                    rainbowNumber %= 6;
+                    rainbowNumber %= NUM_RAINBOWS;
                     rainbowStartTime = currentTime;
                     rgb_setAll(clRainbows[rainbowNumber]);
                 }
             break;
+            case rsGameModeStarting:
             case rsStartMode:
             case rsGameModeRunning:
             case rsTestModeRunning:
+            case rsGameModeFinished:
             break;
         }
         currentTime = systick_get();
@@ -103,8 +116,8 @@ int main () {
                     menuemode = rsSelectMasterMode;
                 break;
                 case rsSelectMasterMode:
-                    menuemode = rsSelectSubMode;
-                break;
+//                    menuemode = rsSelectSubMode;
+//                break;
                 case rsSelectSubMode:
                     menuemode = rsStartMode;
                 break;
@@ -167,21 +180,20 @@ int main () {
                     starttime=currentTime;
                 }
                 else{
+                    uint32_t i;
+                    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+                        if(((i*STARTTIME)/LEDBOX_COUNT_MAX)<(currentTime-starttime)){
+                            rgb_set(i, clBlack);
+                        }
+                    }
                     showtime((STARTTIME+starttime-currentTime)/10,0);
                 }
             break;
             case rsGameModeRunning:
-                systick_freezUpdate();
                 gamemode_update();
                 if(!gameRunningShowPoints){
                     showtime((ROUNDTIME+starttime-currentTime)/(1000UL),1);
                 }
-		else{
-		    display_invertSegment(0);
-		    display_invertSegment(1);
-		    display_invertSegment(2);
-		    display_invertSegment(3);
-		}
                 if(ROUNDTIME+starttime<currentTime){
                     menuemode=7;
                     display_double_dot=0;
@@ -189,12 +201,9 @@ int main () {
                     display_setSegment(Robol,1);
                     display_setSegment(Robor,2);
                 }
-                systick_unFreezUpdate();
             break;
             case rsTestModeRunning:
-                systick_freezUpdate();
                 gamemode_update();
-                systick_unFreezUpdate();
             break;
             case rsGameModeFinished:
                 gamemode_finalize();
@@ -208,23 +217,23 @@ int main () {
             if((display_blink_time+BLINKTIMEON<currentTime)||(currentTime<display_blink_time)){
                 switch (menuemode){
                     case rsSelectMasterMode:
-                        writeModesToDisplay(masterMode, gamemode);
-		        display_invertSegment(0);
-		        display_invertSegment(1);
+                        //writeModesToDisplay(masterMode, gamemode);
+		        //display_invertSegment(0);
+		        //display_invertSegment(1);
                         //display_setSegment(qestM,0);
                         //display_setSegment(qestM,1);
-                        //display_setSegment(space,0);
-                        //display_setSegment(space,1);
+                        display_setSegment(space,0);
+                        display_setSegment(space,1);
                         display_blink_status = 0;
                     break;
                     case rsSelectSubMode:
-                        writeModesToDisplay(masterMode, gamemode);
-		        display_invertSegment(2);
-		        display_invertSegment(3);
+                        //writeModesToDisplay(masterMode, gamemode);
+		        //display_invertSegment(2);
+		        //display_invertSegment(3);
                         //display_setSegment(qestM,2);
                         //display_setSegment(qestM,3);
-                        //display_setSegment(space,2);
-                        //display_setSegment(space,3);
+                        display_setSegment(space,2);
+                        display_setSegment(space,3);
                         display_blink_status = 0;
                     break;
                     case rsNone:
@@ -259,7 +268,8 @@ int main () {
                 display_blink_time = currentTime;
             }
         }
-        delay_ms(3);
+	updateBuffer();
+        systick_delay(1);
     }
     return (0);
 }

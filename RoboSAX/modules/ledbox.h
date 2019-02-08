@@ -52,5 +52,6 @@ uint8_t buttons_get(uint8_t number);
 // update
 void _ledbox_rgb_update(void);
 void _ledbox_buttons_and_ir_update(void);
+void _ledbox_switchBuffer(void);
 
 #endif //#ifndef __LEDBOX_H

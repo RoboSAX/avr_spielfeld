@@ -21,23 +21,39 @@
 // leds
 enum eColor {
     clPurple = 0,
-    clBlue   = 1,
-    clCyan   = 2,
-    clGreen  = 3,
-    clYellow = 4,
-    clRed    = 5,
-    clWhite  = 6,
-    clBlack  = 7,
-    clLBlue  = 8,
-    clLGreen = 9,
-    clRain0  = 10,
-    clRain1  = 11,
-    clRain2  = 12,
-    clRain3  = 13,
-    clRain4  = 14,
-    clRain5  = 15,
+    clPB     ,
+    clBlue   ,
+    clBC     ,
+    clCyan   ,
+    clCG     ,
+    clGreen  ,
+    clGY     ,
+    clYellow ,
+    clYR     ,
+    clRed    ,
+    clRP     ,
+    clWhite  ,
+    clBlack  ,
+    clLBlue  ,
+    clLGreen ,
+    clRain0  ,
+    clRain1  ,
+    clRain2  ,
+    clRain3  ,
+    clRain4  ,
+    clRain5  ,
+    clRain6  ,
+    clRain7  ,
+    clRain8  ,
+    clRain9  ,
+    clRain10 ,
+    clRain11 ,
     clRain   = clRain0
 };
+
+#define NUM_RAINBOWS 12
+static const enum eColor clRainbows[NUM_RAINBOWS]={clRain0,clRain1,clRain2,clRain3,clRain4,clRain5,clRain6,clRain7,clRain8,clRain9,clRain10,clRain11};
+
 
 struct sRGB {
     uint8_t r; ///< red

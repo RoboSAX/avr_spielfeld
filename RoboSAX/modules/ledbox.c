@@ -81,6 +81,14 @@
 #define _return_btn_enable() (RETURN_BTN_DDR|= RETURN_BTN_PIN)
 
 
+//#define ledbox_buttons_get ledbox_buttons[working_buffer]
+//#define ledbox_buttons_set ledbox_buttons[display_buffer]
+
+//#define ledbox_ir_get ledbox_ir[working_buffer]
+//#define ledbox_ir_set ledbox_ir[display_buffer]
+
+//#define ledbox_ir_get ledbox_ir[working_buffer]
+//#define ledbox_ir_set ledbox_ir[display_buffer]
 //**************************<Types and Variables>******************************
 
 // buttons
@@ -91,8 +99,6 @@ volatile struct sRGB ledbox_rgb[LEDBOX_COUNT_MAX];
 
 // ir leds (order is invers!)
 volatile uint8_t ledbox_ir[LEDBOX_COUNT_MAX];
-
-
 
 //**************************<Methods>******************************************
 
@@ -180,23 +186,36 @@ void rgb_set(uint8_t number, enum eColor color) {
         return;
     }
 
+    #define H2 30
     switch (color) {
         case clPurple: rgb_set2(number, 255,   0, 255); break;
+        case clPB    : rgb_set2(number,  H2,   0, 255); break;
         case clBlue  : rgb_set2(number,   0,   0, 255); break;
+        case clBC    : rgb_set2(number,   0,  H2, 255); break;
         case clCyan  : rgb_set2(number,   0, 255, 255); break;
+        case clCG    : rgb_set2(number,   0, 255,  H2); break;
         case clGreen : rgb_set2(number,   0, 255,   0); break;
+        case clGY    : rgb_set2(number,  H2, 255,   0); break;
         case clYellow: rgb_set2(number, 255, 255,   0); break;
+        case clYR    : rgb_set2(number, 255,  H2,   0); break;
         case clRed   : rgb_set2(number, 255,   0,   0); break;
+        case clRP    : rgb_set2(number, 255,   0,  H2); break;
         case clBlack : rgb_set2(number,   0,   0,   0); break;
         case clWhite : rgb_set2(number, 255, 255, 255); break;
         case clLBlue : rgb_set2(number,  10,  10,  50); break;
         case clLGreen: rgb_set2(number,  10,  50,  10); break;
-        case clRain0 : rgb_set (number,(number + 0)%6); break;
-        case clRain1 : rgb_set (number,(number + 1)%6); break;
-        case clRain2 : rgb_set (number,(number + 2)%6); break;
-        case clRain3 : rgb_set (number,(number + 3)%6); break;
-        case clRain4 : rgb_set (number,(number + 4)%6); break;
-        case clRain5 : rgb_set (number,(number + 5)%6); break;
+        case clRain0 : rgb_set (number,(number + 0)%12); break;
+        case clRain1 : rgb_set (number,(number + 1)%12); break;
+        case clRain2 : rgb_set (number,(number + 2)%12); break;
+        case clRain3 : rgb_set (number,(number + 3)%12); break;
+        case clRain4 : rgb_set (number,(number + 4)%12); break;
+        case clRain5 : rgb_set (number,(number + 5)%12); break;
+        case clRain6 : rgb_set (number,(number + 6)%12); break;
+        case clRain7 : rgb_set (number,(number + 7)%12); break;
+        case clRain8 : rgb_set (number,(number + 8)%12); break;
+        case clRain9 : rgb_set (number,(number + 9)%12); break;
+        case clRain10: rgb_set (number,(number +10)%12); break;
+        case clRain11: rgb_set (number,(number +11)%12); break;
         default      :                                  break;
     }
 }
@@ -213,61 +232,6 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
     ledbox_rgb[number].b = b;
 
 
-    uint8_t j;
-
-    // init data bytes
-    // set all needed "1" (which will be "0" on the bus)
-    for (j = 0; j < 8; j++){
-        ledbox_rgb[number].dataOut[j] = 0x12;
-        // S = 0  ==> 1 (high       part of databit 1)-
-        // 0 = x  ==> !x(adjustable part of databit 1)?
-        // 1 = 1  ==> 0 (low        part of databit 1)0x02
-        // 2 = 0  ==> 1 (high       part of databit 2)0
-        // 3 = x  ==> !x(adjustable part of databit 2)?
-        // 4 = 1  ==> 0 (low        part of databit 2)0x10
-        // 5 = 0  ==> 1 (high       part of databit 3)0
-        // 6 = x  ==> !x(adjustable part of databit 3)?
-        // P = 1  ==> 0 (low        part of databit 3)-
-    }
-
-    // load needed bits
-    uint8_t d;
-
-    d = ledbox_rgb[number].g;
-
-    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x01;}
-    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x08;}
-    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x40;}
-
-    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x01;}
-    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x08;}
-    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x40;}
-
-    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x01;}
-    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x08;}
-    d = ledbox_rgb[number].r;
-    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x40;}
-
-    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x01;}
-    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x08;}
-    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x40;}
-
-    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x01;}
-    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x08;}
-    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x40;}
-
-    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x01;}
-    d = ledbox_rgb[number].b;
-    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x08;}
-    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x40;}
-
-    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x01;}
-    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x08;}
-    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x40;}
-
-    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x01;}
-    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x08;}
-    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x40;}
 }
 
 //**************************[rgb_setAll]***************************************
@@ -432,6 +396,69 @@ void _ledbox_buttons_and_ir_update(void) {
     }
     toggle_led_load();
 }
+
+void _ledbox_switchBuffer(){
+
+    uint8_t number;
+    for(number=0;number<LEDBOX_COUNT_MAX;number++){
+	    uint8_t j;
+
+	    // init data bytes
+	    // set all needed "1" (which will be "0" on the bus)
+	    for (j = 0; j < 8; j++){
+		ledbox_rgb[number].dataOut[j] = 0x12;
+		// S = 0  ==> 1 (high       part of databit 1)-
+		// 0 = x  ==> !x(adjustable part of databit 1)?
+		// 1 = 1  ==> 0 (low        part of databit 1)0x02
+		// 2 = 0  ==> 1 (high       part of databit 2)0
+		// 3 = x  ==> !x(adjustable part of databit 2)?
+		// 4 = 1  ==> 0 (low        part of databit 2)0x10
+		// 5 = 0  ==> 1 (high       part of databit 3)0
+		// 6 = x  ==> !x(adjustable part of databit 3)?
+		// P = 1  ==> 0 (low        part of databit 3)-
+	    }
+
+	    // load needed bits
+	    uint8_t d;
+
+	    d = ledbox_rgb[number].g;
+
+	    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x01;}
+	    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x08;}
+	    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[0]|= 0x40;}
+
+	    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x01;}
+	    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x08;}
+	    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[1]|= 0x40;}
+
+	    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x01;}
+	    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x08;}
+	    d = ledbox_rgb[number].r;
+	    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[2]|= 0x40;}
+
+	    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x01;}
+	    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x08;}
+	    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[3]|= 0x40;}
+
+	    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x01;}
+	    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x08;}
+	    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[4]|= 0x40;}
+
+	    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x01;}
+	    d = ledbox_rgb[number].b;
+	    if ((d & 0x80) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x08;}
+	    if ((d & 0x40) == 0x00) {ledbox_rgb[number].dataOut[5]|= 0x40;}
+
+	    if ((d & 0x20) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x01;}
+	    if ((d & 0x10) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x08;}
+	    if ((d & 0x08) == 0x00) {ledbox_rgb[number].dataOut[6]|= 0x40;}
+
+	    if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x01;}
+	    if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x08;}
+	    if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x40;}
+    }
+}
+
 
 //**************************[toggle_clk]***************************************
 void toggle_clk() {

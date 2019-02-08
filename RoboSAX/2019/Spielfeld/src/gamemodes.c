@@ -24,13 +24,13 @@
 #define TEAM2COLOR clRed
 #define TEAMNCOLOR clBlue
 #define NOCOLOR clBlack
-#define ERRORCOLOR clYellow
+#define ERRORCOLOR clPurple
 #define POINTSFOROWNCOLOR 3
 #define POINTSFORNEUTRAL 1
 #define STOREDLASTLEDS 3
 
-#define NUMBEROFBLINKINGS 3
-#define BLINKCOUNTDOWNMAX 7
+#define NUMBEROFBLINKINGS 5
+#define BLINKCOUNTDOWNMAX 2
 
 //PHASEX = Y: X LEDs on after Y correct deactivated LEDs
 #define PHASE0 19
@@ -50,8 +50,8 @@ struct sTeamLED{
 };
 struct sBlink{
     uint8_t LEDNr : 3;
-    uint8_t countdown : 3;
-    uint8_t numberOfBlinks : 2;
+    uint8_t countdown : 2;
+    uint8_t numberOfBlinks : 3;
 };
 struct sTeam {
     uint8_t points;
@@ -86,6 +86,7 @@ enum eGamemodes usedGamemode;
 //**************************<Methods>******************************************
 void pushButton(uint8_t number);
 void setLEDs(void);
+void diasbleOneLEDForTeam(volatile struct sTeam *team);
 void setLEDForTeam(volatile struct sTeam *team);
 
 void gamemode_init(void){
@@ -100,7 +101,7 @@ void gamemode_init(void){
         rgb_set(i,NOCOLOR);
     }
 
-    uint8_t  teamNr=0;
+    uint8_t  teamNr=1;
     uint8_t  ledNr=0;
 //default
     for(i=0;i<LEDBOX_COUNT_MAX;i++){
@@ -120,9 +121,14 @@ void gamemode_init(void){
         LEDToTeam[i].LEDNr = ledNr;
         team[teamNr].LEDs[ledNr].activ = 1;
 
-    	teamNr++;
-       	ledNr+=teamNr/3;
-       	teamNr%=3;
+        if (teamNr){
+            teamNr--;
+        } else {
+            teamNr=2;
+        }
+        if (teamNr==1){
+            ledNr++;
+        }
     }
 
 //special
@@ -218,14 +224,37 @@ void gamemode_update(){
     }
     //code to update RGB and IR LED
     setLEDs();
-    team[team1].points = team[team1].disabledLeds * POINTSFOROWNCOLOR + team[teamNeutral].disabledLeds * POINTSFORNEUTRAL;
-    team[team2].points = team[team2].disabledLeds * POINTSFOROWNCOLOR + team[teamNeutral].disabledLeds * POINTSFORNEUTRAL;
+    team[team1].points = team[team1].disabledLeds ?
+                            team[team1].disabledLeds * POINTSFOROWNCOLOR + team[teamNeutral].disabledLeds * POINTSFORNEUTRAL 
+                          : 0;
+    team[team2].points = team[team2].disabledLeds ?
+                            team[team2].disabledLeds * POINTSFOROWNCOLOR + team[teamNeutral].disabledLeds * POINTSFORNEUTRAL
+                          : 0;
     showPoints(team[team1].points, team[team2].points);
 }
 
 void gamemode_finalize(){
     //game end
     showPoints(team[team1].points, team[team2].points);
+
+    uint8_t i;
+    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+        rgb_set(i, clBlack);
+    }
+    if (team[team1].disabledLeds){
+        for (i = 0; i < LEDBOX_COUNT_MAX/2; i++) {
+            if(((i*2*76U)/LEDBOX_COUNT_MAX)<=(team[team1].points)){
+                rgb_set(i, team[team1].teamColor);
+            }
+        }
+    }
+    if (team[team2].disabledLeds){
+        for (i = 0; i < LEDBOX_COUNT_MAX/2; i++) {
+            if(((i*2U*76U)/(LEDBOX_COUNT_MAX-2U))<=(team[team2].points)){
+                rgb_set(LEDBOX_COUNT_MAX-1-i, team[team2].teamColor);
+            }
+        }
+    }
 }
 
 //Game priate
@@ -307,23 +336,55 @@ void pushButton(uint8_t number){
         team[teamNr].correct.LEDNr = LEDNr;
         team[teamNr].correct.countdown = BLINKCOUNTDOWNMAX;
         team[teamNr].correct.numberOfBlinks = NUMBEROFBLINKINGS;
+        setLEDForTeam(&team[teamNr]);
     }
     else{
         //error
         team[teamNr].numberOfErrors++;
         uint8_t i;
-        for (i = STOREDLASTLEDS; i > 0; i--){
-            if (team[teamNr].lastPressedLeds[i - 1] < LED_PER_TEAM){
-                team[teamNr].lastPressedLeds[i-1] = LED_PER_TEAM;
-                break;
-            }
+        for (i = STOREDLASTLEDS - 1; i > 0; i--){
+            team[teamNr].lastPressedLeds[i]=team[teamNr].lastPressedLeds[i-1];
         }
+        team[teamNr].lastPressedLeds[0]=LEDNr;
 
         team[teamNr].error.LEDNr = LEDNr;
         team[teamNr].error.countdown = BLINKCOUNTDOWNMAX;
         team[teamNr].error.numberOfBlinks = NUMBEROFBLINKINGS;
+        diasbleOneLEDForTeam(&team[teamNr]);
+        //setLEDForTeam(&team[teamNr]);//full random
     }
-    setLEDForTeam(&team[teamNr]);
+}
+
+void diasbleOneLEDForTeam(volatile struct sTeam *team){
+    int8_t  numActivLEDs = 0;
+
+    uint8_t activLEDs = 0;
+    uint8_t i;
+    for (i = 0; i < LED_PER_TEAM;i++){
+        if ((team->LEDs[i].activ)&&(team->LEDs[i].globalNumber != LEDBOX_COUNT_MAX)){
+            activLEDs |= 0x01 << i;
+            numActivLEDs++;
+        }
+    }
+    if (numActivLEDs<=1){
+        return;
+    }
+
+    uint16_t randomNumber= random();
+    //deactivate a random led
+    uint8_t random = randomNumber % numActivLEDs;
+    uint8_t activated=0;
+    for (i = 0; i < LED_PER_TEAM;i++){
+        if (activLEDs & (0x01 << i)){
+            if (activated==random){
+                team->LEDs[i].activ = 0;
+                team->correct.LEDNr = i;
+                team->correct.countdown = BLINKCOUNTDOWNMAX;
+                team->correct.numberOfBlinks = NUMBEROFBLINKINGS;
+            }
+            activated++;
+        }
+    }
 }
 
 void setLEDForTeam(volatile struct sTeam *team){
@@ -360,12 +421,16 @@ void setLEDForTeam(volatile struct sTeam *team){
         ledsToSwitch+=team->numberOfErrors;
     }
 
-    if ((ledsToSwitch)&&(team->lastPressedLeds[0] < LED_PER_TEAM))
-    {
-        switchLEDs |= 0x01 << team->lastPressedLeds[0];
-        ledsToSwitch--;
-        undecidedLEDs--;
-        deactivateLastLed = 1;
+    for (i = 0; (i < STOREDLASTLEDS)&&(!deactivateLastLed||(i<ledsToSwitch/2)); ++i){
+        if ((ledsToSwitch)&&(team->lastPressedLeds[i] < LED_PER_TEAM))
+        {
+            switchLEDs |= 0x01 << team->lastPressedLeds[i];
+            ledsToSwitch--;
+            undecidedLEDs--;
+            deactivateLastLed ++;
+        }else{
+           break;
+	}
     }
 
     if (ledsToSwitch >= team->numberOfActivLeds)
@@ -409,10 +474,16 @@ void setLEDForTeam(volatile struct sTeam *team){
 
     uint16_t activLeds =(deactivateLeds?~switchLEDs:switchLEDs);
     for(i=0;i<LED_PER_TEAM;i++){
-        if ((team->lastPressedLeds[0] == i)&&(deactivateLastLed)){
-            team->LEDs[team->lastPressedLeds[0]].activ = 0;
+        uint8_t notDeactivated=1;
+        uint8_t j;
+        for (j = 0; (j < deactivateLastLed); ++j){
+            if (team->lastPressedLeds[j] == i){
+                team->LEDs[team->lastPressedLeds[j]].activ = 0;
+                notDeactivated=0;
+                break;
+            }
         }
-        else
+        if(notDeactivated)
         {
             team->LEDs[i].activ = (activLeds>>i)&0x01;
         }

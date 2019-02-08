@@ -30,7 +30,11 @@
 
 //*********************************<Variables>**********************************
 
-
+enum eUpdate {
+    update_Display = 1,
+    update_others  = 2,
+    update_all     = 3,
+};
 
 //*********************************<Macros>*************************************
 
@@ -40,8 +44,8 @@
 void systick_init(void);
 void systick_reset(void);
 
-void systick_freezUpdate(void);
-void systick_unFreezUpdate(void);
+void systick_freezUpdate(enum eUpdate update);
+void systick_unFreezUpdate(enum eUpdate update);
 
 void systick_delay(uint16_t mseconds);
 
