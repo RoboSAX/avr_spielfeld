@@ -5,7 +5,7 @@
 # .travis.sh                                                                  #
 # ==========                                                                  #
 #                                                                             #
-# Version: 1.2.1                                                              #
+# Version: 1.2.2                                                              #
 # Date   : 09.02.18                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
@@ -27,7 +27,7 @@ echo ""
 if [ "${ROBOLIB_MAKEFILE}" != "" ]; then
     echo "robolib already sourced :-)"
 else
-    ./.robolib.sh
+    . .robolib.sh
     if [ $? -ne 0 ]; then cd "${PWD_temp}"; return -1; exit -1; fi
 fi
 
