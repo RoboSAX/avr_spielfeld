@@ -237,8 +237,8 @@ static const uint8_t qestM[8]={
 
  static const uint8_t num7[8]={
 0b00001111,
+0b00000001,
 0b00000010,
-0b00000100,
 0b00000100,
 0b00000100,
 0b00000100,
