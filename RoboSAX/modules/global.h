@@ -36,6 +36,7 @@ enum eColor {
     clBlack  ,
     clLBlue  ,
     clLGreen ,
+    clLRed   ,
     clRain0  ,
     clRain1  ,
     clRain2  ,

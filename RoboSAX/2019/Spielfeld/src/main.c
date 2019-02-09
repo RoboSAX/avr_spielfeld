@@ -18,7 +18,7 @@
 //**************************<Included files>***********************************
 #include "master.h"
 #include "ledbox.h"
-#include "mainMenue.h"
+#include "menueHelper.h"
 #include "gamemodes.h"
 #include "display.h"
 #include "systick.h"
@@ -29,8 +29,8 @@
 
 //**************************<Prototypes>***************************************
 int main(void);
-void updateBuffer(void);
 void init(void);
+void default_display(void);
 
 enum eRunningState {
     rsNone = 0,
@@ -52,24 +52,14 @@ void init () {
     systick_init();
     gamemode_init();
 
+    default_display();
+}
+//**************************[default display]**********************************
+void default_display(){
     display_double_dot=0;
     display_setSuperSegment(RoboSax,0);
     display_setSuperSegment(Pokeball,1);
     rgb_setAll(clRain);
-}
-//**************************[update]*********************************************
-void updateBuffer () {
-
-    // update asyncron mode
-    // switch working and showing buffers
-    systick_freezUpdate(update_Display);
-    display_switchBuffer();
-    systick_unFreezUpdate(update_Display);
-    systick_freezUpdate(update_others);
-    _ledbox_switchBuffer();
-    systick_unFreezUpdate(update_others);
-
-
 }
 //**************************[main]*********************************************
 int main () {
@@ -196,10 +186,7 @@ int main () {
                 }
                 if(ROUNDTIME+starttime<currentTime){
                     menuemode=7;
-                    display_double_dot=0;
-                    display_setSegment(Smile,0);
-                    display_setSegment(Robol,1);
-                    display_setSegment(Robor,2);
+		    default_display();
                 }
             break;
             case rsTestModeRunning:
@@ -268,8 +255,7 @@ int main () {
                 display_blink_time = currentTime;
             }
         }
-	updateBuffer();
-        systick_delay(1);
+	waitAndUpdate();
     }
     return (0);
 }

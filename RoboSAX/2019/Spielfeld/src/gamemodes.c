@@ -21,8 +21,11 @@
 //**************************<Macros>*******************************************
 #define LED_PER_TEAM LEDBOX_COUNT_MAX/3
 #define TEAM1COLOR clGreen
+#define TEAM1FLASHCOLOR clLGreen
 #define TEAM2COLOR clRed
+#define TEAM2FLASHCOLOR clLRed
 #define TEAMNCOLOR clBlue
+#define TEAMNFLASHCOLOR clLBlue
 #define NOCOLOR clBlack
 #define ERRORCOLOR clPurple
 #define POINTSFOROWNCOLOR 3
@@ -63,8 +66,10 @@ struct sTeam {
     uint8_t lastPressedLeds[STOREDLASTLEDS];
     enum eColor error_color;
     enum eColor teamColor;
+    enum eColor teamFlashColor;
 
     struct sBlink correct;
+    struct sBlink fullBlink;
     struct sBlink error;
 };
 
@@ -107,13 +112,19 @@ void gamemode_init(void){
     for(i=0;i<LEDBOX_COUNT_MAX;i++){
         switch (teamNr){
             case team1:
-                team[teamNr].teamColor = TEAM1COLOR;
+                team[teamNr].teamColor      = TEAM1COLOR;
+                team[teamNr].error_color    = ERRORCOLOR;
+                team[teamNr].teamFlashColor = TEAM1FLASHCOLOR;
             break;
             case team2:
-                team[teamNr].teamColor = TEAM2COLOR;
+                team[teamNr].teamColor      = TEAM2COLOR;
+                team[teamNr].error_color    = ERRORCOLOR;
+                team[teamNr].teamFlashColor = TEAM2FLASHCOLOR;
             break;
             case teamNeutral:
-                team[teamNr].teamColor = TEAMNCOLOR;
+                team[teamNr].teamColor      = TEAMNCOLOR;
+                team[teamNr].error_color    = ERRORCOLOR;
+                team[teamNr].teamFlashColor = TEAMNFLASHCOLOR;
             break;
         }
         team[teamNr].LEDs[ledNr].globalNumber = i;
@@ -281,7 +292,7 @@ void setLEDs(void){
                 }
                 if (team[teamNr].error.LEDNr == i){
                     if (team[teamNr].error.numberOfBlinks & 0x01){
-                        rgb_set(number,ERRORCOLOR);
+                        rgb_set(number,team[teamNr].error_color);
                         useTeamColor = 0;
                     }
                     if (team[teamNr].error.countdown) team[teamNr].error.countdown--;
@@ -289,6 +300,15 @@ void setLEDs(void){
                         team[teamNr].error.numberOfBlinks--;
                         team[teamNr].error.countdown = BLINKCOUNTDOWNMAX;
                     }
+                }
+                if (team[teamNr].fullBlink.numberOfBlinks & 0x01){
+                    rgb_set(number,team[teamNr].teamFlashColor);
+                    useTeamColor = 0;
+                }
+                if (team[teamNr].fullBlink.countdown) team[teamNr].fullBlink.countdown--;
+                else if(team[teamNr].fullBlink.numberOfBlinks){
+                    team[teamNr].fullBlink.numberOfBlinks--;
+                    team[teamNr].fullBlink.countdown = BLINKCOUNTDOWNMAX;
                 }
 
                 if (team[teamNr].LEDs[i].activ){
@@ -336,6 +356,10 @@ void pushButton(uint8_t number){
         team[teamNr].correct.LEDNr = LEDNr;
         team[teamNr].correct.countdown = BLINKCOUNTDOWNMAX;
         team[teamNr].correct.numberOfBlinks = NUMBEROFBLINKINGS;
+
+        team[teamNr].fullBlink.countdown = BLINKCOUNTDOWNMAX;
+        team[teamNr].fullBlink.numberOfBlinks = NUMBEROFBLINKINGS -  2;
+
         setLEDForTeam(&team[teamNr]);
     }
     else{

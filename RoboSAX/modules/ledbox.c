@@ -204,6 +204,7 @@ void rgb_set(uint8_t number, enum eColor color) {
         case clWhite : rgb_set2(number, 255, 255, 255); break;
         case clLBlue : rgb_set2(number,  10,  10,  50); break;
         case clLGreen: rgb_set2(number,  10,  50,  10); break;
+        case clLRed  : rgb_set2(number,  50,  10,  10); break;
         case clRain0 : rgb_set (number,(number + 0)%12); break;
         case clRain1 : rgb_set (number,(number + 1)%12); break;
         case clRain2 : rgb_set (number,(number + 2)%12); break;

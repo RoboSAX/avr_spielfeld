@@ -21,6 +21,7 @@
 
 
 //**************************<Macros>*******************************************
+//TODO read LEDBOX_COUNT_ from number of LEDs in cycle
 #define LEDBOX_COUNT_MAX 24
 
 // buttons
@@ -37,7 +38,6 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b);
 void rgb_setAll(enum eColor color);
 void rgb_setAll2(uint8_t r, uint8_t g, uint8_t b);
 void rgb_clearAll(void);
-void rgb_setRollingRainbow(void);
 
 // ir leds
 void ir_set(uint8_t number, uint8_t x);
