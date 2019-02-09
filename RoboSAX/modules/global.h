@@ -65,9 +65,11 @@ struct sRGB {
 
 // buttons
 struct sButtonState {
-    uint8_t state     : 1; ///< boolean
-    uint8_t flank     : 1; ///< boolean
-    uint8_t countdown : 6; ///< 0..63 (* 10ms)
+    uint16_t stateWrite: 1; ///< boolean
+    uint16_t stateRead : 1; ///< boolean
+    uint16_t flankWrite: 1; ///< boolean
+    uint16_t flankRead : 1; ///< boolean
+    uint16_t countdown :12; ///< 0..4095 (* 1ms)
 };
 
 

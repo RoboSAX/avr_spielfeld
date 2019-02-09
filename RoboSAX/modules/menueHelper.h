@@ -14,6 +14,7 @@
 #include "display.h"
 #include "display_chars.h"
 #include "systick.h"
+#include "ledbox.h"
 
 //**************************<Prototypes>***************************************
 enum eMasterModes {

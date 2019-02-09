@@ -90,6 +90,11 @@
 //#define ledbox_ir_get ledbox_ir[working_buffer]
 //#define ledbox_ir_set ledbox_ir[display_buffer]
 //**************************<Types and Variables>******************************
+struct sIRLed{
+    uint8_t read  : 1;
+    uint8_t write : 1;
+    uint8_t empty : 6;
+};
 
 // buttons
 volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
@@ -98,7 +103,7 @@ volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
 volatile struct sRGB ledbox_rgb[LEDBOX_COUNT_MAX];
 
 // ir leds (order is invers!)
-volatile uint8_t ledbox_ir[LEDBOX_COUNT_MAX];
+volatile struct sIRLed ledbox_ir[LEDBOX_COUNT_MAX];
 
 //**************************<Methods>******************************************
 
@@ -275,7 +280,7 @@ void ir_set(uint8_t number, uint8_t x) {
     }
 
     // order is invers!
-    ledbox_ir[LEDBOX_COUNT_MAX - number - 1] = x;
+    ledbox_ir[LEDBOX_COUNT_MAX - number - 1].write = x ? 1 : 0;
 }
 
 //**************************[ir_setAll]****************************************
@@ -302,7 +307,8 @@ void buttons_reset(void) {
     uint8_t i;
 
     for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-        ledbox_buttons[i].state     = 0;
+        ledbox_buttons[i].stateWrite= 0;
+        ledbox_buttons[i].flankWrite= 0;
         ledbox_buttons[i].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
     }
 
@@ -315,7 +321,7 @@ void buttons_clear(void) {
     uint8_t i;
 
     for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-        ledbox_buttons[i].flank =  0;
+        ledbox_buttons[i].flankRead =  0;
     }
 }
 
@@ -326,8 +332,8 @@ uint8_t buttons_get(uint8_t number) {
         return 0x00;
     }
 
-    uint8_t result = ledbox_buttons[number].flank;
-    ledbox_buttons[number].flank = 0;
+    uint8_t result = ledbox_buttons[number].flankRead;
+    ledbox_buttons[number].flankRead = 0;
 
     return result;
 }
@@ -368,7 +374,7 @@ void _ledbox_buttons_and_ir_update(void) {
     for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
 
         // set ir_led
-        bus_led_data(ledbox_ir[i]);
+        bus_led_data(ledbox_ir[i].read);
 
         // toggle clock
         toggle_clk();
@@ -377,8 +383,8 @@ void _ledbox_buttons_and_ir_update(void) {
         bus_btn_load(0);
 
         // check for changed state
-        if (state != ledbox_buttons[i].state) {
-            ledbox_buttons[i].state = state;
+        if (state != ledbox_buttons[i].stateWrite) {
+            ledbox_buttons[i].stateWrite = state;
 
             // state did change
             if (!state) {
@@ -386,7 +392,7 @@ void _ledbox_buttons_and_ir_update(void) {
                 ledbox_buttons[i].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
             } else if (ledbox_buttons[i].countdown == 0x00) {
                 // pushed button and no countdown
-                ledbox_buttons[i].flank = 1;
+                ledbox_buttons[i].flankWrite = 1;
             }
             continue;
         }
@@ -402,6 +408,13 @@ void _ledbox_switchBuffer(){
 
     uint8_t number;
     for(number=0;number<LEDBOX_COUNT_MAX;number++){
+            ledbox_ir[number].read = ledbox_ir[number].write;
+
+            ledbox_buttons[number].flankRead |= ledbox_buttons[number].flankWrite;
+            ledbox_buttons[number].flankWrite = 0;
+            ledbox_buttons[number].stateRead |= ledbox_buttons[number].stateWrite;
+
+
 	    uint8_t j;
 
 	    // init data bytes
