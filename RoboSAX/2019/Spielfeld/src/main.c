@@ -48,7 +48,7 @@ void init () {
     master_init();
     ledbox_init();
     init_display();
-    updateBuffer();
+    waitAndUpdate();
     systick_init();
     gamemode_init();
 
