@@ -76,6 +76,7 @@ int main () {
     uint32_t display_blink_time = currentTime;
     uint8_t display_blink_status = 0;
     uint8_t rainbowNumber = 0;
+    uint8_t itteration = 0;
     uint8_t gameRunningShowPoints = 0;
     while (1) {
         switch (menuemode){
@@ -90,6 +91,19 @@ int main () {
                 }
             break;
             case rsGameModeStarting:
+                if(((itteration*STARTTIME)/LEDBOX_COUNT_MAX)<(currentTime-starttime)){
+                    rainbowNumber++;
+		    itteration++;
+                    rainbowNumber %= NUM_RAINBOWS;
+                    rainbowStartTime = currentTime;
+                    rgb_setAll(clRainbows[rainbowNumber]);
+                }
+                uint32_t i;
+                for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+                    if(((i*STARTTIME)/LEDBOX_COUNT_MAX)<(currentTime-starttime)){
+                        rgb_set(i, clBlack);
+                    }
+                }
             case rsStartMode:
             case rsGameModeRunning:
             case rsTestModeRunning:
@@ -154,6 +168,7 @@ int main () {
                 if (masterMode == mmGameMode)
                 {
                     menuemode=rsGameModeStarting;
+		    itteration = 0;
                     systick_reset();
                     currentTime = systick_get();
                     starttime=currentTime;
@@ -170,12 +185,6 @@ int main () {
                     starttime=currentTime;
                 }
                 else{
-                    uint32_t i;
-                    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-                        if(((i*STARTTIME)/LEDBOX_COUNT_MAX)<(currentTime-starttime)){
-                            rgb_set(i, clBlack);
-                        }
-                    }
                     showtime((STARTTIME+starttime-currentTime)/10,0);
                 }
             break;
@@ -185,7 +194,7 @@ int main () {
                     showtime((ROUNDTIME+starttime-currentTime)/(1000UL),1);
                 }
                 if(ROUNDTIME+starttime<currentTime){
-                    menuemode=7;
+                    menuemode=rsGameModeFinished;
 		    default_display();
                 }
             break;
