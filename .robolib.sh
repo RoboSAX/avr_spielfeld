@@ -5,8 +5,8 @@
 # .robolib.sh                                                                 #
 # ===========                                                                 #
 #                                                                             #
-# Version: 1.2.0                                                              #
-# Date   : 08.02.18                                                           #
+# Version: 1.2.1                                                              #
+# Date   : 09.02.18                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # See also:                                                                   #
@@ -44,4 +44,6 @@ echo "### Sourcing robolib"
 echo ""
 . scripts/bashrc.sh
 if [ $? -ne 0 ]; then return -1; exit -1; fi
+echo "  ROBOLIB_MAKEFILE = \"$ROBOLIB_MAKEFILE\""
+
 
