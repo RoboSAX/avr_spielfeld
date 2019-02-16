@@ -32,10 +32,19 @@ export ROBOLIB_DIR?=$(MAIN_DIR)/robolib
 
 #################################################################################
 # define phony targets for make commands
-.PHONY: all all_init $(SUBDIRS) clean
+.PHONY: all all_init warn_only reduce_output $(SUBDIRS) clean
 .PHONY: update robolib status push pull
 
 all: all_init $(SUBDIRS)
+
+reduce_output:
+	$(MAKE) -s
+
+warn_only:
+	@echo
+	@echo "###### reducing output to warnings ######"
+	$(MAKE) >/dev/null || $(MAKE)
+
 #################################################################################
 # git specific commands
 update: pull
