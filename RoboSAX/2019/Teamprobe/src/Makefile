@@ -1,10 +1,10 @@
 ###############################################################################
 #                                                                             #
-# Makefile                                                                    #
-# ========                                                                    #
+# RoboSAX/.../Makefile                                                        #
+# ====================                                                        #
 #                                                                             #
-# Version: 1.2.5                                                              #
-# Date   : 07.02.18                                                           #
+# Version: 1.0.2                                                              #
+# Date   : 07.02.19                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # Source code was taken from:                                                 #
@@ -14,31 +14,28 @@
 #   https://github.com/RoboSAX/avr_spielfeld                                  #
 ###############################################################################
 
-SUBDIRS = RoboSAX devel
-include Makefile.global
+SUBDIRS = Spielfeld/src Teamprobe/Main/src Teamprobe/Test/src
 
 ###############################################################################
 # define phony targets for make commands
-.PHONY: warn
+.PHONY: all all_init  $(SUBDIRS)  clean
 
+all: all_init $(SUBDIRS)
 
 all_init:
-	$(call echoHeader,)
-	$(call echoHeader, "### building $(NAME_GIT_THIS) ###")
-	$(call echoHeader, "   ### sub projects: $(foreach dir,$(SUBDIRS),$(dir),) ###")
+	@echo "## building $(CURDIRSTRIP) ##"
 
-warn:
-	@echo
-	@echo "###### reducing output to warnings ######"
-	$(MAKE) | grep -A 3 -B 3 -i warn; dummy=$?
 
 $(SUBDIRS):
-	$(MAKE) -C $@
+	$(MAKE) -C $@ -f "$(ROBOLIB_MAKEFILE)"
+
 
 clean:
 	@echo
-	@echo "### clean $(NAME_GIT_THIS) ###"
+	@echo "## clean $(CURDIRSTRIP) ##"
 	@for dir in $(SUBDIRS); do \
-	    $(MAKE) -C $$dir clean; \
+	    $(MAKE) -C $$dir -f "$(ROBOLIB_MAKEFILE)" clean; \
 	done
+
 ###############################################################################
+include Makefile.global

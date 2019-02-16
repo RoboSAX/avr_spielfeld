@@ -14,31 +14,52 @@
 #   https://github.com/RoboSAX/avr_spielfeld                                  #
 ###############################################################################
 
-SUBDIRS = RoboSAX devel
-include Makefile.global
+NAME_GIT_THIS=spielfeld
 
-###############################################################################
+export ccred=$(echo -e "\033[0;31m")
+export ccyellow=$(echo -e "\033[0;33m")
+export cchead=@$(echo -e "\033[0;33m")
+export ccend=@$ (echo -e "\033[0m")
+define echoHeader
+      @tput setaf 6
+      @echo $1
+      @tput sgr0
+endef
+export CURDIR_MAIN ?= $(CURDIR)
+export MAIN_DIR?=$(CURDIR_MAIN)
+export ROBOLIB_MAKEFILE?=$(MAIN_DIR)/robolib/make/Makefile
+export ROBOLIB_DIR?=$(MAIN_DIR)/robolib
+
+#################################################################################
 # define phony targets for make commands
-.PHONY: warn
+.PHONY: all all_init $(SUBDIRS) clean
+.PHONY: update robolib status push pull
+
+all: all_init $(SUBDIRS)
+#################################################################################
+# git specific commands
+update: pull
+	$(MAKE) -C $(ROBOLIB_DIR)/ update
+
+robolib:
+	@echo ""
+	@echo "### Downloading robolib"
+	git clone https://github.com/RoboAG/avr_robolib $(ROBOLIB_DIR)
+
+status:
+	@echo ""
+	@echo "### status of $(NAME_GIT_THIS) ###"
+	git status --untracked-files
+
+push:
+	@echo ""
+	@echo "### pushing of $(NAME_GIT_THIS) ###"
+	git push
+
+pull:
+	@echo ""
+	@echo "### update $(NAME_GIT_THIS) ###"
+	git pull
 
 
-all_init:
-	$(call echoHeader,)
-	$(call echoHeader, "### building $(NAME_GIT_THIS) ###")
-	$(call echoHeader, "   ### sub projects: $(foreach dir,$(SUBDIRS),$(dir),) ###")
-
-warn:
-	@echo
-	@echo "###### reducing output to warnings ######"
-	$(MAKE) | grep -A 3 -B 3 -i warn; dummy=$?
-
-$(SUBDIRS):
-	$(MAKE) -C $@
-
-clean:
-	@echo
-	@echo "### clean $(NAME_GIT_THIS) ###"
-	@for dir in $(SUBDIRS); do \
-	    $(MAKE) -C $$dir clean; \
-	done
 ###############################################################################

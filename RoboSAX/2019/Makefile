@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
-# RoboSAX/.../Makefile                                                        #
-# ====================                                                        #
+# RoboSAX/Makefile                                                            #
+# ================                                                            #
 #                                                                             #
 # Version: 1.0.2                                                              #
 # Date   : 07.02.19                                                           #
@@ -14,29 +14,38 @@
 #   https://github.com/RoboSAX/avr_spielfeld                                  #
 ###############################################################################
 
-CURRENTDIR = 2019
+EXCLUDES = 
+INCLUDES = 
 
-SUBDIRS = Spielfeld/src Teamprobe/src
+SUBDIRS = $(wildcard */)
+SUBDIRS := $(subst /,,$(SUBDIRS))
+SUBDIRS := $(filter-out $(EXCLUDES),$(SUBDIRS))
+SUBDIRS := $(SUBDIRS) $(INCLUDES)
 
+CURDIRSTRIP = $(subst $(MAIN_DIR),,$(CURDIR))
+
+ifndef PARDIR
+export PARDIR = 
+include Makefile.global
+else
+include $(MAIN_DIR)/Makefile.global
+endif
 ###############################################################################
-# define phony targets for make commands
-.PHONY: all all_init  $(SUBDIRS)  clean
-
-all: all_init $(SUBDIRS)
+.PHONY: $(SUBDIRS)
 
 all_init:
-	@echo "# building $(CURRENTDIR) #"
-
+	$(call echoHeader,)
+	$(call echoHeader, "## folder $(NAME_GIT_THIS)$(CURDIRSTRIP) ##")
+	$(call echoHeader, "   ### sub folders: $(foreach dir,$(SUBDIRS),$(dir),) ###")
 
 $(SUBDIRS):
-	$(MAKE) -C $@ -f "$(ROBOLIB_MAKEFILE)"
-
+	$(MAKE) -C $@
 
 clean:
 	@echo
-	@echo "# clean $(CURRENTDIR) #"
+	@echo "## clean $(CURDIRSTRIP) ##"
 	@for dir in $(SUBDIRS); do \
-	    $(MAKE) -C $$dir -f "$(ROBOLIB_MAKEFILE)" clean; \
+	    $(MAKE) -C $$dir clean; \
 	done
 
 ###############################################################################

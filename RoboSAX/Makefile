@@ -14,27 +14,36 @@
 #   https://github.com/RoboSAX/avr_spielfeld                                  #
 ###############################################################################
 
-CURRENTDIR = RoboSAX
+EXCLUDES = modules
+INCLUDES = 
 
-SUBDIRS = 2019 2018
+SUBDIRS = $(wildcard */)
+SUBDIRS := $(subst /,,$(SUBDIRS))
+SUBDIRS := $(filter-out $(EXCLUDES),$(SUBDIRS))
+SUBDIRS := $(SUBDIRS) $(INCLUDES)
 
+CURDIRSTRIP = $(subst $(MAIN_DIR),,$(CURDIR))
+
+ifndef PARDIR
+export PARDIR = 
+include Makefile.global
+else
+include $(MAIN_DIR)/Makefile.global
+endif
 ###############################################################################
-# define phony targets for make commands
-.PHONY: all all_init  $(SUBDIRS)  clean
-
-all: all_init $(SUBDIRS)
+.PHONY: $(SUBDIRS)
 
 all_init:
-	@echo "## building $(CURRENTDIR) ##"
-
+	$(call echoHeader,)
+	$(call echoHeader, "## folder $(NAME_GIT_THIS)$(CURDIRSTRIP) ##")
+	$(call echoHeader, "   ### sub folders: $(foreach dir,$(SUBDIRS),$(dir),) ###")
 
 $(SUBDIRS):
 	$(MAKE) -C $@
 
-
 clean:
 	@echo
-	@echo "## clean $(CURRENTDIR) ##"
+	@echo "## clean $(CURDIRSTRIP) ##"
 	@for dir in $(SUBDIRS); do \
 	    $(MAKE) -C $$dir clean; \
 	done
