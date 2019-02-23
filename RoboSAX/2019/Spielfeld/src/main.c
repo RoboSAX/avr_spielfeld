@@ -104,6 +104,7 @@ int main () {
                         rgb_set(i, clBlack);
                     }
                 }
+            break;
             case rsStartMode:
             case rsGameModeRunning:
             case rsTestModeRunning:

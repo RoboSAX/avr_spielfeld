@@ -17,7 +17,7 @@
 EXCLUDES =  
 INCLUDES = 
 
-SUBDIRS = src
+SUBDIRS = src Gluecksrad
 SUBDIRS := $(subst /,,$(SUBDIRS))
 SUBDIRS := $(filter-out $(EXCLUDES),$(SUBDIRS))
 SUBDIRS := $(SUBDIRS) $(INCLUDES)
@@ -31,7 +31,7 @@ else
 include $(MAIN_DIR)/Makefile.global
 endif
 ###############################################################################
-.PHONY: $(SUBDIRS) all
+.PHONY: $(SUBDIRS) all avrdude_
 all_init:
 	$(call echoHeader,)
 	$(call echoHeader, "# folder $(NAME_GIT_THIS)$(CURDIRSTRIP) #")
@@ -39,6 +39,10 @@ all_init:
 $(SUBDIRS):
 	$(call echoHeader, "compile code for $(NAME_GIT_THIS)/$(CURDIRSTRIP)/$(SUBDIR)")
 	$(MAKE) -C $@ -f "$(ROBOLIB_MAKEFILE)"
+
+avrdude_: 
+	$(call echoHeader, "download code for $(NAME_GIT_THIS)/$(CURDIRSTRIP)/$(SUBDIR)")
+	$(MAKE) avrdude Gluecksrad/out.hex -f "$(ROBOLIB_MAKEFILE)"
 
 clean:
 	@echo
