@@ -48,11 +48,12 @@ void init () {
     master_init();
     ledbox_init();
     init_display();
-    waitAndUpdate();
     systick_init();
     gamemode_init();
 
     default_display();
+
+    waitAndUpdate();
 }
 //**************************[default display]**********************************
 void default_display(){

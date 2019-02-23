@@ -21,6 +21,7 @@ SUBDIRS = $(wildcard */)
 SUBDIRS := $(subst /,,$(SUBDIRS))
 SUBDIRS := $(filter-out $(EXCLUDES),$(SUBDIRS))
 SUBDIRS := $(SUBDIRS) $(INCLUDES)
+AVR_SUBDIRS = $(patsubst %,avrdude_%,$(SUBDIRS))
 
 CURDIRSTRIP = $(subst $(MAIN_DIR),,$(CURDIR))
 
@@ -31,14 +32,20 @@ else
 include $(MAIN_DIR)/Makefile.global
 endif
 ###############################################################################
-.PHONY: $(SUBDIRS) all
+.PHONY: $(SUBDIRS) all $(AVR_SUBDIRS)
 all_init:
 	$(call echoHeader,)
 	$(call echoHeader, "# folder $(NAME_GIT_THIS)$(CURDIRSTRIP) #")
 
 $(SUBDIRS):
-	$(call echoHeader, "compile code for $(NAME_GIT_THIS)/$(CURDIRSTRIP)/$(SUBDIR)")
+	$(call echoHeader, "compile code for $(NAME_GIT_THIS)/$(CURDIRSTRIP)/$@")
 	$(MAKE) -C $@ -f "$(ROBOLIB_MAKEFILE)"
+
+$(AVR_SUBDIRS):	
+	$(eval DIR=$(subst avrdude_,,$@))
+	$(MAKE) $(DIR)
+	$(call echoHeader, "download code for $(NAME_GIT_THIS)/$(CURDIRSTRIP)/$(DIR)")
+	$(MAKE) avrdude -C $(DIR) -f "$(ROBOLIB_MAKEFILE)"
 
 clean:
 	@echo
