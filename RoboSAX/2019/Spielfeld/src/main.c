@@ -51,9 +51,9 @@ void init () {
     systick_init();
     gamemode_init();
 
-    default_display();
-
     waitAndUpdate();
+
+    default_display();
 }
 //**************************[default display]**********************************
 void default_display(){

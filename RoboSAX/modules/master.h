@@ -36,7 +36,6 @@
 #define _debug_led2_enable() (MASTER_LED2_DDR|= MASTER_LED2_PIN)
 
 // buttons
-#define MASTER_BUTTONS_DEBOUNCE_TIME 25
 
 #define master_button1() (master_buttons_get_pushed(1))
 #define master_button2() (master_buttons_get_pushed(2))

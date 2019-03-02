@@ -37,6 +37,9 @@ enum eColor {
     clLBlue  ,
     clLGreen ,
     clLRed   ,
+    clBBlue  ,
+    clBGreen ,
+    clBRed   ,
     clRain0  ,
     clRain1  ,
     clRain2  ,
@@ -64,12 +67,22 @@ struct sRGB {
 };
 
 // buttons
+#define SYSTICK_LED_BUTTON_UPDATE_TIME 2
+
+//debounce=debounce*(global+1)*(update+1)[ms]
+#define MASTER_BUTTONS_DEBOUNCE_TIME 15
+#define MASTER_BUTTONS_GLOBAL_TIME 2
+
+//debounce=debounce*(global+1)*(update+1)[ms]
+#define LEDBOX_BUTTONS_DEBOUNCE_TIME 15
+#define LEDBOX_BUTTONS_GLOBAL_TIME 9
+
 struct sButtonState {
-    uint16_t stateWrite: 1; ///< boolean
-    uint16_t stateRead : 1; ///< boolean
-    uint16_t flankWrite: 1; ///< boolean
-    uint16_t flankRead : 1; ///< boolean
-    uint16_t countdown :12; ///< 0..4095 (* 1ms)
+    uint8_t stateWrite: 1; ///< boolean
+    uint8_t stateRead : 1; ///< boolean
+    uint8_t flankWrite: 1; ///< boolean
+    uint8_t flankRead : 1; ///< boolean
+    uint8_t countdown : 4; ///< 0..16 (* 1ms)
 };
 
 

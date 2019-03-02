@@ -205,11 +205,18 @@ void rgb_set(uint8_t number, enum eColor color) {
         case clYR    : rgb_set2(number, 255,  H2,   0); break;
         case clRed   : rgb_set2(number, 255,   0,   0); break;
         case clRP    : rgb_set2(number, 255,   0,  H2); break;
+
         case clBlack : rgb_set2(number,   0,   0,   0); break;
         case clWhite : rgb_set2(number, 255, 255, 255); break;
+
         case clLBlue : rgb_set2(number,  10,  10,  50); break;
         case clLGreen: rgb_set2(number,  10,  50,  10); break;
         case clLRed  : rgb_set2(number,  50,  10,  10); break;
+
+        case clBBlue : rgb_set2(number,   0,   0, 100); break;
+        case clBGreen: rgb_set2(number,   0, 100,   0); break;
+        case clBRed  : rgb_set2(number, 100,   0,   0); break;
+
         case clRain0 : rgb_set (number,(number + 0)%12); break;
         case clRain1 : rgb_set (number,(number + 1)%12); break;
         case clRain2 : rgb_set (number,(number + 2)%12); break;
@@ -371,6 +378,12 @@ void _ledbox_buttons_and_ir_update(void) {
     uint8_t i;
     uint8_t state;
 
+    static uint8_t global_button_countdown = 0;
+    if (global_button_countdown){global_button_countdown--;}
+    else{
+        global_button_countdown=LEDBOX_BUTTONS_GLOBAL_TIME;
+    }
+ 
     for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
 
         // set ir_led
@@ -387,18 +400,21 @@ void _ledbox_buttons_and_ir_update(void) {
             ledbox_buttons[i].stateWrite = state;
 
             // state did change
-            if (!state) {
-                // button released
-                ledbox_buttons[i].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
-            } else if (ledbox_buttons[i].countdown == 0x00) {
-                // pushed button and no countdown
-                ledbox_buttons[i].flankWrite = 1;
+	    if (ledbox_buttons[i].countdown == 0x00) {
+                if (!state) {
+                    // button released
+                    ledbox_buttons[i].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
+                } else {                 // pushed button and no countdown
+                    ledbox_buttons[i].flankWrite = 1;
+                }
             }
             continue;
         }
 
-        if (ledbox_buttons[i].countdown) {
-            ledbox_buttons[i].countdown--;
+        if (!global_button_countdown){
+            if (ledbox_buttons[i].countdown) {
+                ledbox_buttons[i].countdown--;
+            }
         }
     }
     toggle_led_load();

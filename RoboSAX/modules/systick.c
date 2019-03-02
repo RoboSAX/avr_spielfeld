@@ -177,11 +177,11 @@ void systick_freezUpdate(enum eUpdate update){
 void systick_unFreezUpdate(enum eUpdate update){
     makeUpdate|=update;
 }
-void update (void) {
-    if (makeUpdate&update_Display){
+void update (uint8_t count) {
+    if (makeUpdate && update_Display){
         display_show();
     }
-    if (makeUpdate&update_others){
+    if (makeUpdate && update_others && (count==0)){
         _ledbox_buttons_and_ir_update();
         _ledbox_rgb_update();
         _master_buttons_update();
@@ -198,7 +198,13 @@ ISR(TIMER2_COMPA_vect) {
     sei();
 
     // update
-    update();
+    static uint8_t update_count=0;
+    if (update_count){
+        update_count--;
+    }else{
+        update_count=SYSTICK_LED_BUTTON_UPDATE_TIME;
+    }
+    update(update_count);
 
     // turn off interrupts
     cli();

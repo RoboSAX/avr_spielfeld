@@ -25,7 +25,6 @@
 #define LEDBOX_COUNT_MAX 24
 
 // buttons
-#define LEDBOX_BUTTONS_DEBOUNCE_TIME 500
 
 //**************************<Prototypes>***************************************
 

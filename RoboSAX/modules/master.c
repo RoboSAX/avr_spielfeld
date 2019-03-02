@@ -133,6 +133,13 @@ void _master_buttons_update(void) {
     uint8_t i;
     uint8_t state;
 
+    static uint8_t global_button_countdown = 0;
+    if (global_button_countdown){global_button_countdown--;}
+    else{
+        global_button_countdown=MASTER_BUTTONS_GLOBAL_TIME;
+    }
+
+
     for (i = 0; i < MASTER_BUTTONS_COUNT; i++) {
 
         // read current state
@@ -147,19 +154,22 @@ void _master_buttons_update(void) {
         if (state != master_buttons[i].stateWrite) {
             master_buttons[i].stateWrite = state;
 
+            if (master_buttons[i].countdown == 0x00) {
             // state did change
-            if (!state) {
-                // button released
-                master_buttons[i].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
-            } else if (master_buttons[i].countdown == 0x00) {
-                // pushed button and no countdown
-                master_buttons[i].flankWrite = 1;
+                if (!state) {
+                    // button released
+                    master_buttons[i].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
+                } else {                // pushed button and no countdown
+                    master_buttons[i].flankWrite = 1;
+                }
             }
             continue;
         }
 
-        if (master_buttons[i].countdown) {
-            master_buttons[i].countdown--;
+        if (!global_button_countdown){
+            if (master_buttons[i].countdown) {
+                master_buttons[i].countdown--;
+            }
         }
 
 
