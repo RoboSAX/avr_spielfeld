@@ -34,6 +34,7 @@ enum eUpdate {
     update_Display = 1,
     update_others  = 2,
     update_all     = 3,
+    update_activ   = 0x80,
 };
 
 //*********************************<Macros>*************************************

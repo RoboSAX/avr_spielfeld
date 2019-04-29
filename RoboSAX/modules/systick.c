@@ -172,20 +172,25 @@ uint16_t systick_toMsec(uint32_t time) {
 
 //**************************<UPDATE>********************************************
 void systick_freezUpdate(enum eUpdate update){
+    while(makeUpdate & update_activ){
+        nop();
+    }
     makeUpdate&=~update;
 }
 void systick_unFreezUpdate(enum eUpdate update){
     makeUpdate|=update;
 }
 void update (uint8_t count) {
-    if (makeUpdate && update_Display){
+    makeUpdate|=update_activ;
+    if (makeUpdate & update_Display){
         display_show();
     }
-    if (makeUpdate && update_others && (count==0)){
+    if ((makeUpdate & update_others) && (count==0)){
         _ledbox_buttons_and_ir_update();
         _ledbox_rgb_update();
         _master_buttons_update();
     }
+    makeUpdate&=~update_activ;
 }
 //**************************[ISR(TIMER0_COMPA_vect)]****************************
 ISR(TIMER2_COMPA_vect) {
