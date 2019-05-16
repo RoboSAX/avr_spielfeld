@@ -20,6 +20,7 @@
 enum eMasterModes {
     mmGameMode   = 0,
     mmTestMode      ,
+    mmOldGameMode   ,
     MaxMasterModes
 };
 //**************************<Methods>******************************************
@@ -27,5 +28,6 @@ void waitAndUpdate(void);
 
 void showtime (uint16_t time,uint8_t dot);
 void showPoints (uint8_t team1Points,uint8_t team2Points);
+void showOnePoints (uint8_t teamPoints);
 void writeModesToDisplay (enum eMasterModes masterMode, uint8_t subMode);
 #endif

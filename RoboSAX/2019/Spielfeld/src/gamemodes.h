@@ -35,7 +35,7 @@ enum eGamemodes {
 void gamemode_init(void);
 void gamemode_start(enum eGamemodes gameMode);
 void gamemode_update(void);
-void gamemode_finalize(void);
+void gamemode_finalize(uint8_t count, uint8_t mode);
 
 
 #endif //#ifndef __GAMEMODES_H

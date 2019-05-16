@@ -31,25 +31,50 @@ void showtime (uint16_t time,uint8_t dot) {
     {
 //        display_double_dot=1;
         display_double_dot=0;
-        display_setSegment(numbers[time%10],3);
-        time/=10;
-        display_setSegment(numbers[time%6],2);
-        time/=6;
-        display_setSegment(numbers[time%10],1);
-        time/=10;
-        display_setSegment(numbers[time%10],0);
     }
     else
     {
         display_double_dot=0;
-        display_setSegment(numbers[time%10],3);
-        time/=10;
-        display_setSegment(numbers[time%10],2);
-        time/=10;
-        display_setSegment(numbers[time%10],1);
-        time/=10;
-        display_setSegment(numbers[time%10],0);
     }
+    uint8_t digitNot0 = 0;
+
+    uint8_t digit = time%10;
+    time/=10;
+    if (digitNot0 || digit){
+        display_setSegment(numbers[digit],3);
+        digitNot0 = 1;
+    } else {
+        display_setSegment(space,3);
+    }
+
+    if(dot)
+    {
+        digit = time%6;
+        time/=6;
+    }
+    else
+    {
+        digit = time%10;
+        time/=10;
+    }
+    if (digitNot0 || digit){
+        display_setSegment(numbers[digit],2);
+        digitNot0 = 1;
+    } else {
+        display_setSegment(space,2);
+    }
+
+    digit = time%10;
+    time/=10;
+    if (digitNot0 || digit){
+       display_setSegment(numbers[digit],1);
+       digitNot0 = 1;
+    } else {
+       display_setSegment(space,1);
+    }
+
+    digit = time%10;
+    display_setSegment(numbers[digit],0);
 }
 
 void showPoints (uint8_t team1Points,uint8_t team2Points) {
@@ -74,6 +99,19 @@ void showPoints (uint8_t team1Points,uint8_t team2Points) {
     }
 }
 
+void showOnePoints (uint8_t teamPoints) {
+    display_double_dot=0;
+
+    if (teamPoints>99){
+        display_setSegment(qestM,0);
+        display_setSegment(qestM,1);
+    }
+    else {
+        display_setSegment(numbers[teamPoints/10],1);
+        display_setSegment(numbers[teamPoints%10],2);
+    }
+}
+
 void writeModesToDisplay (enum eMasterModes masterMode, uint8_t subMode){
     display_double_dot=0;
     switch (masterMode){
@@ -90,6 +128,14 @@ void writeModesToDisplay (enum eMasterModes masterMode, uint8_t subMode){
             display_addRight(alpaM,0,0);
             display_setSegment(numbers[subMode / 10],2);
             display_setSegment(numbers[subMode % 10],3);
+        break;
+        case mmOldGameMode:
+            display_clearSuperSegment(0);
+            display_addRight(alpaL,0,1);
+            display_addRight(alpaA,0,1);
+            display_clearSuperSegment(1);
+            display_addRight(alpaS,1,1);
+            display_addRight(alpaT,1,1);
         break;
         default:
             display_clearSuperSegment(0);

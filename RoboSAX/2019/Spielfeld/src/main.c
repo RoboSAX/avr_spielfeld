@@ -10,6 +10,8 @@
 //ms per round
 #define ROUNDTIME ((uint32_t)(3UL*60UL*1000UL))
 #define STARTTIME ((uint32_t)(10UL*1000UL))
+#define SWITCHTIME ((uint32_t)(3UL*1000UL))
+#define UPDATETIME ((uint32_t)(100UL))
 //ms for blinking of activ changed elements
 #define BLINKTIMEON ((uint32_t)(420UL))
 #define BLINKTIMEOFF ((uint32_t)(200UL))
@@ -79,6 +81,7 @@ int main () {
     uint8_t rainbowNumber = 0;
     uint8_t itteration = 0;
     uint8_t gameRunningShowPoints = 0;
+    uint8_t pointsMode = 1;
     while (1) {
         switch (menuemode){
             case rsNone:
@@ -119,7 +122,9 @@ int main () {
                 case rsStartMode:
                 case rsTestModeRunning:
                 case rsGameModeFinished:
-                    menuemode = rsSelectMasterMode;
+                    if(master_button_state1() && master_button_state2()){
+                        menuemode = rsSelectMasterMode;
+                    }
                 break;
                 case rsSelectMasterMode:
 //                    menuemode = rsSelectSubMode;
@@ -130,7 +135,8 @@ int main () {
                 case rsGameModeStarting:
                 case rsGameModeRunning:
                     if(master_button_state1() && master_button_state2()){
-                        menuemode = rsSelectMasterMode;
+                        menuemode = rsGameModeFinished;
+                        pointsMode = 1;
                     }
 		    else{
 			gameRunningShowPoints=!gameRunningShowPoints;
@@ -179,6 +185,11 @@ int main () {
                 {
                     menuemode=rsTestModeRunning;
                 }
+                if (masterMode == mmOldGameMode)
+                {
+                    pointsMode = 1;
+                    menuemode=rsGameModeFinished;
+                }
             break;
             case rsGameModeStarting:
                 if (currentTime>(STARTTIME+starttime)){
@@ -197,6 +208,7 @@ int main () {
                 }
                 if(ROUNDTIME+starttime<currentTime){
                     menuemode=rsGameModeFinished;
+                    pointsMode = 1;
 		    default_display();
                 }
             break;
@@ -204,7 +216,13 @@ int main () {
                 gamemode_update();
             break;
             case rsGameModeFinished:
-                gamemode_finalize();
+                if (currentTime>(SWITCHTIME+starttime)){
+                    starttime=currentTime;
+		    pointsMode = !pointsMode;
+                }
+                else{
+                    gamemode_finalize((currentTime-starttime) / UPDATETIME, pointsMode);
+                }
             break;
             case rsNone:
             default:
