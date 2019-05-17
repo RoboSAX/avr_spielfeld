@@ -10,7 +10,7 @@
 //ms per round
 #define ROUNDTIME ((uint32_t)(3UL*60UL*1000UL))
 #define STARTTIME ((uint32_t)(10UL*1000UL))
-#define LAST10SEC ((uint32_t)(10UL*1000UL))
+#define LASTSEC ((uint32_t)(15UL*1000UL))
 
 #define SWITCHTIME ((uint32_t)(3UL*1000UL))
 #define UPDATETIME ((uint32_t)(100UL))
@@ -71,6 +71,20 @@ int main () {
 
     init();
 
+    uint8_t maxModes[MaxMasterModes];
+    uint8_t i;
+    for (i=0;i<MaxMasterModes;i++){
+        switch (i){
+            case mmGameMode:
+            case mmTestMode:
+                maxModes[i]=MaxGameModes;
+	    break;
+            case mmOldGameMode:
+            default:
+                maxModes[i]=1;
+	    break;
+        }
+    }
 
     uint32_t currentTime = systick_get();
     enum eRunningState menuemode=rsNone;
@@ -131,8 +145,12 @@ int main () {
                     }
                 break;
                 case rsSelectMasterMode:
-//                    menuemode = rsSelectSubMode;
-//                break;
+                    if (maxModes[masterMode]>1){
+                        menuemode = rsSelectSubMode;
+                    } else if (maxModes[masterMode]==1){
+                        menuemode = rsStartMode;
+                    }
+                break;
                 case rsSelectSubMode:
                     menuemode = rsStartMode;
                 break;
@@ -140,7 +158,7 @@ int main () {
                 case rsGameModeRunning:
                     if(master_button_state1() && master_button_state2()){
                         menuemode = rsGameModeFinished;
-                        pointsMode = 1;
+                        pointsMode = 0;
                     }
 		    else{
 			gameRunningShowPoints=!gameRunningShowPoints;
@@ -191,7 +209,7 @@ int main () {
                 }
                 if (masterMode == mmOldGameMode)
                 {
-                    pointsMode = 1;
+                    pointsMode = 0;
                     menuemode=rsGameModeFinished;
                 }
             break;
@@ -207,7 +225,7 @@ int main () {
             break;
             case rsGameModeRunning:
                 gamemode_update();
-                if(ROUNDTIME+starttime-LAST10SEC<currentTime){
+                if(ROUNDTIME+starttime-LASTSEC<currentTime){
                     gameRunningShowPoints = 0;
 		}
                 if(!gameRunningShowPoints){
@@ -215,7 +233,7 @@ int main () {
                 }
                 if(ROUNDTIME+starttime<currentTime){
                     menuemode=rsGameModeFinished;
-                    pointsMode = 1;
+                    pointsMode = 0;
 		    default_display();
                 }
             break;
@@ -225,7 +243,7 @@ int main () {
             case rsGameModeFinished:
                 if (currentTime>(SWITCHTIME+starttime)){
                     starttime=currentTime;
-		    pointsMode = !pointsMode;
+		    pointsMode++;
                 }
                 else{
                     gamemode_finalize((currentTime-starttime) / UPDATETIME, pointsMode);
@@ -275,6 +293,8 @@ int main () {
             if((display_blink_time+BLINKTIMEOFF<currentTime)||(currentTime<display_blink_time)){
                 switch (menuemode){
                     case rsSelectMasterMode:
+                        writeModesToDisplay(masterMode, -1);
+                    break;
                     case rsSelectSubMode:
                         writeModesToDisplay(masterMode, gamemode);
                         display_blink_status = 1;

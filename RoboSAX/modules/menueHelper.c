@@ -120,42 +120,56 @@ void showOnePoints (uint8_t teamPoints) {
     }
 }
 
-void writeModesToDisplay (enum eMasterModes masterMode, uint8_t subMode){
+void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
     display_double_dot=0;
     switch (masterMode){
         case mmGameMode:
-            //display_clearSuperSegment(0);
-            //display_addRight(alpaG,0,1);
-            //display_addRight(alpaM,0,1);
-            //display_setSegment(numbers[subMode / 10],2);
-            //display_setSegment(numbers[subMode % 10],3);
-            display_clearSuperSegment(0);
-            display_addRight(alpaG,0,1);
-            display_addRight(alpaA,0,1);
-            display_clearSuperSegment(1);
-            display_addRight(alpaM,1,1);
-            display_addRight(alpaE,1,1);
+	    if (subMode >= 0){
+                display_clearSuperSegment(0);
+                display_addRight(alpaG,0,1);
+                display_addRight(alpaM,0,1);
+                display_setSegment(numbers[subMode / 10],2);
+                display_setSegment(numbers[subMode % 10],3);
+	    } else {
+                display_clearSuperSegment(0);
+                display_addRight(alpaG,0,1);
+                display_addRight(alpaA,0,1);
+                display_clearSuperSegment(1);
+                display_addRight(alpaM,1,1);
+                display_addRight(alpaE,1,1);
+	    }
         break;
         case mmTestMode:
-            //display_clearSuperSegment(0);
-            //display_addRight(alpaT,0,0);
-            //display_addRight(alpaM,0,0);
-            //display_setSegment(numbers[subMode / 10],2);
-            //display_setSegment(numbers[subMode % 10],3);
-            display_clearSuperSegment(0);
-            display_addRight(alpaT,0,1);
-            display_addRight(alpaE,0,1);
-            display_clearSuperSegment(1);
-            display_addRight(alpaS,1,1);
-            display_addRight(alpaT,1,1);
+	    if (subMode >= 0){
+                display_clearSuperSegment(0);
+                display_addRight(alpaT,0,0);
+                display_addRight(alpaM,0,0);
+                display_setSegment(numbers[subMode / 10],2);
+                display_setSegment(numbers[subMode % 10],3);
+	    } else {
+                display_clearSuperSegment(0);
+                display_addRight(alpaT,0,1);
+                display_addRight(alpaE,0,1);
+                display_clearSuperSegment(1);
+                display_addRight(alpaS,1,1);
+                display_addRight(alpaT,1,1);
+	    }
         break;
         case mmOldGameMode:
-            display_clearSuperSegment(0);
-            display_addRight(alpaL,0,1);
-            display_addRight(alpaA,0,1);
-            display_clearSuperSegment(1);
-            display_addRight(alpaS,1,1);
-            display_addRight(alpaT,1,1);
+	    if (subMode >= 0){
+                display_clearSuperSegment(0);
+                display_addRight(alpaL,0,1);
+                display_addRight(alpaG,0,1);
+                display_setSegment(numbers[subMode / 10],2);
+                display_setSegment(numbers[subMode % 10],3);
+	    } else {
+                display_clearSuperSegment(0);
+                display_addRight(alpaL,0,1);
+                display_addRight(alpaA,0,1);
+                display_clearSuperSegment(1);
+                display_addRight(alpaS,1,1);
+                display_addRight(alpaT,1,1);
+            }
         break;
         default:
             display_clearSuperSegment(0);

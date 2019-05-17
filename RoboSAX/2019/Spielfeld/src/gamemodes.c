@@ -263,7 +263,7 @@ void gamemode_finalize(uint8_t count, uint8_t mode){
     //for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
     //    rgb_set(i, clBlack);
     //}
-    if (mode){
+    if (mode % 2){
         points1 = team1;
         points2 = team2;
 
