@@ -40,11 +40,9 @@ void showtime (uint16_t time,uint8_t dot) {
 
     uint8_t digit = time%10;
     time/=10;
-    if (digitNot0 || digit){
-        display_setSegment(numbers[digit],3);
-        digitNot0 = 1;
-    } else {
-        display_setSegment(space,3);
+    display_setSegment(numbers[digit],3);
+    if (digit){
+        digitNot0 |= 0x08;
     }
 
     if(dot)
@@ -57,24 +55,32 @@ void showtime (uint16_t time,uint8_t dot) {
         digit = time%10;
         time/=10;
     }
-    if (digitNot0 || digit){
-        display_setSegment(numbers[digit],2);
-        digitNot0 = 1;
-    } else {
-        display_setSegment(space,2);
+    display_setSegment(numbers[digit],2);
+    if (digit){
+        digitNot0 |= 0x04;
     }
 
     digit = time%10;
     time/=10;
-    if (digitNot0 || digit){
-       display_setSegment(numbers[digit],1);
-       digitNot0 = 1;
-    } else {
-       display_setSegment(space,1);
+    display_setSegment(numbers[digit],1);
+    if (digit){
+        digitNot0 |= 0x02;
     }
 
     digit = time%10;
     display_setSegment(numbers[digit],0);
+
+
+
+    if (!digit){
+        display_setSegment(space,0);
+        if (!(digitNot0 & 0x02)){
+            display_setSegment(space,1);
+            if (!(digitNot0 & 0x04)){
+                display_setSegment(space,2);
+            }
+        }
+    }
 }
 
 void showPoints (uint8_t team1Points,uint8_t team2Points) {
@@ -102,15 +108,15 @@ void showPoints (uint8_t team1Points,uint8_t team2Points) {
 void showOnePoints (uint8_t teamPoints) {
     display_double_dot=0;
     display_setSegment(space,0);
-    display_setSegment(space,3);
+    display_setSegment(space,1);
 
     if (teamPoints>99){
-        display_setSegment(qestM,1);
         display_setSegment(qestM,2);
+        display_setSegment(qestM,3);
     }
     else {
-        display_setSegment(numbers[teamPoints/10],1);
-        display_setSegment(numbers[teamPoints%10],2);
+        display_setSegment(numbers[teamPoints/10],2);
+        display_setSegment(numbers[teamPoints%10],3);
     }
 }
 
@@ -118,18 +124,30 @@ void writeModesToDisplay (enum eMasterModes masterMode, uint8_t subMode){
     display_double_dot=0;
     switch (masterMode){
         case mmGameMode:
+            //display_clearSuperSegment(0);
+            //display_addRight(alpaG,0,1);
+            //display_addRight(alpaM,0,1);
+            //display_setSegment(numbers[subMode / 10],2);
+            //display_setSegment(numbers[subMode % 10],3);
             display_clearSuperSegment(0);
             display_addRight(alpaG,0,1);
-            display_addRight(alpaM,0,1);
-            display_setSegment(numbers[subMode / 10],2);
-            display_setSegment(numbers[subMode % 10],3);
+            display_addRight(alpaA,0,1);
+            display_clearSuperSegment(1);
+            display_addRight(alpaM,1,1);
+            display_addRight(alpaE,1,1);
         break;
         case mmTestMode:
+            //display_clearSuperSegment(0);
+            //display_addRight(alpaT,0,0);
+            //display_addRight(alpaM,0,0);
+            //display_setSegment(numbers[subMode / 10],2);
+            //display_setSegment(numbers[subMode % 10],3);
             display_clearSuperSegment(0);
-            display_addRight(alpaT,0,0);
-            display_addRight(alpaM,0,0);
-            display_setSegment(numbers[subMode / 10],2);
-            display_setSegment(numbers[subMode % 10],3);
+            display_addRight(alpaT,0,1);
+            display_addRight(alpaE,0,1);
+            display_clearSuperSegment(1);
+            display_addRight(alpaS,1,1);
+            display_addRight(alpaT,1,1);
         break;
         case mmOldGameMode:
             display_clearSuperSegment(0);

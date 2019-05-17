@@ -10,6 +10,8 @@
 //ms per round
 #define ROUNDTIME ((uint32_t)(3UL*60UL*1000UL))
 #define STARTTIME ((uint32_t)(10UL*1000UL))
+#define LAST10SEC ((uint32_t)(10UL*1000UL))
+
 #define SWITCHTIME ((uint32_t)(3UL*1000UL))
 #define UPDATETIME ((uint32_t)(100UL))
 //ms for blinking of activ changed elements
@@ -205,6 +207,9 @@ int main () {
             break;
             case rsGameModeRunning:
                 gamemode_update();
+                if(ROUNDTIME+starttime-LAST10SEC<currentTime){
+                    gameRunningShowPoints = 0;
+		}
                 if(!gameRunningShowPoints){
                     showtime((ROUNDTIME+starttime-currentTime)/(1000UL),1);
                 }
