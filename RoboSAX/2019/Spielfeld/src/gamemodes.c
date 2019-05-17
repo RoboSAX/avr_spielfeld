@@ -236,11 +236,13 @@ void gamemode_update(){
     }
     //code to update RGB and IR LED
     setLEDs();
+    team[teamNeutral].points = team[teamNeutral].disabledLeds * POINTSFORNEUTRAL;
+
     team[team1].points = team[team1].disabledLeds ?
-                            team[team1].disabledLeds * POINTSFOROWNCOLOR + team[teamNeutral].disabledLeds * POINTSFORNEUTRAL 
+                            team[team1].disabledLeds * POINTSFOROWNCOLOR + team[teamNeutral].points 
                           : 0;
     team[team2].points = team[team2].disabledLeds ?
-                            team[team2].disabledLeds * POINTSFOROWNCOLOR + team[teamNeutral].disabledLeds * POINTSFORNEUTRAL
+                            team[team2].disabledLeds * POINTSFOROWNCOLOR + team[teamNeutral].points
                           : 0;
     showPoints(team[team1].points, team[team2].points);
 }
@@ -250,6 +252,9 @@ void gamemode_finalize(uint8_t count, uint8_t mode){
 
     uint8_t points1;
     uint8_t points2;
+
+    uint8_t points1MaxVal;
+    uint8_t points2MaxVal;
     
     uint8_t i;
     uint8_t numberMax = LEDBOX_COUNT_MAX / 2;
@@ -261,41 +266,38 @@ void gamemode_finalize(uint8_t count, uint8_t mode){
     if (mode){
         points1 = team1;
         points2 = team2;
-        showPoints(team[points1].points, team[points2].points);
 
-        //0 -> no leds
-        //76 -> all leds
-        //1-75 -> >=one led on, >=1 led off
-        for (i = 0; i < number; i++) {
-            if(((i*75U)/(numberMax - 1U)) < (team[points1].points)){
-                rgb_set(i, team[points1].teamColor);
-            }
-        }
-        for (i = 0; i < number; i++) {
-            if(((i*75U)/(numberMax - 1U)) < (team[points2].points)){
-                rgb_set(LEDBOX_COUNT_MAX-1-i, team[points2].teamColor);
-            }
-        }
+        points1MaxVal = (PHASE0 * (POINTSFORNEUTRAL + POINTSFOROWNCOLOR)) - 1U;
+        points2MaxVal = (PHASE0 * (POINTSFORNEUTRAL + POINTSFOROWNCOLOR)) - 1U;
+
+        showPoints(team[points1].points, team[points2].points);
     } else {
         points1 = teamNeutral;
         points2 = teamNeutral;
-        showOnePoints(team[teamNeutral].points);
 
-        //0 -> no leds
-        //76 -> all leds
-        //1-75 -> >=one led on, >=1 led off
-        for (i = 0; i < number; i++) {
-            if(((i*(PHASE0 - 1U))/(numberMax - 1U)) < (team[points1].disabledLeds)){
-                rgb_set(i, team[points1].teamColor);
-            }
-        }
-        for (i = 0; i < number; i++) {
-            if(((i*(PHASE0 - 1U))/(numberMax - 1U)) < (team[points2].disabledLeds)){
-                rgb_set(LEDBOX_COUNT_MAX-1-i, team[points2].teamColor);
-            }
-        }
+        points1MaxVal = (PHASE0 * POINTSFORNEUTRAL) - 1U;
+        points2MaxVal = (PHASE0 * POINTSFORNEUTRAL) - 1U;
+
+        showOnePoints(team[teamNeutral].points);
     }
 
+    //0 -> no leds
+    //76 -> all leds
+    //1-75 -> >=one led on, >=1 led off
+    for (i = 0; i < number; i++) {
+       if(((i * points1MaxVal)/(numberMax - 1U)) < (team[points1].points)){
+            rgb_set(i, team[points1].teamColor);
+        } else {
+            rgb_set(i, clBlack);
+        }
+    }
+    for (i = 0; i < number; i++) {
+        if(((i * points2MaxVal)/(numberMax - 1U)) < (team[points2].points)){
+            rgb_set(LEDBOX_COUNT_MAX-1-i, team[points2].teamColor);
+        } else {
+            rgb_set(LEDBOX_COUNT_MAX-1-i, clBlack);
+        }
+    }
 }
 
 //Game priate

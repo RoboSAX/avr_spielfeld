@@ -101,10 +101,12 @@ void showPoints (uint8_t team1Points,uint8_t team2Points) {
 
 void showOnePoints (uint8_t teamPoints) {
     display_double_dot=0;
+    display_setSegment(space,0);
+    display_setSegment(space,3);
 
     if (teamPoints>99){
-        display_setSegment(qestM,0);
         display_setSegment(qestM,1);
+        display_setSegment(qestM,2);
     }
     else {
         display_setSegment(numbers[teamPoints/10],1);

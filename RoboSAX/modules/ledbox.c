@@ -217,18 +217,18 @@ void rgb_set(uint8_t number, enum eColor color) {
         case clBGreen: rgb_set2(number,   0, 100,   0); break;
         case clBRed  : rgb_set2(number, 100,   0,   0); break;
 
-        case clRain0 : rgb_set (number,(number + 0)%12); break;
-        case clRain1 : rgb_set (number,(number + 1)%12); break;
-        case clRain2 : rgb_set (number,(number + 2)%12); break;
-        case clRain3 : rgb_set (number,(number + 3)%12); break;
-        case clRain4 : rgb_set (number,(number + 4)%12); break;
-        case clRain5 : rgb_set (number,(number + 5)%12); break;
-        case clRain6 : rgb_set (number,(number + 6)%12); break;
-        case clRain7 : rgb_set (number,(number + 7)%12); break;
-        case clRain8 : rgb_set (number,(number + 8)%12); break;
-        case clRain9 : rgb_set (number,(number + 9)%12); break;
-        case clRain10: rgb_set (number,(number +10)%12); break;
-        case clRain11: rgb_set (number,(number +11)%12); break;
+        case clRain0 : rgb_set (number,(number +11)%12); break;
+        case clRain1 : rgb_set (number,(number +10)%12); break;
+        case clRain2 : rgb_set (number,(number + 9)%12); break;
+        case clRain3 : rgb_set (number,(number + 8)%12); break;
+        case clRain4 : rgb_set (number,(number + 7)%12); break;
+        case clRain5 : rgb_set (number,(number + 6)%12); break;
+        case clRain6 : rgb_set (number,(number + 5)%12); break;
+        case clRain7 : rgb_set (number,(number + 4)%12); break;
+        case clRain8 : rgb_set (number,(number + 3)%12); break;
+        case clRain9 : rgb_set (number,(number + 2)%12); break;
+        case clRain10: rgb_set (number,(number + 1)%12); break;
+        case clRain11: rgb_set (number,(number + 0)%12); break;
         default      :                                  break;
     }
 }

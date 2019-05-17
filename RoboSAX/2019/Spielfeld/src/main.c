@@ -121,6 +121,8 @@ int main () {
                 case rsNone:
                 case rsStartMode:
                 case rsTestModeRunning:
+                    menuemode = rsSelectMasterMode;
+                break;
                 case rsGameModeFinished:
                     if(master_button_state1() && master_button_state2()){
                         menuemode = rsSelectMasterMode;
@@ -241,7 +243,7 @@ int main () {
                         display_setSegment(space,0);
                         display_setSegment(space,1);
                         display_blink_status = 0;
-                    break;
+                    //break;
                     case rsSelectSubMode:
                         //writeModesToDisplay(masterMode, gamemode);
 		        //display_invertSegment(2);
