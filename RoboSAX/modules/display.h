@@ -25,6 +25,8 @@
 
 #define SEGMENTS_COUNT 4
 #define SUPER_SEGMENTS_COUNT 2
+#define SUPER_SEGMENT_HIGHT 7
+#define SUPER_SEGMENT_WIDTH 16
 #define INVERT_DISPLAY
 
 //**************************<Types and Variables>******************************

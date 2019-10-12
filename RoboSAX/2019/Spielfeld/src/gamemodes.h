@@ -14,9 +14,6 @@
 
 //**************************<Included files>***********************************
 //#include "robolib.h"
-#include "global.h"
-#include "ledbox.h"
-#include "menueHelper.h"
 
 #include <avr/io.h>
 #include <inttypes.h>
@@ -37,5 +34,7 @@ void gamemode_start(enum eGamemodes gameMode);
 void gamemode_update(void);
 void gamemode_finalize(uint8_t count, uint8_t mode);
 
+
+void gamemode_to_display(uint8_t gameMode, uint8_t const* displayOut[2]);
 
 #endif //#ifndef __GAMEMODES_H

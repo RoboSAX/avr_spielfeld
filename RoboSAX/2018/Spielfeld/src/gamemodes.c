@@ -11,6 +11,15 @@
 
 //**************************<Included files>***********************************
 #include "gamemodes.h"
+#include "random.h"
+#include "master.h"
+#include "global.h"
+#include "ledbox.h"
+#include "menueHelper.h"
+
+//optics:
+//blink if pressed correct
+//blink red[/color] if error
 
 
 //**************************<Macros>*******************************************
@@ -22,6 +31,7 @@
 #define NEUTRALCOLOR clBlack
 #define LED_TEAM1_0_to 4
 #define PUNISHERRORTIMER (LEDBOX_BUTTONS_DEBOUNCE_TIME*4)
+
 //**************************<Types and Variables>******************************
 struct sTeam {
     uint8_t error_timer;
@@ -30,16 +40,17 @@ struct sTeam {
     uint8_t activate_LEDS[LED_PER_TEAM];
 };
 struct sTeam team1,team2;
+enum eGamemodes gamemode;
 //**************************<Methods>******************************************
 uint8_t punishment(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
 void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
 
 void gamemode_init(void){
-    gamemode=gmNothing;
-    gamemode_reset();
+    gamemode_start(gmNothing);
 }
 
-void gamemode_reset(void){
+void gamemode_start(enum eGamemodes gameModeIn){
+    gamemode=gameModeIn;
     team1.error_countdown=0;
     team2.error_countdown=0;
     uint8_t  i;
@@ -132,3 +143,56 @@ void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber){
     myteam->activate_LEDS[mynumber]=1;
     if ((gamemode==gmPunishAndEnemy)||(gamemode==gmEnemy))enemy->activate_LEDS[mynumber]=0;
 }
+
+void gamemode_update(){
+	int i;
+       	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+       		if (buttons_get(i)) {
+       			pushButton(i);
+       		}
+	}
+       	setLEDs();
+}
+
+void gamemode_finalize(uint8_t count, uint8_t mode){
+    //game end
+
+    uint8_t points1 = 0;
+    uint8_t points2 = 0;
+    
+    uint8_t i;
+
+    for(i=0;i<LED_PER_TEAM;i++){
+        if (team1.activate_LEDS[i]){
+	    points1+=3;
+        }
+        if (team2.error_timer){
+	    points2+=3;
+        }
+    }
+
+    showPoints(points1, points2);
+}
+
+void gamemode_to_display(uint8_t gameMode, uint8_t const* displayOut[2]){
+    switch (gameMode) {
+    case gmNothing:
+        displayOut[0]=numbers[1];
+        displayOut[1]=alpaP;
+        break;
+    case gmEnemy:
+        displayOut[0]=numbers[2];
+        displayOut[1]=alpaP;
+        break;
+    case gmPunishAndEnemy:
+        displayOut[0]=alpaH;
+        displayOut[1]=alpaM;
+        break;
+    default:
+        displayOut[0]=numbers[gameMode / 10];
+        displayOut[1]=numbers[gameMode % 10];
+        break;
+    }
+}
+
+//Game priate

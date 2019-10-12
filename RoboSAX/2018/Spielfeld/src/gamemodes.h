@@ -13,10 +13,7 @@
 
 
 //**************************<Included files>***********************************
-#include "robolib.h"
-#include "global.h"
-#include "ledbox.h"
-
+//#include "robolib.h"
 #include <avr/io.h>
 #include <inttypes.h>
 
@@ -28,16 +25,16 @@
 enum eGamemodes {
     gmNothing        = 0,
     gmEnemy          = 1,
-    gmPunishAndEnemy = 2
+    gmPunishAndEnemy = 2,
+    MaxGameModes
 };
-
-enum eGamemodes gamemode;
 
 //**************************<Prototypes>***************************************
 void gamemode_init(void);
-void gamemode_reset(void);
-void pushButton(uint8_t number);
-void setLEDs(void);
+void gamemode_start(enum eGamemodes gameMode);
+void gamemode_update(void);
+void gamemode_finalize(uint8_t count, uint8_t mode);
 
+void gamemode_to_display(uint8_t gameMode, uint8_t const* displayOut[2]);
 
 #endif //#ifndef __GAMEMODES_H

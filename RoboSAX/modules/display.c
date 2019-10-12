@@ -174,12 +174,12 @@ void display_shiftleft(uint8_t number){
 void display_setSuperSegment(const uint16_t *pict,uint8_t supersegmentnumber){
     if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
         int8_t i;
-        uint8_t width=0x00FF & pict[7];
-        uint8_t hight=0xFF00 & pict[7]>>8;
-        if((hight<=7)&&(width<=16)){
-            display_working_supersegmentbuffer[supersegmentnumber][7]=pict[7];
-            for(i=0;i<7;i++){
-                display_working_supersegmentbuffer[supersegmentnumber][i]=pict[i]<<(16-width);
+        uint8_t width=0x00FF & pict[SUPER_SEGMENT_HIGHT];
+        uint8_t hight=0xFF00 & pict[SUPER_SEGMENT_HIGHT]>>8;
+        if((hight<=SUPER_SEGMENT_HIGHT)&&(width<=SUPER_SEGMENT_HIGHT)){
+            display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT]=pict[SUPER_SEGMENT_HIGHT];
+            for(i=0;i<SUPER_SEGMENT_HIGHT;i++){
+                display_working_supersegmentbuffer[supersegmentnumber][i]=pict[i]<<(SUPER_SEGMENT_HIGHT-width);
             }
         } else {
             for(i=0;i<8;i++){
@@ -201,7 +201,7 @@ void display_clearSuperSegment(uint8_t supersegmentnumber){
 void display_invertSuperSegment(uint8_t supersegmentnumber){
     if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
         int8_t i;
-        for(i=0;i<7;i++){
+        for(i=0;i<SUPER_SEGMENT_HIGHT;i++){
             display_working_supersegmentbuffer[supersegmentnumber][i]= ~display_working_supersegmentbuffer[supersegmentnumber][i];
         }
     }
@@ -209,21 +209,21 @@ void display_invertSuperSegment(uint8_t supersegmentnumber){
 void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse){
     if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
         int8_t i;
-        uint8_t width=0x0F & pict[7];
-        uint8_t hight=0xF0 & pict[7]>>4;
-        uint8_t oldwidth=0x00FF & display_working_supersegmentbuffer[supersegmentnumber][7];
-        uint8_t oldhight=0xFF00 & display_working_supersegmentbuffer[supersegmentnumber][7]>>8;
+        uint8_t width=0x0F & pict[SUPER_SEGMENT_HIGHT];
+        uint8_t hight=0xF0 & pict[SUPER_SEGMENT_HIGHT]>>4;
+        uint8_t oldwidth=0x00FF & display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT];
+        uint8_t oldhight=0xFF00 & display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT]>>8;
 
-        uint8_t movewidth = (sparse & oldwidth)?1:0;
+        uint8_t movewidth = (sparse & oldwidth && (oldwidth + width + 1 <= SUPER_SEGMENT_HIGHT))?1:0;
 
         uint8_t newwidth=oldwidth + movewidth;
         uint8_t newhight=(oldhight>hight)?oldhight:hight;
 
-        if((newhight<=7)&&(newwidth<=16)){
-            display_working_supersegmentbuffer[supersegmentnumber][7]=(((uint16_t)(newhight))<<8)|(newwidth);
-            for(i=0;i<7;i++){
+        if((newhight<=SUPER_SEGMENT_HIGHT)&&(newwidth<=SUPER_SEGMENT_HIGHT)){
+            display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT]=(((uint16_t)(newhight))<<8)|(newwidth);
+            for(i=0;i<SUPER_SEGMENT_HIGHT;i++){
                 display_working_supersegmentbuffer[supersegmentnumber][i]=display_working_supersegmentbuffer[supersegmentnumber][i]>>movewidth;
-                display_working_supersegmentbuffer[supersegmentnumber][i]|=((uint16_t)(pict[i]) & ((1<<width)-1))<<(16-width);
+                display_working_supersegmentbuffer[supersegmentnumber][i]|=((uint16_t)(pict[i]) & ((1<<width)-1))<<(SUPER_SEGMENT_HIGHT-width);
             }
         }
     }
@@ -232,20 +232,20 @@ void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spar
 void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse){
     if ((supersegmentnumber>=0)&&(supersegmentnumber<SUPER_SEGMENTS_COUNT)){
         int8_t i;
-        uint8_t width=0x0F & pict[7];
-        uint8_t hight=0xF0 & pict[7]>>4;
-        uint8_t oldwidth=0x00FF & display_working_supersegmentbuffer[supersegmentnumber][7];
-        uint8_t oldhight=0xFF00 & display_working_supersegmentbuffer[supersegmentnumber][7]>>8;
+        uint8_t width=0x0F & pict[SUPER_SEGMENT_HIGHT];
+        uint8_t hight=0xF0 & pict[SUPER_SEGMENT_HIGHT]>>4;
+        uint8_t oldwidth=0x00FF & display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT];
+        uint8_t oldhight=0xFF00 & display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT]>>8;
 
-        oldwidth += (sparse && oldwidth)?1:0;
+        oldwidth += (sparse && oldwidth && (oldwidth + width + 1 <= SUPER_SEGMENT_HIGHT))?1:0;
 
         uint8_t newwidth=oldwidth + width;
         uint8_t newhight=(oldhight>hight)?oldhight:hight;
 
-        if((newhight<=7)&&(newwidth<=16)){
-            display_working_supersegmentbuffer[supersegmentnumber][7]=(((uint16_t)(newhight))<<8)|(newwidth);
-            for(i=0;i<7;i++){
-                display_working_supersegmentbuffer[supersegmentnumber][i]|=(uint16_t)(pict[i] & ((1<<width)-1))<<(16-oldwidth-width);
+        if((newhight<=SUPER_SEGMENT_HIGHT)&&(newwidth<=SUPER_SEGMENT_HIGHT)){
+            display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT]=(((uint16_t)(newhight))<<8)|(newwidth);
+            for(i=0;i<SUPER_SEGMENT_HIGHT;i++){
+                display_working_supersegmentbuffer[supersegmentnumber][i]|=(uint16_t)(pict[i] & ((1<<width)-1))<<(SUPER_SEGMENT_HIGHT-oldwidth-width);
             }
         }
     }
@@ -258,7 +258,7 @@ void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spa
 
 //**************************[display::shower]**********************************
 void display_fill_col(uint8_t row, uint8_t col, uint8_t seg){
-    if(col>=16){
+    if(col>=SUPER_SEGMENT_HIGHT){
         disp_col_ser(0);
     }else if ((display_showing_supersegmentbuffer[seg][row]&_BV(col))){
         disp_col_ser(1);
@@ -280,8 +280,8 @@ void display_row_next(void){
 void display_row_reset(void){
     uint8_t select;
     display_current_row=0;
-    for(select=0;select<=7;select++){
-        if (select==7){
+    for(select=0;select<=SUPER_SEGMENT_HIGHT;select++){
+        if (select==SUPER_SEGMENT_HIGHT){
             disp_row_ser(1);
         } else {
             disp_row_ser(0);
@@ -290,14 +290,14 @@ void display_row_reset(void){
     }
 }
 void display_fill_current_row(void){
-    if (display_current_row==7){
+    if (display_current_row==SUPER_SEGMENT_HIGHT){
         //double dot is out -> dont show it by shift row out, next is anyhow newstart
         if(display_double_dot)toggle_rck();
     } else {
         int8_t seg;
         for(seg=0;seg<SEGMENTS_COUNT;seg++){
             int8_t col;
-            for(col=7;col>4;col--){
+            for(col=SUPER_SEGMENT_HIGHT;col>4;col--){
                 //empty
                 display_fill_col(99,99,99);
             }

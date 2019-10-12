@@ -9,6 +9,7 @@
 ******************************************************************************/
 //**************************<Included files>***********************************
 #include "menueHelper.h"
+#include "gamemodes.h"
 
 
 //**************************<Methods>******************************************
@@ -128,9 +129,12 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
                 display_clearSuperSegment(0);
                 display_addRight(alpaG,0,1);
                 display_addRight(alpaM,0,1);
-                display_setSegment(numbers[subMode / 10],2);
-                display_setSegment(numbers[subMode % 10],3);
-	    } else {
+
+                uint8_t const* displayLast2Chars[2];
+                gamemode_to_display(subMode,displayLast2Chars);
+                display_addRight(displayLast2Chars[0],1,1);
+                display_addRight(displayLast2Chars[1],1,1);
+            } else {
                 display_clearSuperSegment(0);
                 display_addRight(alpaG,0,1);
                 display_addRight(alpaA,0,1);
@@ -144,9 +148,12 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
                 display_clearSuperSegment(0);
                 display_addRight(alpaT,0,0);
                 display_addRight(alpaM,0,0);
-                display_setSegment(numbers[subMode / 10],2);
-                display_setSegment(numbers[subMode % 10],3);
-	    } else {
+
+                uint8_t const* displayLast2Chars[2];
+                gamemode_to_display(subMode,displayLast2Chars);
+                display_addRight(displayLast2Chars[0],1,1);
+                display_addRight(displayLast2Chars[1],1,1);
+            } else {
                 display_clearSuperSegment(0);
                 display_addRight(alpaT,0,1);
                 display_addRight(alpaE,0,1);
@@ -160,9 +167,12 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
                 display_clearSuperSegment(0);
                 display_addRight(alpaL,0,1);
                 display_addRight(alpaG,0,1);
-                display_setSegment(numbers[subMode / 10],2);
-                display_setSegment(numbers[subMode % 10],3);
-	    } else {
+
+                uint8_t const* displayLast2Chars[2];
+                gamemode_to_display(subMode,displayLast2Chars);
+                display_addRight(displayLast2Chars[0],1,1);
+                display_addRight(displayLast2Chars[1],1,1);
+            } else {
                 display_clearSuperSegment(0);
                 display_addRight(alpaL,0,1);
                 display_addRight(alpaA,0,1);

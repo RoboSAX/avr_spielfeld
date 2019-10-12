@@ -13,6 +13,10 @@
 #include "gamemodes.h"
 #include "random.h"
 #include "master.h"
+
+#include "global.h"
+#include "ledbox.h"
+#include "menueHelper.h"
 //optics:
 //blink if pressed correct
 //blink red[/color] if error
@@ -557,4 +561,9 @@ void setLEDForTeam(volatile struct sTeam *team){
             team->LEDs[i].activ = (activLeds>>i)&0x01;
         }
     }
+}
+
+void gamemode_to_display(uint8_t gameMode, uint8_t const* displayOut[2]){
+    displayOut[0]=numbers[gameMode / 10];
+    displayOut[1]=numbers[gameMode % 10];
 }
