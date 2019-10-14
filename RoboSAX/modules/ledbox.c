@@ -180,8 +180,60 @@ void ledbox_init(void) {
         // buttons
         buttons_reset();
     sei();
+
+    ledbox_setup_module_count();
 }
 
+//**************************[ledbox_set_modul_count]**************************************
+void ledbox_setup_module_count(void) {
+
+    // load button values
+    return_btn(0);
+
+    bus_btn_load(1);
+    delay_us(1);
+
+    uint8_t i;
+    uint8_t state;
+
+    //send all 1s
+    for (i = 0; i < LEDBOX_COUNT_MAX*10; i++) {
+
+        // set button
+        return_btn(1);
+
+        // read current state
+        state = bus_btn_data();
+        bus_btn_load(0);
+
+        // toggle clock
+        toggle_clk();
+    }
+
+    //recieve 1
+    //send 01010??
+    //count till recieve 01010
+    //set count as moudule count
+    ledbox_count_current=0;
+    state=1;
+    while(state) {
+
+        // send 0 button
+        return_btn(0);
+
+        // toggle clock
+        toggle_clk();
+
+	ledbox_count_current++;
+
+        // read current state
+        state = bus_btn_data();
+        bus_btn_load(0);
+    }
+    
+    //correct count(me->id0->me = 2)
+    ledbox_count_current-=2;
+}
 
 
 //**************************[rgb_set]******************************************

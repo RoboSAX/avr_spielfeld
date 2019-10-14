@@ -26,10 +26,19 @@
 
 // buttons
 
+//**************************<Types and Variables>******************************
+enum fieldState{
+    unknown_field = 0,
+    full_field  = 1,
+    half_field = 2
+};
+
+volatile int8_t ledbox_count_current;
 //**************************<Prototypes>***************************************
 
 // init
 void ledbox_init(void);
+void ledbox_setup_module_count(void);
 
 // rgb leds
 void rgb_set(uint8_t number, enum eColor color);

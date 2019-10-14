@@ -21,7 +21,12 @@ enum eMasterModes {
     mmGameMode   = 0,
     mmTestMode      ,
     mmOldGameMode   ,
+    mmScanMode      ,
     MaxMasterModes
+};
+enum eScanModes {
+    scLedboxCount = 0,
+    MaxScanModes
 };
 //**************************<Methods>******************************************
 void waitAndUpdate(void);

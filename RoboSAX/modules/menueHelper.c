@@ -181,6 +181,27 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
                 display_addRight(alpaT,1,1);
             }
         break;
+        case mmScanMode:
+	    switch (subMode){
+		case scLedboxCount:
+                display_clearSuperSegment(0);
+                display_addRight(alpaN,0,1);
+                display_addRight(alpaU,0,1);
+                display_clearSuperSegment(1);
+                display_addRight(alpaM,1,1);
+                display_addRight(alpaDot,1,1);
+        	break;
+        	
+		default:
+                display_clearSuperSegment(0);
+                display_addRight(alpaS,0,1);
+                display_addRight(alpaC,0,1);
+                display_clearSuperSegment(1);
+                display_addRight(alpaA,1,1);
+                display_addRight(alpaN,1,1);
+        	break;
+            }
+        break;
         default:
             display_clearSuperSegment(0);
             display_addRight(qestM,0,1);

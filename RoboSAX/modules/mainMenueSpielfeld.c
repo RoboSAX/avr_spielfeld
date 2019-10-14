@@ -66,6 +66,17 @@ void default_display(){
     display_setSuperSegment(Pokeball,1);
     rgb_setAll(clRain);
 }
+
+void scanmode_start(enum eScanModes scanMode){
+    switch (scanMode){
+	case scLedboxCount:
+	    ledbox_setup_module_count();
+     	break;
+       	
+	default:
+      	break;
+    }
+ }
 //**************************[main]*********************************************
 int main () {
 
@@ -78,6 +89,9 @@ int main () {
             case mmGameMode:
             case mmTestMode:
                 maxModes[i]=MaxGameModes;
+	    break;
+            case mmScanMode:
+                maxModes[i]=MaxScanModes;
 	    break;
             case mmOldGameMode:
             default:
@@ -211,6 +225,10 @@ int main () {
                 {
                     pointsMode = 0;
                     menuemode=rsGameModeFinished;
+                }
+                if (masterMode == mmScanMode)
+                {
+                    scanmode_start(gamemode);
                 }
             break;
             case rsGameModeStarting:
