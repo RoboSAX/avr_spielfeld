@@ -21,19 +21,19 @@
 
 
 //**************************<Macros>*******************************************
-//TODO read LEDBOX_COUNT_ from number of LEDs in cycle
 #define LEDBOX_COUNT_MAX 24
 
 // buttons
 
 //**************************<Types and Variables>******************************
 enum fieldState{
-    unknown_field = 0,
-    full_field  = 1,
-    half_field = 2
+	unknown_field = 0,
+	full_field	= 1,
+	half_field = 2
 };
 
-volatile int8_t ledbox_count_current;
+volatile uint8_t ledbox_count_current;
+volatile enum fieldState ledbox_state;
 //**************************<Prototypes>***************************************
 
 // init
