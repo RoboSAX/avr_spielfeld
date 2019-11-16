@@ -1,11 +1,11 @@
 /******************************************************************************
-* moduls/main.h																  *
-* ======================													  *
-*																			  *
-* Version: 1.0.0															  *
-* Date	 : 01.01.19															  *
-* Author : Peter Weissig, Leander Herr										  *
-*																			  *
+* moduls/main.h                                                               *
+* ======================                                                      *
+*                                                                             *
+* Version: 1.0.0                                                              *
+* Date   : 01.01.19                                                           *
+* Author : Peter Weissig, Leander Herr                                        *
+*                                                                             *
 ******************************************************************************/
 #ifndef __MENUE_HELPER_H
 #define __MENUE_HELPER_H
