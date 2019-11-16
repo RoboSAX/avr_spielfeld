@@ -188,19 +188,20 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
 		switch (subMode){
 			case scLedboxCount:
 				display_clearSuperSegment(0);
-				display_addRight(alpaN,0,1);
-				display_addRight(alpaU,0,1);
+				display_addRight(alpaS,0,1);
+				display_addRight(alpaM,0,1);
 				display_clearSuperSegment(1);
-				display_addRight(alpaM,1,1);
-				display_addRight(alpaDot,1,1);
+				display_addRight(alpaN,1,1);
+				display_addRight(alpar,1,0);
+				display_addRight(alpaSDot,1,0);
 			break;
 			case scTesting:
 				display_clearSuperSegment(0);
-				display_addRight(alpaT,0,1);
-				display_addRight(alpaE,0,1);
+				display_addRight(alpaS,0,1);
+				display_addRight(alpaM,0,1);
 				display_clearSuperSegment(1);
-				display_addRight(alpaS,1,1);
 				display_addRight(alpaT,1,1);
+				display_addRight(alpaM,1,1);
 			break;
 		
 			default:

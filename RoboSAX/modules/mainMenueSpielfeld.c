@@ -94,9 +94,11 @@ void scanmode_start(enum eScanModes scanMode){
             ir_set(number,1);
 			//Buttontest&next
 			if (buttons_get(number)) number++;
-			//reset
-			if (master_button3()) {
-				number=0;
+			if (master_button_up()) {
+				number++;
+			}
+			if (master_button_down()) {
+				if (number>0)	number--;
 			}
 		}
 		break;
@@ -338,6 +340,7 @@ int main () {
 				switch (menuemode){
 					case rsSelectMasterMode:
 						writeModesToDisplay(masterMode, -1);
+						display_blink_status = 1;
 					break;
 					case rsSelectSubMode:
 						writeModesToDisplay(masterMode, submode);

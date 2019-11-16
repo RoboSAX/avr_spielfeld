@@ -179,7 +179,7 @@ void display_setSuperSegment(const uint16_t *pict,uint8_t supersegmentnumber){
         if((hight<=SUPER_SEGMENT_HIGHT)&&(width<=SUPER_SEGMENT_WIDTH)){
             display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT]=pict[SUPER_SEGMENT_HIGHT];
             for(i=0;i<SUPER_SEGMENT_HIGHT;i++){
-                display_working_supersegmentbuffer[supersegmentnumber][i]=pict[i]<<(SUPER_SEGMENT_WIDTH-width);
+                display_working_supersegmentbuffer[supersegmentnumber][i]=pict[i]<<(16-width);
             }
         } else {
             for(i=0;i<8;i++){
@@ -223,7 +223,7 @@ void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spar
             display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT]=(((uint16_t)(newhight))<<8)|(newwidth);
             for(i=0;i<SUPER_SEGMENT_HIGHT;i++){
                 display_working_supersegmentbuffer[supersegmentnumber][i]=display_working_supersegmentbuffer[supersegmentnumber][i]>>movewidth;
-                display_working_supersegmentbuffer[supersegmentnumber][i]|=((uint16_t)(pict[i]) & ((1<<width)-1))<<(SUPER_SEGMENT_WIDTH-width);
+                display_working_supersegmentbuffer[supersegmentnumber][i]|=((uint16_t)(pict[i]) & ((1<<width)-1))<<(16-width);
             }
         }
     }
@@ -245,7 +245,7 @@ void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spa
         if((newhight<=SUPER_SEGMENT_HIGHT)&&(newwidth<=SUPER_SEGMENT_WIDTH)){
             display_working_supersegmentbuffer[supersegmentnumber][SUPER_SEGMENT_HIGHT]=(((uint16_t)(newhight))<<8)|(newwidth);
             for(i=0;i<SUPER_SEGMENT_HIGHT;i++){
-                display_working_supersegmentbuffer[supersegmentnumber][i]|=(uint16_t)(pict[i] & ((1<<width)-1))<<(SUPER_SEGMENT_WIDTH-oldwidth-width);
+                display_working_supersegmentbuffer[supersegmentnumber][i]|=(uint16_t)(pict[i] & ((1<<width)-1))<<(16-oldwidth-width);
             }
         }
     }
@@ -258,7 +258,7 @@ void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spa
 
 //**************************[display::shower]**********************************
 void display_fill_col(uint8_t row, uint8_t col, uint8_t seg){
-    if(col>=SUPER_SEGMENT_WIDTH){
+    if(col>=16){
         disp_col_ser(0);
     }else if ((display_showing_supersegmentbuffer[seg][row]&_BV(col))){
         disp_col_ser(1);
