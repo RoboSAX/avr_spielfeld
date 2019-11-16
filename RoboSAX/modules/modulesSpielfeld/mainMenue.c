@@ -20,13 +20,13 @@
 #define LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS 500
 
 //**************************<Included files>***********************************
-#include "master.h"
-#include "ledbox.h"
-#include "menueHelper.h"
-#include "gamemodes.h"
-#include "display.h"
-#include "systick.h"
-#include "display_chars.h"
+#include "../modulesInterface/master.h"
+#include "../modulesInterface/ledbox.h"
+#include "../modulesInterface/menueHelper.h"
+#include "../modulesInterface/gamemodes.h"
+#include "../modulesInterface/display.h"
+#include "../modulesInterface/systick.h"
+#include "../modulesInterface/display_chars.h"
 
 #include <avr/io.h>
 #include <inttypes.h>
@@ -117,7 +117,7 @@ int main () {
 		switch (i){
 			case mmGameMode:
 			case mmTestMode:
-				maxModes[i]=MaxGameModes;
+				maxModes[i]=maxGameModes;
 			break;
 			case mmScanMode:
 				maxModes[i]=MaxScanModes;
@@ -141,16 +141,21 @@ int main () {
 	uint8_t itteration = 0;
 	uint8_t gameRunningShowPoints = 0;
 	uint8_t pointsMode = 1;
+	uint8_t invalidMode = 1;
 	while (1) {
 		switch (menuemode){
 			case rsNone:
 			case rsSelectMasterMode:
 			case rsSelectSubMode:
-				if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)||(currentTime<rainbowStartTime)){
-					rainbowNumber++;
-					rainbowNumber %= NUM_RAINBOWS;
-					rainbowStartTime = currentTime;
-					rgb_setAll(clRainbows[rainbowNumber]);
+				if(invalidMode){
+					rgb_setAll(clRed);
+				}else{
+					if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)||(currentTime<rainbowStartTime)){
+						rainbowNumber++;
+						rainbowNumber %= NUM_RAINBOWS;
+						rainbowStartTime = currentTime;
+						rgb_setAll(clRainbows[rainbowNumber]);
+					}
 				}
 			break;
 			case rsGameModeStarting:
@@ -174,6 +179,7 @@ int main () {
 		}
 		currentTime = systick_get();
 		if (master_button_full3()) {
+			invalidMode = 0;
 			switch (menuemode){
 				case rsNone:
 				case rsStartMode:
@@ -234,7 +240,7 @@ int main () {
 			case rsStartMode:
 				if ((masterMode == mmGameMode) || (masterMode == mmTestMode))
 				{
-					gamemode_start(submode);
+					invalidMode = gamemode_start(submode);
 					buttons_reset();
 				}
 				if (masterMode == mmGameMode)
@@ -257,6 +263,13 @@ int main () {
 				if (masterMode == mmScanMode)
 				{
 					scanmode_start(submode);
+				}
+				if(invalidMode){
+					if (maxModes[masterMode]>1){
+						menuemode = rsSelectSubMode;
+					} else if (maxModes[masterMode]==1){
+						menuemode = rsSelectMasterMode;
+					}
 				}
 			break;
 			case rsGameModeStarting:
