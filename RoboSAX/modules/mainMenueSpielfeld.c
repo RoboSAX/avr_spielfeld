@@ -131,7 +131,7 @@ int main () {
 	enum eRunningState menuemode=rsNone;
 	uint32_t starttime = currentTime;
 	uint32_t rainbowStartTime = currentTime;
-	enum eGamemodes gamemode = 0;
+	uint32_t submode = 0;
 	enum eMasterModes masterMode = 0;
 	uint32_t display_blink_time = currentTime;
 	uint8_t display_blink_status = 0;
@@ -152,17 +152,15 @@ int main () {
 				}
 			break;
 			case rsGameModeStarting:
-				if(((itteration*STARTTIME)/LEDBOX_COUNT_MAX)<(currentTime-starttime)){
+				if((((itteration + 1)*STARTTIME)/(ledbox_count_current))<(currentTime-starttime)){
 					rainbowNumber++;
-			itteration++;
+					itteration++;
 					rainbowNumber %= NUM_RAINBOWS;
 					rainbowStartTime = currentTime;
 					rgb_setAll(clRainbows[rainbowNumber]);
-				}
-				uint32_t i;
-				for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-					if(((i*STARTTIME)/LEDBOX_COUNT_MAX)<(currentTime-starttime)){
-						rgb_set(i, clBlack);
+					uint32_t i;
+					for (i = 0; i < itteration; i++) {
+							rgb_set(i, clBlack);
 					}
 				}
 			break;
@@ -186,6 +184,7 @@ int main () {
 					}
 				break;
 				case rsSelectMasterMode:
+					submode = 0;
 					if (maxModes[masterMode]>1){
 						menuemode = rsSelectSubMode;
 					} else if (maxModes[masterMode]==1){
@@ -212,28 +211,28 @@ int main () {
 				if (master_button1()) {
 					masterMode++;
 					masterMode %= MaxMasterModes;
-					//writeModesToDisplay(masterMode, gamemode);
+					//writeModesToDisplay(masterMode, submode);
 				}
 				if (master_button2()) {
 					(masterMode <=	0)? masterMode = MaxMasterModes - 1 : masterMode-- ;
-					//writeModesToDisplay(masterMode, gamemode);
+					//writeModesToDisplay(masterMode, submode);
 				}
 			break;
 			case rsSelectSubMode:
 				if (master_button1()) {
-					gamemode++;
-					gamemode %= MaxGameModes;
-					//writeModesToDisplay(masterMode, gamemode);
+					submode++;
+					submode %= maxModes[masterMode];
+					//writeModesToDisplay(masterMode, submode);
 				}
 				if (master_button2()) {
-					(gamemode <=  0)? gamemode = MaxGameModes - 1 : gamemode-- ;
-					//writeModesToDisplay(masterMode, gamemode);
+					(submode <=  0)? submode = maxModes[masterMode] - 1 : submode-- ;
+					//writeModesToDisplay(masterMode, submode);
 				}
 			break;
 			case rsStartMode:
 				if ((masterMode == mmGameMode) || (masterMode == mmTestMode))
 				{
-					gamemode_start(gamemode);
+					gamemode_start(submode);
 					buttons_reset();
 				}
 				if (masterMode == mmGameMode)
@@ -255,7 +254,7 @@ int main () {
 				}
 				if (masterMode == mmScanMode)
 				{
-					scanmode_start(gamemode);
+					scanmode_start(submode);
 				}
 			break;
 			case rsGameModeStarting:
@@ -303,7 +302,7 @@ int main () {
 			if((display_blink_time+BLINKTIMEON<currentTime)||(currentTime<display_blink_time)){
 				switch (menuemode){
 					case rsSelectMasterMode:
-						//writeModesToDisplay(masterMode, gamemode);
+						//writeModesToDisplay(masterMode, submode);
 						//display_invertSegment(0);
 						//display_invertSegment(1);
 						//display_setSegment(qestM,0);
@@ -313,7 +312,7 @@ int main () {
 						display_blink_status = 0;
 					//break;
 					case rsSelectSubMode:
-						//writeModesToDisplay(masterMode, gamemode);
+						//writeModesToDisplay(masterMode, submode);
 						//display_invertSegment(2);
 						//display_invertSegment(3);
 						//display_setSegment(qestM,2);
@@ -341,7 +340,7 @@ int main () {
 						writeModesToDisplay(masterMode, -1);
 					break;
 					case rsSelectSubMode:
-						writeModesToDisplay(masterMode, gamemode);
+						writeModesToDisplay(masterMode, submode);
 						display_blink_status = 1;
 					break;
 					case rsNone:

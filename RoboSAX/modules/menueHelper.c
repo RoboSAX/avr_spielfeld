@@ -130,8 +130,9 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
 			display_addRight(alpaG,0,1);
 			display_addRight(alpaM,0,1);
 
+			display_clearSuperSegment(1);
 			uint8_t const* displayLast2Chars[2];
-			gamemode_to_display(subMode,displayLast2Chars);
+			gamemode_to_display(subMode, &displayLast2Chars[0], &displayLast2Chars[1]);
 			display_addRight(displayLast2Chars[0],1,1);
 			display_addRight(displayLast2Chars[1],1,1);
 		} else {
@@ -149,8 +150,9 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
 			display_addRight(alpaT,0,0);
 			display_addRight(alpaM,0,0);
 
+			display_clearSuperSegment(1);
 			uint8_t const* displayLast2Chars[2];
-			gamemode_to_display(subMode,displayLast2Chars);
+			gamemode_to_display(subMode, &displayLast2Chars[0], &displayLast2Chars[1]);
 			display_addRight(displayLast2Chars[0],1,1);
 			display_addRight(displayLast2Chars[1],1,1);
 		} else {
@@ -168,8 +170,9 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
 			display_addRight(alpaL,0,1);
 			display_addRight(alpaG,0,1);
 
+			display_clearSuperSegment(1);
 			uint8_t const* displayLast2Chars[2];
-			gamemode_to_display(subMode,displayLast2Chars);
+			gamemode_to_display(subMode, &displayLast2Chars[0], &displayLast2Chars[1]);
 			display_addRight(displayLast2Chars[0],1,1);
 			display_addRight(displayLast2Chars[1],1,1);
 		} else {

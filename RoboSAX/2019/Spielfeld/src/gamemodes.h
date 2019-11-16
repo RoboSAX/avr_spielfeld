@@ -35,6 +35,6 @@ void gamemode_update(void);
 void gamemode_finalize(uint8_t count, uint8_t mode);
 
 
-void gamemode_to_display(uint8_t gameMode, uint8_t const* displayOut[2]);
+void gamemode_to_display(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2);
 
 #endif //#ifndef __GAMEMODES_H

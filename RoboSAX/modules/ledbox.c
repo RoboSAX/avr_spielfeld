@@ -116,69 +116,69 @@ void toggle_led_load(void);
 void ledbox_init(void) {
 
 	// hardware
-		// bus
-		_bus_btn_data_init();
-		_bus_btn_load_enable(); bus_btn_load(0);
+	// bus
+	_bus_btn_data_init();
+	_bus_btn_load_enable(); bus_btn_load(0);
 
-		_bus_led_data_enable(); bus_led_data(0);
-		_bus_led_load_enable(); bus_led_load(0);
+	_bus_led_data_enable(); bus_led_data(0);
+	_bus_led_load_enable(); bus_led_load(0);
 
-		_bus_ir_clk_enable();	bus_ir_clk(0);
-		_bus_clk_enable();		bus_clk(0);
+	_bus_ir_clk_enable();	bus_ir_clk(0);
+	_bus_clk_enable();		bus_clk(0);
 
-		_bus_rgb_enable();		bus_rgb(0);
-		_return_rgb_init();
-		_return_btn_enable();	return_btn(0);
+	_bus_rgb_enable();		bus_rgb(0);
+	_return_rgb_init();
+	_return_btn_enable();	return_btn(0);
 
-		// uart
-		UCSR0A	= _BV(TXC0 ) |	 // clear TX-Complete-Flag
-				  _BV(U2X0 );	 // enable double speed
-				  //_BV(MPCM0)	 // no multi-processor communication mode
-		UCSR0B	= _BV(TXEN0);	 // enable transmitter
-				  //_BV(RXCIE)	 // no RX-Complete-Interrupt
-				  //_BV(UDRIE)	 // no Date-Register-Empty-Interrupt
-				  //_BV(TXCIE)	 // no TX-Complete-Interrupt
-				  //_BV(RXEN0)	 // disable receiver
-				  //_BV(UCSZ02)  // 7 bits in UART frame (UCSZ0x = 0x010)
-				  //_BV(TXB80)	 // 9th data bit for transmission
-		UCSR0C	= _BV(UCSZ01);	 // 7 bits in UART frame (UCSZ0x = 0x010)
-				  //_BV(UMSEL01) // asynchronous mode (UMSEL0x = 0x00)
-				  //_BV(UMSEL00) // asynchronous mode (UMSEL0x = 0x00)
-				  //_BV(UPM01)	 // no parity check (UPM0x = 0x00)
-				  //_BV(UPM00)	 // no parity check (UPM0x = 0x00)
-				  //_BV(USBS0)	 // 1 stop bit
-				  //_BV(UCSZ00)  // 7 bits in UART frame (UCSZ0x = 0x010)
-				  //_BV(UCPOL0)  // clock polarity (not used)
+	// uart
+	UCSR0A	= _BV(TXC0 ) |	 // clear TX-Complete-Flag
+			  _BV(U2X0 );	 // enable double speed
+			  //_BV(MPCM0)	 // no multi-processor communication mode
+	UCSR0B	= _BV(TXEN0);	 // enable transmitter
+			  //_BV(RXCIE)	 // no RX-Complete-Interrupt
+			  //_BV(UDRIE)	 // no Date-Register-Empty-Interrupt
+			  //_BV(TXCIE)	 // no TX-Complete-Interrupt
+			  //_BV(RXEN0)	 // disable receiver
+			  //_BV(UCSZ02)  // 7 bits in UART frame (UCSZ0x = 0x010)
+			  //_BV(TXB80)	 // 9th data bit for transmission
+	UCSR0C	= _BV(UCSZ01);	 // 7 bits in UART frame (UCSZ0x = 0x010)
+			  //_BV(UMSEL01) // asynchronous mode (UMSEL0x = 0x00)
+			  //_BV(UMSEL00) // asynchronous mode (UMSEL0x = 0x00)
+			  //_BV(UPM01)	 // no parity check (UPM0x = 0x00)
+			  //_BV(UPM00)	 // no parity check (UPM0x = 0x00)
+			  //_BV(USBS0)	 // 1 stop bit
+			  //_BV(UCSZ00)  // 7 bits in UART frame (UCSZ0x = 0x010)
+			  //_BV(UCPOL0)  // clock polarity (not used)
 
-		UBRR0H = 0; // set baudrate to F_CPU
-		UBRR0L = 0; // ==> with double speed this will be 2.5 MHz
+	UBRR0H = 0; // set baudrate to F_CPU
+	UBRR0L = 0; // ==> with double speed this will be 2.5 MHz
 
-		DDRD|= _BV(1); // activate strong drivers for TX
+	DDRD|= _BV(1); // activate strong drivers for TX
 
-		//Timer 0 -> IR led basetakt(38KHz)
-		TCCR0A	= 0
-				 //|_BV(COM0A1)  // OC0A disconnected
-				 //|_BV(COM0A0)  // OC0A disconnected
-				 //|_BV(COM0B1)  // OC0B toggel mode
-				 |_BV(COM0B0)	 // OC0B toggel mode
-				 |_BV(WGM01)	 // Timer modus CTC top at OCR0A
-				 //|_BV(WGM00)	 // =Mode 2
-				 ;
-		TCCR0B	= 0
-				 //|_BV(WGM02)	 // Timer modus CTC top at OCR0A
-				 //|_BV(CS02)	 // Speed = 38KHz
-				 |_BV(CS01)		 // => 20MHz/2(half speed by toggeling)/38KHz~aller 263 takte
-				 //|_BV(CS00)	 // => prescaler=8,OCRA=32=>37,87KHz
-				 ;
-		OCR0A	= 32;
+	//Timer 0 -> IR led basetakt(38KHz)
+	TCCR0A	= 0
+			 //|_BV(COM0A1)  // OC0A disconnected
+			 //|_BV(COM0A0)  // OC0A disconnected
+			 //|_BV(COM0B1)  // OC0B toggel mode
+			 |_BV(COM0B0)	 // OC0B toggel mode
+			 |_BV(WGM01)	 // Timer modus CTC top at OCR0A
+			 //|_BV(WGM00)	 // =Mode 2
+			 ;
+	TCCR0B	= 0
+			 //|_BV(WGM02)	 // Timer modus CTC top at OCR0A
+			 //|_BV(CS02)	 // Speed = 38KHz
+			 |_BV(CS01)		 // => 20MHz/2(half speed by toggeling)/38KHz~aller 263 takte
+			 //|_BV(CS00)	 // => prescaler=8,OCRA=32=>37,87KHz
+			 ;
+	OCR0A	= 32;
 
 	// variables
-		// leds
-		rgb_clearAll();
-		ir_clearAll();
+	// leds
+	rgb_clearAll();
+	ir_clearAll();
 
-		// buttons
-		buttons_reset();
+	// buttons
+	buttons_reset();
 	sei();
 
 	ledbox_setup_module_count();
@@ -215,8 +215,7 @@ void ledbox_setup_module_count(void) {
 	//count till recieve 01010
 	//set count as moudule count
 	ledbox_count_current=0;
-	state=1;
-	while(state) {
+	while(!state) {
 
 		// send 0 button
 		return_btn(0);
@@ -225,14 +224,13 @@ void ledbox_setup_module_count(void) {
 		toggle_clk();
 
 		ledbox_count_current++;
+		if(ledbox_count_current>LEDBOX_COUNT_MAX)
+			break;
 
 		// read current state
 		state = bus_btn_data();
 		bus_btn_load(0);
 	}
-	
-	//correct count(me->id0->me = 2)
-	ledbox_count_current-=2;
 	
 	if(ledbox_count_current==LEDBOX_COUNT_MAX)
 		ledbox_state=full_field;
@@ -240,6 +238,8 @@ void ledbox_setup_module_count(void) {
 		ledbox_state=half_field;
 	else
 		ledbox_state=unknown_field;
+	if(ledbox_count_current>LEDBOX_COUNT_MAX)
+		ledbox_count_current=LEDBOX_COUNT_MAX;
 }
 
 

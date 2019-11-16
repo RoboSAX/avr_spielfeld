@@ -174,23 +174,23 @@ void gamemode_finalize(uint8_t count, uint8_t mode){
     showPoints(points1, points2);
 }
 
-void gamemode_to_display(uint8_t gameMode, uint8_t const* displayOut[2]){
+void gamemode_to_display(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
     switch (gameMode) {
     case gmNothing:
-        displayOut[0]=numbers[1];
-        displayOut[1]=alpaP;
+        *displayOut1=numbers[1];
+        *displayOut2=alpaP;
         break;
     case gmEnemy:
-        displayOut[0]=numbers[2];
-        displayOut[1]=alpaP;
+        *displayOut1=numbers[2];
+        *displayOut2=alpaP;
         break;
     case gmPunishAndEnemy:
-        displayOut[0]=alpaH;
-        displayOut[1]=alpaM;
+        *displayOut1=alpaH;
+        *displayOut2=alpaM;
         break;
     default:
-        displayOut[0]=numbers[gameMode / 10];
-        displayOut[1]=numbers[gameMode % 10];
+        *displayOut1=numbers[gameMode / 10];
+        *displayOut2=numbers[gameMode % 10];
         break;
     }
 }

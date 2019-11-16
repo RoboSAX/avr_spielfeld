@@ -563,7 +563,7 @@ void setLEDForTeam(volatile struct sTeam *team){
     }
 }
 
-void gamemode_to_display(uint8_t gameMode, uint8_t const* displayOut[2]){
-    displayOut[0]=numbers[gameMode / 10];
-    displayOut[1]=numbers[gameMode % 10];
+void gamemode_to_display(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
+	*displayOut1=numbers[gameMode / 10];
+	*displayOut2=numbers[gameMode % 10];
 }
