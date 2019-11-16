@@ -10,12 +10,12 @@
 
 
 //**************************<Included files>***********************************
-#include "gamemodes.h"
-#include "random.h"
-#include "master.h"
-#include "global.h"
-#include "ledbox.h"
-#include "menueHelper.h"
+#include "modulesInterface/gamemodes.h"
+#include "modulesInterface/random.h"
+#include "modulesInterface/master.h"
+#include "modulesInterface/global.h"
+#include "modulesInterface/ledbox.h"
+#include "modulesInterface/menueHelper.h"
 
 //optics:
 //blink if pressed correct
@@ -33,6 +33,13 @@
 #define PUNISHERRORTIMER (LEDBOX_BUTTONS_DEBOUNCE_TIME*4)
 
 //**************************<Types and Variables>******************************
+enum eGamemodes {
+    gmNothing        = 0,
+    gmEnemy          = 1,
+    gmPunishAndEnemy = 2,
+    MaxGameModes
+};
+
 struct sTeam {
     uint8_t error_timer;
     uint8_t error_countdown;
@@ -46,10 +53,11 @@ uint8_t punishment(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
 void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
 
 void gamemode_init(void){
+    maxGameModes=MaxGameModes;
     gamemode_start(gmNothing);
 }
 
-void gamemode_start(enum eGamemodes gameModeIn){
+uint8_t gamemode_start(uint8_t gameModeIn){
     gamemode=gameModeIn;
     team1.error_countdown=0;
     team2.error_countdown=0;
@@ -58,6 +66,7 @@ void gamemode_start(enum eGamemodes gameModeIn){
         team1.activate_LEDS[i]=0;
         team2.activate_LEDS[i]=0;
     }
+	return 0;
 }
 
 void setLEDs(void){

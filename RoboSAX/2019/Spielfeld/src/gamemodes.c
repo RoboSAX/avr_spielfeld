@@ -10,13 +10,13 @@
 
 
 //**************************<Included files>***********************************
-#include "gamemodes.h"
-#include "random.h"
-#include "master.h"
+#include "modulesInterface/gamemodes.h"
+#include "modulesInterface/random.h"
+#include "modulesInterface/master.h"
 
-#include "global.h"
-#include "ledbox.h"
-#include "menueHelper.h"
+#include "modulesInterface/global.h"
+#include "modulesInterface/ledbox.h"
+#include "modulesInterface/menueHelper.h"
 //optics:
 //blink if pressed correct
 //blink red[/color] if error
@@ -92,7 +92,6 @@ struct sGlobalLED{
 };
 struct sGlobalLED LEDToTeam[LEDBOX_COUNT_MAX];
 
-enum eGamemodes usedGamemode;
 //**************************<Methods>******************************************
 void pushButton(uint8_t number);
 void setLEDs(void);
@@ -100,10 +99,10 @@ void diasbleOneLEDForTeam(volatile struct sTeam *team);
 void setLEDForTeam(volatile struct sTeam *team);
 
 void gamemode_init(void){
+	maxGameModes=1;
     random_init();
 
-    usedGamemode=gmStd;
-    gamemode_start(usedGamemode);
+    gamemode_start(0);
 
     uint8_t  i;
     for(i=0;i<LEDBOX_COUNT_MAX;i++){
@@ -208,8 +207,7 @@ void gamemode_init(void){
     */
 }
 
-void gamemode_start(enum eGamemodes gameMode){
-    usedGamemode=gameMode;
+uint8_t gamemode_start(uint8_t gameMode){
 
     //set all LEDs to on
     uint8_t  j;
@@ -229,6 +227,7 @@ void gamemode_start(enum eGamemodes gameMode){
             team[j].LEDs[i].activ=1;
         }
     }
+	return 0;
 }
 
 void gamemode_update(){
