@@ -20,13 +20,13 @@
 #define LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS 500
 
 //**************************<Included files>***********************************
-#include "master.h"
-#include "ledbox.h"
-#include "menueHelper.h"
-#include "gamemodes.h"
-#include "display.h"
-#include "systick.h"
-#include "display_chars.h"
+#include "../modulesInterface/master.h"
+#include "../modulesInterface/ledbox.h"
+#include "../modulesInterface/menueHelper.h"
+#include "../modulesInterface/gamemodes.h"
+#include "../modulesInterface/display.h"
+#include "../modulesInterface/systick.h"
+#include "../modulesInterface/display_chars.h"
 
 #include <avr/io.h>
 #include <inttypes.h>
@@ -109,7 +109,7 @@ int main () {
 
 	//todo: select mode....
 	init();
-	enum eGamemodes gamemode = 0;
+	uint8_t gamemode = 0;
 	gamemode_start(gamemode);
 	buttons_reset();
 	while (1) {

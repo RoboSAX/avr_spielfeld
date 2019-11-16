@@ -11,10 +11,10 @@
 *******************************************************************************/
 
 //*********************************<Included files>*****************************
-#include "systick.h"
-#include "master.h"
-#include "display.h"
-#include "ledbox.h"
+#include "../modulesInterface/systick.h"
+#include "../modulesInterface/master.h"
+#include "../modulesInterface/display.h"
+#include "../modulesInterface/ledbox.h"
 
 
 

@@ -14,7 +14,7 @@
 #   https://github.com/RoboSAX/avr_spielfeld                                  #
 ###############################################################################
 
-SUBDIRS = RoboSAX devel
+SUBDIRS = RoboSAX
 include Makefile.global
 
 ###############################################################################

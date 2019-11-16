@@ -10,7 +10,7 @@
 
 
 //**************************<Included files>***********************************
-#include "ledbox.h"
+#include "../modulesInterface/ledbox.h"
 
 uint8_t firstNumber=0;
 uint8_t secondNumber=1;
@@ -297,7 +297,6 @@ void _ledbox_rgb_update(void) {
 
 	static uint8_t X=0;
 	X++;
-	bus_rgb(0);
 
 	led1_setRed(ledbox_rgb[firstNumber].r>X);
 	led1_setGreen(ledbox_rgb[firstNumber].g>X);
