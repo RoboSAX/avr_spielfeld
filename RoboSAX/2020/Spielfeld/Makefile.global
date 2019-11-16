@@ -1,0 +1,7 @@
+export CURDIR_MAIN ?= $(CURDIR)
+CURDIR_MAIN := $(subst $(lastword $(subst /, ,$(CURDIR_MAIN))),,$(CURDIR_MAIN))
+CURDIR_MAIN := $(subst //,/,$(CURDIR_MAIN))
+
+PARDIR := ../$(PARDIR)
+
+include $(PARDIR)Makefile.global
