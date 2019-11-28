@@ -23,7 +23,6 @@
 
 
 //**************************<Macros>*******************************************
-#define LED_PER_TEAM LEDBOX_COUNT_MAX/3
 #define TEAM1COLOR clGreen
 #define TEAM1FLASHCOLOR clBGreen
 #define TEAM2COLOR clRed
@@ -112,7 +111,7 @@ uint8_t gamemode_start(uint8_t gameMode){
 		team[team2].trys = 0;
 		team[team2].points = 0;
 
-    uint16_t randomNumber= random();
+		uint16_t randomNumber= random();
 		uint8_t  teamNr;
 		for (teamNr=0;teamNr<2;teamNr++){
 			uint8_t i;
@@ -163,6 +162,50 @@ void gamemode_update(){
 }
 
 void gamemode_finalize(uint8_t count, uint8_t mode){
+	//game end
+
+	uint8_t points1MaxVal= MAX_TRYS * POINTS_PER_PRESS;
+	uint8_t points2MaxVal= MAX_TRYS * POINTS_PER_PRESS;
+	
+	uint8_t i;
+	uint8_t numberMax = (full_field)? ledbox_count_current / 2 : ledbox_count_current;
+	uint8_t number = (count > numberMax)? numberMax: count;
+
+	//for (i = 0; i < ledbox_count_current; i++) {
+	//	rgb_set(i, clBlack);
+	//}
+	
+	showPoints(team[team1].points, team[team2].points);
+
+
+	if(ledbox_state == full_field){
+		//0 -> no leds
+		//76 -> all leds
+		//1-75 -> >=one led on, >=1 led off
+		for (i = 0; i < number; i++) {
+	  	 if(((i * points1MaxVal)/(numberMax - 1U)) < (team[team1].points)){
+				rgb_set(i, team[team1].teamColor);
+			} else {
+				rgb_set(i, clBlack);
+			}
+		}
+		for (i = 0; i < number; i++) {
+			if(((i * points2MaxVal)/(numberMax - 1U)) < (team[team2].points)){
+				rgb_set(ledbox_count_current-1-i, team[team2].teamColor);
+			} else {
+				rgb_set(ledbox_count_current-1-i, clBlack);
+			}
+		}
+	} else { 
+		for (i = 0; i < number; i++) {
+			uint8_t led = (ledbox_count_current - i + 3) % ledbox_count_current;
+			if(((i * points1MaxVal)/(numberMax - 1U)) < (team[team1].points)){
+				rgb_set(led, team[team1].teamColor);
+			} else {
+				rgb_set(led, clBlack);
+			}
+		}
+	}
 }
 
 void gamemode_to_display(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
@@ -212,7 +255,7 @@ void pushButton(uint8_t number){
 	if (team[teamNr].groups[GroupNr].status){
 		team[teamNr].trys++;
 		if (team[teamNr].groups[GroupNr].status == LEDNr + 1) team[teamNr].points += POINTS_PER_PRESS;
-		if (team[teamNr].trys>=5){
+		if (team[teamNr].trys>=MAX_TRYS){
 			uint8_t i;
 			for(i=0;i<3;i++){
 				team[teamNr].groups[i].status = groupOff;
