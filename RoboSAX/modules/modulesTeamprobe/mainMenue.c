@@ -110,7 +110,7 @@ int main () {
 	//todo: select mode....
 	init();
 	uint8_t gamemode = 0;
-	gamemode_start(gamemode);
+	gamemode_start(gamemode, omTeamprobe);
 	buttons_reset();
 	while (1) {
 		gamemode_update();

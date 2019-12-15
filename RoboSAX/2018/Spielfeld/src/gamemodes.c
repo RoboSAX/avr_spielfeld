@@ -54,10 +54,10 @@ void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
 
 void gamemode_init(void){
     maxGameModes=MaxGameModes;
-    gamemode_start(gmNothing);
+    gamemode_start(gmNothing, omTest);
 }
 
-uint8_t gamemode_start(uint8_t gameModeIn){
+uint8_t gamemode_start(uint8_t gameModeIn, enum eOperationModes operationMode){
     gamemode=gameModeIn;
     team1.error_countdown=0;
     team2.error_countdown=0;

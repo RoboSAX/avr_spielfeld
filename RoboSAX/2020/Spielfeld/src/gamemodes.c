@@ -82,6 +82,7 @@ struct sGlobalLED{
 struct sGlobalLED LEDToTeam[LEDBOX_COUNT_MAX];
 
 enum eGamemodes usedGamemode;
+enum eOperationModes operationMode;
 //**************************<Methods>******************************************
 void pushButton(uint8_t number);
 void setLEDs(void);
@@ -91,15 +92,16 @@ void gamemode_init(void){
 	random_init();
 
 	usedGamemode=gm1P;
-	gamemode_start(usedGamemode);
+	gamemode_start(usedGamemode, omTest);
 
 }
 
-uint8_t gamemode_start(uint8_t gameMode){
+uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes oM){
 	if ((ledbox_state == full_field && gameMode == gm2P)||
 		((ledbox_state == full_field || ledbox_state == half_field ) && gameMode == gm1P)){
 
 		usedGamemode=gameMode;
+		operationMode=oM;
 
 		team[team1].teamColor = TEAM1COLOR;
 		team[team1].offGroup = 3;
@@ -255,7 +257,7 @@ void pushButton(uint8_t number){
 	if (team[teamNr].groups[GroupNr].status){
 		team[teamNr].trys++;
 		if (team[teamNr].groups[GroupNr].status == LEDNr + 1) team[teamNr].points += POINTS_PER_PRESS;
-		if (team[teamNr].trys>=MAX_TRYS){
+		if ((operationMode == omGame) && (team[teamNr].trys>=MAX_TRYS)){
 			uint8_t i;
 			for(i=0;i<3;i++){
 				team[teamNr].groups[i].status = groupOff;
@@ -263,11 +265,14 @@ void pushButton(uint8_t number){
 			team[teamNr].offGroup = 4;
 		}
 
+		team[teamNr].groups[GroupNr].status = groupOff;
+  
+		if (operationMode == omTeamprobe) team[teamNr].offGroup = GroupNr;
+  
 		if (team[teamNr].offGroup < 3){
 			team[teamNr].groups[team[teamNr].offGroup].status = random() % 2 + 1;
 		}
 
-		team[teamNr].groups[GroupNr].status = groupOff;
 		team[teamNr].offGroup = GroupNr;
 	}
 }

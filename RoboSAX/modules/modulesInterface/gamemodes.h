@@ -25,10 +25,15 @@
 // leds
 
 uint8_t maxGameModes;
+enum eOperationModes {
+    omGame,
+    omTest,
+    omTeamprobe,
+};
 
 //**************************<Prototypes>***************************************
 void gamemode_init(void);
-uint8_t gamemode_start(uint8_t gameMode);
+uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes operationMode);
 void gamemode_update(void);
 void gamemode_finalize(uint8_t count, uint8_t mode);
 
