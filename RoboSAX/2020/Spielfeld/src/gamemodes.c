@@ -38,6 +38,8 @@
 #define MAX_TRYS 5
 #define POINTS_PER_PRESS 5
 
+#define SPECIAL_TIMER (LEDBOX_BUTTONS_DEBOUNCE_TIME*4)
+
 //**************************<Types and Variables>******************************
 enum eGamemodes {
 	gm1P	 = 0,
@@ -57,6 +59,8 @@ enum eGroup {
 struct sTeamGroup{
 	enum eGroup status;
 	uint8_t firstLED;
+	uint8_t special_timer;
+    enum eColor special_color;
 };
 struct sTeam {
 	uint8_t points;
@@ -65,6 +69,9 @@ struct sTeam {
 	uint8_t offGroup;
 
 	enum eColor teamColor;
+
+    enum eColor error_color;
+    enum eColor good_color;
 };
 
 volatile struct sTeam team[2];
@@ -103,19 +110,34 @@ uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes oM){
 		usedGamemode=gameMode;
 		operationMode=oM;
 
+		if (operationMode == omTeamprobe){
+			   firstNumber = 1;
+			   secondNumber = 2;
+		}
+
 		team[team1].teamColor = TEAM1COLOR;
 		team[team1].offGroup = 3;
 		team[team1].trys = 0;
 		team[team1].points = 0;
+		team[team1].error_color = clPurple;
+		team[team1].good_color = TEAM1COLOR;
 
 		team[team2].teamColor = TEAM2COLOR;
 		team[team2].offGroup = 3;
 		team[team2].trys = 0;
 		team[team2].points = 0;
+		team[team2].error_color = clPurple;
+		team[team2].good_color = TEAM2COLOR;
 
-		uint16_t randomNumber= random();
 		uint8_t  teamNr;
 		for (teamNr=0;teamNr<2;teamNr++){
+			uint8_t i;
+			for(i=0;i<3;i++){
+				team[teamNr].groups[i].status = groupOff;
+			}
+		}
+		uint16_t randomNumber= random();
+		for (teamNr=0;teamNr<((gameMode==gm2P)?2:1);teamNr++){
 			uint8_t i;
 			for(i=0;i<3;i++){
 				team[teamNr].groups[i].status = randomNumber % 2 + 1;
@@ -239,11 +261,20 @@ void setLEDs(void){
 		for(i=0;i<3;i++){
 			const uint8_t status = team[teamNr].groups[i].status;
 			const uint8_t number = team[teamNr].groups[i].firstLED;
+			const uint8_t special = team[teamNr].groups[i].special_timer;
+			const uint8_t special_color = team[teamNr].groups[i].special_color;
 			uint8_t num;
 			for(num=0;num<2;num++){
 				ir_set(number + num, status & (num + 1));
 				if(status & (num + 1)) rgb_set(number + num, color);
 			}
+			if (special){
+				team[teamNr].groups[i].special_timer--;
+        	    rgb_set(number-1,special_color);
+    	        rgb_set(number,special_color);
+	            rgb_set(number+1,special_color);
+            	rgb_set(number+2,special_color);
+        	}
 		}
 	}
 }
@@ -256,7 +287,14 @@ void pushButton(uint8_t number){
 
 	if (team[teamNr].groups[GroupNr].status){
 		team[teamNr].trys++;
-		if (team[teamNr].groups[GroupNr].status == LEDNr + 1) team[teamNr].points += POINTS_PER_PRESS;
+		if (team[teamNr].groups[GroupNr].status == LEDNr + 1){
+			team[teamNr].points += POINTS_PER_PRESS;
+			team[teamNr].groups[GroupNr].special_color=team[teamNr].good_color;
+		}else{
+			team[teamNr].groups[GroupNr].special_color=team[teamNr].error_color;
+		}
+		team[teamNr].groups[GroupNr].special_timer = SPECIAL_TIMER;
+
 		if ((operationMode == omGame) && (team[teamNr].trys>=MAX_TRYS)){
 			uint8_t i;
 			for(i=0;i<3;i++){
