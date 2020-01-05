@@ -141,7 +141,7 @@ int main () {
 	uint8_t itteration = 0;
 	uint8_t gameRunningShowPoints = 0;
 	uint8_t pointsMode = 1;
-	uint8_t invalidMode = 1;
+	uint8_t invalidMode = 0;
 	while (1) {
 		switch (menuemode){
 			case rsNone:
@@ -201,6 +201,9 @@ int main () {
 				break;
 				case rsSelectSubMode:
 					menuemode = rsStartMode;
+					if(master_button_state1() && master_button_state2()){
+						menuemode = rsSelectMasterMode;
+					}
 				break;
 				case rsGameModeStarting:
 				case rsGameModeRunning:
@@ -216,23 +219,23 @@ int main () {
 		}
 		switch (menuemode){
 			case rsSelectMasterMode:
-				if (master_button1()) {
+				if (master_button_up()) {
 					masterMode++;
 					masterMode %= MaxMasterModes;
 					//writeModesToDisplay(masterMode, submode);
 				}
-				if (master_button2()) {
+				if (master_button_down()) {
 					(masterMode <=	0)? masterMode = MaxMasterModes - 1 : masterMode-- ;
 					//writeModesToDisplay(masterMode, submode);
 				}
 			break;
 			case rsSelectSubMode:
-				if (master_button1()) {
+				if (master_button_up()) {
 					submode++;
 					submode %= maxModes[masterMode];
 					//writeModesToDisplay(masterMode, submode);
 				}
-				if (master_button2()) {
+				if (master_button_down()) {
 					(submode <=  0)? submode = maxModes[masterMode] - 1 : submode-- ;
 					//writeModesToDisplay(masterMode, submode);
 				}

@@ -39,8 +39,8 @@
 
 #define master_button1() (master_buttons_get_pushed(1))
 #define master_button2() (master_buttons_get_pushed(2))
-#define master_button_down() (master_buttons_get_pushed(1))
-#define master_button_up() (master_buttons_get_pushed(2))
+#define master_button_down() (master_buttons_get_pushed(2))
+#define master_button_up() (master_buttons_get_pushed(1))
 #define master_button3() (master_buttons_get_pushed(3))
 
 #define master_button_full1() (master_buttons_get_pushed(1))

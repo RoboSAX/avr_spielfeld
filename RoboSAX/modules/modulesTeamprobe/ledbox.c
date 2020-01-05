@@ -12,8 +12,6 @@
 //**************************<Included files>***********************************
 #include "../modulesInterface/ledbox.h"
 
-uint8_t firstNumber=0;
-uint8_t secondNumber=1;
 //**************************<Macros>*******************************************
 #define leds_setIr1(x)	  ( x ? (PORTD|= _BV(3)) : (PORTD&= ~_BV(3)))
 #define leds_setIr2(x)	  ( x ? (PORTB|= _BV(3)) : (PORTB&= ~_BV(3)))
@@ -61,6 +59,13 @@ volatile struct sRGB ledbox_rgb[LEDBOX_COUNT_MAX];
 
 // ir leds (order is invers!)
 volatile struct sIRLed ledbox_ir[LEDBOX_COUNT_MAX];
+
+struct sIrLedsIntern {
+    uint8_t state1    : 1;
+    uint8_t state2    : 1;
+    uint8_t counter   : 1;
+};
+volatile struct sIrLedsIntern ir_leds;
 
 //**************************<Methods>******************************************
 
@@ -123,6 +128,9 @@ void ledbox_init(void) {
 	sei();
 
 	ledbox_setup_module_count();
+
+	firstNumber=0;
+	secondNumber=1;
 }
 
 //**************************[ledbox_set_modul_count]**************************************
@@ -319,7 +327,7 @@ void _ledbox_buttons_and_ir_update(void) {
 	}
  
 	// set ir_led
-	leds_setIr1(ledbox_ir[firstNumber].read);
+	ir_leds.state1=ledbox_ir[firstNumber].read;
 
 	state = buttons_getBtn1();
 
@@ -344,7 +352,7 @@ void _ledbox_buttons_and_ir_update(void) {
 		}
 	}
 
-	leds_setIr2(ledbox_ir[secondNumber].read);
+	ir_leds.state2=ledbox_ir[secondNumber].read;
 
 	state = buttons_getBtn2();
 
@@ -389,4 +397,18 @@ void toggle_clk() {
 
 //**************************[toggle_led_load]**********************************
 void toggle_led_load() {
+}
+
+//**************************[delay_licht]**************************************
+ISR(TIMER2_COMPA_vect) {
+
+    if (ir_leds.counter) {
+        ir_leds.counter = 0;
+        leds_setIr1(ir_leds.state1);
+        leds_setIr2(ir_leds.state2);
+    } else {
+        ir_leds.counter = 1;
+        leds_setIr1(0);
+        leds_setIr2(0);
+    }
 }

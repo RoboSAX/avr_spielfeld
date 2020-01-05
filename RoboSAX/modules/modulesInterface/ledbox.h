@@ -34,6 +34,9 @@ enum fieldState{
 
 volatile uint8_t ledbox_count_current;
 volatile enum fieldState ledbox_state;
+
+volatile uint8_t firstNumber;
+volatile uint8_t secondNumber;
 //**************************<Prototypes>***************************************
 
 // init
