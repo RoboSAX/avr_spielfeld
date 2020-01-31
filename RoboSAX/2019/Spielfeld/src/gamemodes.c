@@ -102,7 +102,7 @@ void gamemode_init(void){
 	maxGameModes=1;
     random_init();
 
-    gamemode_start(0, omTest);
+    gamemode_start(0, omTest, bsSpielfeld);
 
     uint8_t  i;
     for(i=0;i<LEDBOX_COUNT_MAX;i++){
@@ -207,7 +207,7 @@ void gamemode_init(void){
     */
 }
 
-uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes operationMode){
+uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes operationMode, enum eBaseSystem system){
 
     //set all LEDs to on
     uint8_t  j;

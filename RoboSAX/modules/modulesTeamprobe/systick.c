@@ -80,17 +80,17 @@ void systick_init(void) {
 
     // 8-bit Timer
     // Mode 2 (CTC until OCRA)
-    TCCR0A =  _BV(WGM21);
-        // Bit 6-7 (COM2Ax) =   00 output mode (none)
-        // Bit 4-5 (COM2Bx) =   00 output mode (none)
+    TCCR0A =  _BV(WGM01);
+        // Bit 6-7 (COM0Ax) =   00 output mode (none)
+        // Bit 4-5 (COM0Bx) =   00 output mode (none)
         // Bit 2-3 (  -   ) =      reserved
-        // Bit 0-1 (WGM2x ) =   10 select timer mode [WGM22 in TCCR0B]
+        // Bit 0-1 (WGM0x ) =   10 select timer mode [WGM22 in TCCR0B]
 
     TCCR0B = (TICK_CS & 0x07);
-        // Bit 6-7 (FOC2n)  =    0 force output compare (none)
+        // Bit 6-7 (FOC0n)  =    0 force output compare (none)
         // Bit 4-5 (  -   ) =      reserved
-        // Bit 3   (WGM22 ) =    0 select timer mode [WGM0x in TCCR2A]
-        // Bit 0-2 (CS2x  ) =  ??? [calculated]
+        // Bit 3   (WGM02 ) =    0 select timer mode [WGM0x in TCCR2A]
+        // Bit 0-2 (CS0x  ) =  ??? [calculated]
 
     TCNT0 = 0;
         // Timer/Counter Register - current value of timer
@@ -100,15 +100,15 @@ void systick_init(void) {
 
     TIMSK0 = _BV(OCIE0A);
         // Bit 3-7 (  -   ) =      reserved
-        // Bit 2   (OCIE2B) =    0 interrupt for compare match B
-        // Bit 1   (OCIE2A) =    1 interrupt for compare match A (systick)
-        // Bit 0   (TOIE2 ) =    0 interrupt for overflow
+        // Bit 2   (OCIE0B) =    0 interrupt for compare match B
+        // Bit 1   (OCIE0A) =    1 interrupt for compare match A (systick)
+        // Bit 0   (TOIE0 ) =    0 interrupt for overflow
 
     TIFR0 = _BV(OCF0A);
         // Bit 3-7 (  -   ) =      reserved
-        // Bit 2   (OCF2B ) =    0 interrupt for compare match B
-        // Bit 1   (OCF2A ) =    1 interrupt for compare match A (systick)
-        // Bit 0   (TOV2  ) =    0 interrupt for overflow
+        // Bit 2   (OCF0B ) =    0 interrupt for compare match B
+        // Bit 1   (OCF0A ) =    1 interrupt for compare match A (systick)
+        // Bit 0   (TOV0  ) =    0 interrupt for overflow
 
     makeUpdate=1;
 }
@@ -185,11 +185,11 @@ void update (uint8_t count) {
     if (makeUpdate & update_Display){
         display_show();
     }
-    if ((makeUpdate & update_others) && (count==0)){
+    if (makeUpdate & update_others){
         _ledbox_buttons_and_ir_update();
-        _ledbox_rgb_update();
         _master_buttons_update();
     }
+    _ledbox_rgb_update();
     makeUpdate&=~update_activ;
 }
 //**************************[ISR(TIMER0_COMPA_vect)]****************************
@@ -203,13 +203,7 @@ ISR(TIMER0_COMPA_vect) {
     sei();
 
     // update
-    static uint8_t update_count=0;
-    if (update_count){
-        update_count--;
-    }else{
-        update_count=SYSTICK_LED_BUTTON_UPDATE_TIME;
-    }
-    update(update_count);
+    update(0);
 
     // turn off interrupts
     cli();

@@ -36,7 +36,7 @@
 #define BLINKCOUNTMULTI 6
 
 #define MAX_TRYS 5
-#define POINTS_PER_PRESS 5
+#define POINTS_PER_PRESS 3
 
 #define SPECIAL_TIMER (LEDBOX_BUTTONS_DEBOUNCE_TIME*4)
 
@@ -90,6 +90,9 @@ struct sGlobalLED LEDToTeam[LEDBOX_COUNT_MAX];
 
 enum eGamemodes usedGamemode;
 enum eOperationModes operationMode;
+enum eBaseSystem baseSystem;
+
+
 //**************************<Methods>******************************************
 void pushButton(uint8_t number);
 void setLEDs(void);
@@ -99,21 +102,20 @@ void gamemode_init(void){
 	random_init();
 
 	usedGamemode=gm1P;
-	gamemode_start(usedGamemode, omTest);
+	gamemode_start(usedGamemode, omTest, bsSpielfeld);
 
 }
 
-uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes oM){
+uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes oM, enum eBaseSystem system){
 	if ((ledbox_state == full_field && gameMode == gm2P)||
 		((ledbox_state == full_field || ledbox_state == half_field ) && gameMode == gm1P)){
 
 		usedGamemode=gameMode;
 		operationMode=oM;
+		baseSystem=system;
 
-		if (operationMode == omTeamprobe){
-			   firstNumber = 1;
-			   secondNumber = 2;
-		}
+		firstNumber = 1;
+		secondNumber = 2;
 
 		team[team1].teamColor = TEAM1COLOR;
 		team[team1].offGroup = 3;
@@ -296,16 +298,34 @@ void pushButton(uint8_t number){
 		team[teamNr].groups[GroupNr].special_timer = SPECIAL_TIMER;
 
 		if ((operationMode == omGame) && (team[teamNr].trys>=MAX_TRYS)){
-			uint8_t i;
-			for(i=0;i<3;i++){
-				team[teamNr].groups[i].status = groupOff;
+			uint8_t i,j,k;
+			if (baseSystem == bsSpielfeld){
+				for(i=0;i<3;i++){
+					team[teamNr].groups[i].status = groupOff;
+				}
+				team[teamNr].offGroup = 4;
+			}else{
+				enum eColor colorFinalize;
+				uint8_t timerFinalize;
+				uint8_t numberFinalize;
+				numberFinalize=team[teamNr].points;
+				colorFinalize=team[teamNr].teamColor;
+				for (i=0; i<numberFinalize;i++){
+					for (j=1;j<ledbox_count_current;j+=4){
+						for (k=0;k<2;k++){
+							timerFinalize=100;
+	            			while (timerFinalize){
+								rgb_set(j+k,colorFinalize);
+								waitAndUpdate();
+							}
+						}
+					}
+				}
+				team[teamNr].points = 0;
 			}
-			team[teamNr].offGroup = 4;
 		}
 
 		team[teamNr].groups[GroupNr].status = groupOff;
-  
-		if (operationMode == omTeamprobe) team[teamNr].offGroup = GroupNr;
   
 		if (team[teamNr].offGroup < 3){
 			team[teamNr].groups[team[teamNr].offGroup].status = random() % 2 + 1;

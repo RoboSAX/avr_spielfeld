@@ -35,6 +35,8 @@
 int main(void);
 void init(void);
 void default_display(void);
+void Modus1(void);
+void Modus2(void);
 
 enum eRunningState {
 	rsNone = 0,
@@ -46,6 +48,10 @@ enum eRunningState {
 	rsGameModeRunning ,
 	rsGameModeFinished
 };
+
+
+//**************************<Methods>******************************************
+
 //**************************[init]*********************************************
 void init () {
 	// initialization
@@ -57,64 +63,98 @@ void init () {
 
 	waitAndUpdate();
 
-	default_display();
 }
-//**************************[default display]**********************************
-void default_display(){
-	display_double_dot=0;
-	display_setSuperSegment(RoboSax,0);
-	display_setSuperSegment(Pokeball,1);
-	rgb_setAll(clRain);
-}
+//**************************[Modi]**********************
+void Modus1(){
 
-void scanmode_start(enum eScanModes scanMode){
-	switch (scanMode){
-	case scLedboxCount:
-		ledbox_setup_module_count();
-		showPoints(ledbox_count_current,LEDBOX_COUNT_MAX);
-		break;
-		
-	case scTesting:
-		{
-			static uint8_t number=0;
-			//rainbow LED
-			static uint8_t rainbowNumber=0;
-			uint32_t currentTime = systick_get();
-			uint32_t rainbowStartTime = currentTime;
-			if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)
-							||(currentTime<rainbowStartTime)){
-				rainbowNumber++;
-				rainbowNumber %= NUM_RAINBOWS;
-				rainbowStartTime = currentTime;
-			}
-			rgb_clearAll();
-            rgb_set(number,clRainbows[rainbowNumber]);
-			//IR LED
-			ir_clearAll();
-            ir_set(number,1);
-			//Buttontest&next
-			if (buttons_get(number)) number++;
-			//reset
-			if (master_button3()) {
-				number=0;
-			}
-		}
-		break;
-	default:
-		break;
-	}
- }
+    rgb_clearAll();
+	ir_setAll(1);
+
+    rgb_setAll(clRed);
+	delay_ms(500);
+    rgb_setAll(clGreen);
+	delay_ms(500);
+    rgb_setAll(clBlue);
+	delay_ms(500);
+
+	ir_clearAll();
+    rgb_clearAll();
+}
+void Modus2(){
+
+	uint8_t oldFirst=firstNumber;
+	firstNumber=0;
+	uint8_t oldSec=secondNumber;
+	secondNumber=1;
+
+    rgb_clearAll();
+
+    rgb_set(0,clRed);
+	ir_set(0,1);
+	delay_ms(250);
+    rgb_clearAll();
+	ir_clearAll();
+    
+	rgb_set(1,clYellow);
+	ir_set(1,1);
+	delay_ms(250);
+    rgb_clearAll();
+	ir_clearAll();
+    
+	rgb_set(0,clGreen);
+	ir_set(0,1);
+	delay_ms(250);
+    rgb_clearAll();
+	ir_clearAll();
+    
+	rgb_set(1,clCyan);
+	ir_set(1,1);
+	delay_ms(250);
+    rgb_clearAll();
+	ir_clearAll();
+    
+	rgb_set(0,clBlue);
+	ir_set(0,1);
+	delay_ms(250);
+    rgb_clearAll();
+	ir_clearAll();
+
+    rgb_set(1,clPurple);
+	ir_set(1,1);
+	delay_ms(250);
+    rgb_clearAll();
+	ir_clearAll();
+
+	firstNumber=oldFirst;
+	secondNumber=oldSec;
+}
 //**************************[main]*********************************************
 int main () {
 
 	//todo: select mode....
 	init();
 	uint8_t gamemode = 0;
-	gamemode_start(gamemode, omTeamprobe);
+	ledbox_count_current=12;
+	ledbox_state=half_field;
+	if (master_button_ok_state()){
+		Modus1();
+		gamemode_start(gamemode, omGame, bsTeamprobe);
+	}else{
+		Modus2();
+		gamemode_start(gamemode, omTest, bsTeamprobe);
+	}
 	buttons_reset();
 	while (1) {
 		gamemode_update();
 		waitAndUpdate();
+		
+		if master_button_ok_full()
+		{
+			firstNumber += 4;
+			firstNumber %= 12;
+			secondNumber += 4;
+			secondNumber %= 12;
+		}
 	}
 	return (0);
 }

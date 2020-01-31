@@ -243,8 +243,8 @@ int main () {
 			case rsStartMode:
 				if ((masterMode == mmGameMode) || (masterMode == mmTestMode))
 				{
-					if (masterMode == mmGameMode) invalidMode = gamemode_start(submode, omGame);
-					if (masterMode == mmTestMode) invalidMode = gamemode_start(submode, omTest);
+					if (masterMode == mmGameMode) invalidMode = gamemode_start(submode, omGame, bsSpielfeld);
+					if (masterMode == mmTestMode) invalidMode = gamemode_start(submode, omTest, bsSpielfeld);
 					buttons_reset();
 				}
 				if (masterMode == mmGameMode)

@@ -66,9 +66,6 @@ struct sRGB {
     uint8_t dataOut[8];///< data for the USART
 };
 
-// buttons
-#define SYSTICK_LED_BUTTON_UPDATE_TIME 2
-
 //debounce=debounce*(global+1)*(update+1)[ms]
 #define MASTER_BUTTONS_DEBOUNCE_TIME 15
 #define MASTER_BUTTONS_GLOBAL_TIME 2

@@ -57,7 +57,7 @@ volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
 // rgb leds
 volatile struct sRGB ledbox_rgb[LEDBOX_COUNT_MAX];
 
-// ir leds (order is invers!)
+// ir leds (order is irvers!)
 volatile struct sIRLed ledbox_ir[LEDBOX_COUNT_MAX];
 
 struct sIrLedsIntern {
@@ -97,23 +97,6 @@ void ledbox_init(void) {
 						  // Prescaler: 1
 	OCR2A = 210;		  // Top: 210 ==> 76KHz
 	TIMSK2 = _BV(OCIE2A); // enable compare match interrupt
-	//Timer 2 -> IR led basetakt(38KHz)
-	TCCR2A	= 0
-			 //|_BV(COM2A1)  // OC0A disconnected
-			 //|_BV(COM2A0)  // OC0A disconnected
-			 //|_BV(COM2B1)  // OC0B toggel mode
-			 |_BV(COM2B0)	 // OC0B toggel mode
-			 |_BV(WGM21)	 // Timer modus CTC top at OCR0A
-			 //|_BV(WGM20)	 // =Mode 2
-			 ;
-	TCCR2B	= 0
-			 //|_BV(WGM22)	 // Timer modus CTC top at OCR0A
-			 //|_BV(CS22)	 // Speed = 38KHz
-			 |_BV(CS21)		 // => 20MHz/2(half speed by toggeling)/38KHz~aller 263 takte
-			 //|_BV(CS20)	 // => prescaler=8,OCRA=32=>37,87KHz
-			 ;
-	OCR2A	= 32;
-
 
 	// startup time
 	delay_ms(50);
