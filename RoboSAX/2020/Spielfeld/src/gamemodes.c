@@ -149,8 +149,8 @@ uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes oM, enum eBaseSyst
 		//init Led to team with respect to field size
 		uint8_t i;
 		for(i=0;i< ledbox_count_current / 4;i++){
-			const uint8_t teamNr = ((ledbox_state == half_field) || (i < 1) || (i > 3)) ? 0 : 1;
-			const uint8_t groupNr = ((ledbox_state == half_field) || (i < 1)) ? i : (i < 4) ? i - 1 : i - 3;
+			const uint8_t teamNr = i / (LEDBOX_COUNT_MAX/2);
+			const uint8_t groupNr = (i % (LEDBOX_COUNT_MAX/2)) / 4;
 			uint8_t j;
 			for(j=0;j< 4;j++){
 				uint8_t number = i * 4 + j;
@@ -178,7 +178,7 @@ uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes oM, enum eBaseSyst
 void gamemode_update(){
 	uint8_t i;
 	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		if (buttons_get(i)) {
+		if (buttons_get(shift_num(i))) {
 			pushButton(i);
 		}
 	}
@@ -197,38 +197,21 @@ void gamemode_finalize(uint8_t count, uint8_t mode){
 	uint8_t numberMax = (full_field)? ledbox_count_current / 2 : ledbox_count_current;
 	uint8_t number = (count > numberMax)? numberMax: count;
 
-	//for (i = 0; i < ledbox_count_current; i++) {
-	//	rgb_set(i, clBlack);
-	//}
-	
 	showPoints(team[team1].points, team[team2].points);
 
-
-	if(ledbox_state == full_field){
-		//0 -> no leds
-		//76 -> all leds
-		//1-75 -> >=one led on, >=1 led off
-		for (i = 0; i < number; i++) {
-	  	 if(((i * points1MaxVal)/(numberMax - 1U)) < (team[team1].points)){
-				rgb_set(i, team[team1].teamColor);
-			} else {
-				rgb_set(i, clBlack);
-			}
+	for (i = 0; i < number; i++) {
+		if(((i * points1MaxVal)/(numberMax - 1U)) < (team[team1].points)){
+			rgb_set(shift_num(i), team[team1].teamColor);
+		} else {
+			rgb_set(shift_num(i), clBlack);
 		}
+	}
+	if(ledbox_state == full_field){
 		for (i = 0; i < number; i++) {
 			if(((i * points2MaxVal)/(numberMax - 1U)) < (team[team2].points)){
-				rgb_set(ledbox_count_current-1-i, team[team2].teamColor);
+				rgb_set(shift_num(i), team[team2].teamColor);
 			} else {
-				rgb_set(ledbox_count_current-1-i, clBlack);
-			}
-		}
-	} else { 
-		for (i = 0; i < number; i++) {
-			uint8_t led = (ledbox_count_current - i + 3) % ledbox_count_current;
-			if(((i * points1MaxVal)/(numberMax - 1U)) < (team[team1].points)){
-				rgb_set(led, team[team1].teamColor);
-			} else {
-				rgb_set(led, clBlack);
+				rgb_set(shift_num(i), clBlack);
 			}
 		}
 	}
@@ -267,15 +250,15 @@ void setLEDs(void){
 			const uint8_t special_color = team[teamNr].groups[i].special_color;
 			uint8_t num;
 			for(num=0;num<2;num++){
-				ir_set(number + num, status & (num + 1));
-				if(status & (num + 1)) rgb_set(number + num, color);
+				ir_set(shift_num(number + num), status & (num + 1));
+				if(status & (num + 1)) rgb_set(shift_num(number + num), color);
 			}
 			if (special){
 				team[teamNr].groups[i].special_timer--;
-        	    rgb_set(number-1,special_color);
-    	        rgb_set(number,special_color);
-	            rgb_set(number+1,special_color);
-            	rgb_set(number+2,special_color);
+        	    rgb_set(shift_num(number-1),special_color);
+    	        rgb_set(shift_num(number),special_color);
+	            rgb_set(shift_num(number+1),special_color);
+            	rgb_set(shift_num(number+2),special_color);
         	}
 		}
 	}

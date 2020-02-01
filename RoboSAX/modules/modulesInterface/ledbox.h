@@ -22,6 +22,10 @@
 
 //**************************<Macros>*******************************************
 #define LEDBOX_COUNT_MAX 24
+#define LEDBOX_FULL_FIELD 24
+#define LEDBOX_FULL_FIELD_ABNORMITY 4
+#define LEDBOX_HALF_FIELD 12
+#define LEDBOX_HALF_FIELD_ABNORMITY 4
 
 // buttons
 
@@ -80,7 +84,12 @@ volatile uint8_t firstNumber;
 volatile uint8_t secondNumber;
 //**************************<Prototypes>***************************************
 
-#define shift_num(number) ((ledbox_state==full_field)?(number+20)%24:number)
+#define shift_num(number) \
+	((ledbox_state==full_field)?((number>=LEDBOX_FULL_FIELD)?LEDBOX_FULL_FIELD:\
+		(number+LEDBOX_FULL_FIELD-LEDBOX_FULL_FIELD_ABNORMITY)%LEDBOX_FULL_FIELD)\
+	:(ledbox_state==half_field)?((number>=LEDBOX_HALF_FIELD)?LEDBOX_HALF_FIELD:\
+		(number+LEDBOX_HALF_FIELD-LEDBOX_HALF_FIELD_ABNORMITY)%LEDBOX_HALF_FIELD)\
+	:number)
 
 // init
 void ledbox_init(void);
