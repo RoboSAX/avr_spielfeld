@@ -26,6 +26,47 @@
 // buttons
 
 //**************************<Types and Variables>******************************
+// leds
+enum eColor {
+    clPurple = 0,
+    clPB     ,
+    clBlue   ,
+    clBC     ,
+    clCyan   ,
+    clCG     ,
+    clGreen  ,
+    clGY     ,
+    clYellow ,
+    clYR     ,
+    clRed    ,
+    clRP     ,
+    clWhite  ,
+    clBlack  ,
+    clLBlue  ,
+    clLGreen ,
+    clLRed   ,
+    clBBlue  ,
+    clBGreen ,
+    clBRed   ,
+    clRain0  ,
+    clRain1  ,
+    clRain2  ,
+    clRain3  ,
+    clRain4  ,
+    clRain5  ,
+    clRain6  ,
+    clRain7  ,
+    clRain8  ,
+    clRain9  ,
+    clRain10 ,
+    clRain11 ,
+    clRain   = clRain0
+};
+
+#define NUM_RAINBOWS 12
+static const enum eColor clRainbows[NUM_RAINBOWS]={clRain0,clRain1,clRain2,clRain3,clRain4,clRain5,clRain6,clRain7,clRain8,clRain9,clRain10,clRain11};
+
+
 enum fieldState{
 	unknown_field = 0,
 	full_field	= 1,

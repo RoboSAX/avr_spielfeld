@@ -12,36 +12,17 @@
 
 //*********************************<Included files>*****************************
 #include "../modulesInterface/systick.h"
-#include "../modulesInterface/master.h"
-#include "../modulesInterface/display.h"
-#include "../modulesInterface/ledbox.h"
-
-
 
 //*********************************<Types>**************************************
 
-
-
 //*********************************<Constants>**********************************
 
-// buttons
-#define SYSTICK_LED_BUTTON_UPDATE_TIME 2
-
-
 //*********************************<Variables>**********************************
-volatile uint32_t systick_count;
-volatile uint8_t makeUpdate;
-
-
 
 //*********************************<Macros>*************************************
 
-
-
 //*********************************<Prototypes>*********************************
 ISR(TIMER2_COMPA_vect);
-
-
 
 //*********************************[systick_init]*******************************
 void systick_init(void) {
@@ -112,113 +93,10 @@ void systick_init(void) {
         // Bit 1   (OCF2A ) =    1 interrupt for compare match A (systick)
         // Bit 0   (TOV2  ) =    0 interrupt for overflow
 
-    makeUpdate=1;
+    systick_reset();
 }
 
-//*********************************[systick_reset]******************************
-void systick_reset() {
-
-    uint8_t mSREG = SREG;
-    cli();
-    systick_count = 0;
-    SREG = mSREG;
-}
-
-//*********************************[systick_delay]******************************
-void systick_delay(uint16_t mseconds) {
-
-    uint32_t start;
-
-    start = systick_get();
-
-    while (systick_get() - start < (uint32_t)mseconds) {
-        sei();
-    }
-}
-
-//*********************************[systick_get]********************************
-uint32_t systick_get() {
-
-    uint32_t result;
-    uint8_t mSREG = SREG;
-    cli();
-    result = systick_count;
-    SREG = mSREG;
-
-    return result;
-}
-
-//*********************************[systick_toHour]*****************************
-uint8_t systick_toHour(uint32_t time) {
-
-    return time / (uint32_t) 3600000;
-}
-
-//*********************************[systick_toMin]******************************
-uint8_t systick_toMin(uint32_t time) {
-
-    return (time / (uint32_t) 60000) % (uint32_t) 60;
-}
-
-//*********************************[systick_toSec]******************************
-uint8_t systick_toSec(uint32_t time) {
-
-    return (time / (uint32_t) 1000) % (uint32_t) 60;
-}
-
-//*********************************[systick_toMsec]*****************************
-uint16_t systick_toMsec(uint32_t time) {
-
-    return (time % (uint32_t) 1000);
-}
-
-//**************************<UPDATE>********************************************
-uint8_t systick_freezUpdate(enum eUpdate update){
-    if (makeUpdate & (update_activ|(update<<1))) return 0;
-	makeUpdate&=~update;
-	return 1;
-}
-void systick_unFreezUpdate(enum eUpdate update){
-    makeUpdate|=update;
-}
-void update (uint8_t count) {
-    makeUpdate|=update_activ;
-    if (makeUpdate & update_Display){
-        display_show();
-    	makeUpdate&=~update_Display_planed;
-    }else{
-    	makeUpdate|=update_Display_planed;
-	}
-    if ((makeUpdate & update_others) && (count==0)){
-        _ledbox_buttons_and_ir_update();
-        _ledbox_rgb_update();
-        _master_buttons_update();
-    	makeUpdate&=~update_others_planed;
-    }else{
-    	makeUpdate|=update_others_planed;
-	}
-    makeUpdate&=~update_activ;
-}
 //**************************[ISR(TIMER0_COMPA_vect)]****************************
 ISR(TIMER2_COMPA_vect) {
-
-    // count up
-    systick_count++;
-
-    // turn on interrupts
-    TIMSK2&= ~ _BV(OCIE2A);
-    sei();
-
-    // update
-    static uint8_t update_count=0;
-    if (update_count){
-        update_count--;
-    }else{
-        update_count=SYSTICK_LED_BUTTON_UPDATE_TIME;
-    }
-    update(update_count);
-
-    // turn off interrupts
-    cli();
-    TIMSK2|= _BV(OCIE2A);
+	update();
 }

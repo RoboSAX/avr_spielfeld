@@ -45,19 +45,29 @@
 //#define ledbox_ir_get ledbox_ir[working_buffer]
 //#define ledbox_ir_set ledbox_ir[display_buffer]
 //**************************<Types and Variables>******************************
-struct sIRLed{
-	uint8_t read  : 1;
-	uint8_t write : 1;
-	uint8_t empty : 6;
-};
 
 // buttons
+struct sButtonState {
+    uint8_t state    	: 1; ///< boolean
+    uint8_t flank    	: 1; ///< boolean
+    uint8_t countdown	: 4; ///< 0..15 (* 1ms)
+	uint8_t empty    	: 2;
+};
 volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
 
 // rgb leds
+struct sRGB {
+    uint8_t r; ///< red
+    uint8_t g; ///< green
+    uint8_t b; ///< blue
+};
 volatile struct sRGB ledbox_rgb[LEDBOX_COUNT_MAX];
 
-// ir leds (order is irvers!)
+// ir leds
+struct sIRLed{
+	uint8_t state : 1;
+	uint8_t empty : 7;
+};
 volatile struct sIRLed ledbox_ir[LEDBOX_COUNT_MAX];
 
 struct sIrLedsIntern {
@@ -68,11 +78,6 @@ struct sIrLedsIntern {
 volatile struct sIrLedsIntern ir_leds;
 
 //**************************<Methods>******************************************
-
-// clock and load
-void toggle_clk(void);
-void toggle_led_load(void);
-
 
 //**************************[ledbox_init]**************************************
 void ledbox_init(void) {
@@ -124,55 +129,6 @@ void ledbox_setup_module_count(void) {
 }
 
 
-//**************************[rgb_set]******************************************
-void rgb_set(uint8_t number, enum eColor color) {
-
-	if (number >= LEDBOX_COUNT_MAX) {
-		return;
-	}
-
-	#define H2 30
-	switch (color) {
-		case clPurple: rgb_set2(number, 255,   0, 255); break;
-		case clPB	 : rgb_set2(number,  H2,   0, 255); break;
-		case clBlue  : rgb_set2(number,   0,   0, 255); break;
-		case clBC	 : rgb_set2(number,   0,  H2, 255); break;
-		case clCyan  : rgb_set2(number,   0, 255, 255); break;
-		case clCG	 : rgb_set2(number,   0, 255,  H2); break;
-		case clGreen : rgb_set2(number,   0, 255,	0); break;
-		case clGY	 : rgb_set2(number,  H2, 255,	0); break;
-		case clYellow: rgb_set2(number, 255, 255,	0); break;
-		case clYR	 : rgb_set2(number, 255,  H2,	0); break;
-		case clRed	 : rgb_set2(number, 255,   0,	0); break;
-		case clRP	 : rgb_set2(number, 255,   0,  H2); break;
-
-		case clBlack : rgb_set2(number,   0,   0,	0); break;
-		case clWhite : rgb_set2(number, 255, 255, 255); break;
-
-		case clLBlue : rgb_set2(number,  10,  10,  50); break;
-		case clLGreen: rgb_set2(number,  10,  50,  10); break;
-		case clLRed  : rgb_set2(number,  50,  10,  10); break;
-
-		case clBBlue : rgb_set2(number,   0,   0, 100); break;
-		case clBGreen: rgb_set2(number,   0, 100,	0); break;
-		case clBRed  : rgb_set2(number, 100,   0,	0); break;
-
-		case clRain0 : rgb_set (number,(number +11)%12); break;
-		case clRain1 : rgb_set (number,(number +10)%12); break;
-		case clRain2 : rgb_set (number,(number + 9)%12); break;
-		case clRain3 : rgb_set (number,(number + 8)%12); break;
-		case clRain4 : rgb_set (number,(number + 7)%12); break;
-		case clRain5 : rgb_set (number,(number + 6)%12); break;
-		case clRain6 : rgb_set (number,(number + 5)%12); break;
-		case clRain7 : rgb_set (number,(number + 4)%12); break;
-		case clRain8 : rgb_set (number,(number + 3)%12); break;
-		case clRain9 : rgb_set (number,(number + 2)%12); break;
-		case clRain10: rgb_set (number,(number + 1)%12); break;
-		case clRain11: rgb_set (number,(number + 0)%12); break;
-		default		 :									break;
-	}
-}
-
 //**************************[rgb_set2]*****************************************
 void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
 
@@ -185,38 +141,6 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
 	ledbox_rgb[number].b = b;
 }
 
-//**************************[rgb_setAll]***************************************
-void rgb_setAll(enum eColor color) {
-
-	uint8_t i;
-
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set(i, color);
-	}
-}
-
-//**************************[rgb_setAll2]**************************************
-void rgb_setAll2(uint8_t r, uint8_t g, uint8_t b) {
-
-	uint8_t i;
-
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set2(i, r, g, b);
-	}
-}
-
-//**************************[rgb_clearAll]*************************************
-void rgb_clearAll() {
-
-	uint8_t i;
-
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set2(i, 0, 0, 0);
-	}
-}
-
-
-
 //**************************[ir_set]*******************************************
 void ir_set(uint8_t number, uint8_t x) {
 
@@ -224,26 +148,8 @@ void ir_set(uint8_t number, uint8_t x) {
 		return;
 	}
 
-	ledbox_ir[number].write = x ? 1 : 0;
+	ledbox_ir[number].state = x ? 1 : 0;
 }
-
-//**************************[ir_setAll]****************************************
-void ir_setAll(uint8_t x) {
-
-	uint8_t i;
-
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		ir_set(i, x);
-	}
-}
-
-//**************************[ir_clearAll]**************************************
-void ir_clearAll(void) {
-
-	ir_setAll(0);
-}
-
-
 
 //**************************[buttons_reset]************************************
 void buttons_reset(void) {
@@ -251,8 +157,8 @@ void buttons_reset(void) {
 	uint8_t i;
 
 	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		ledbox_buttons[i].stateWrite= 0;
-		ledbox_buttons[i].flankWrite= 0;
+		ledbox_buttons[i].state= 0;
+		ledbox_buttons[i].flank= 0;
 		ledbox_buttons[i].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
 	}
 
@@ -265,7 +171,7 @@ void buttons_clear(void) {
 	uint8_t i;
 
 	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		ledbox_buttons[i].flankRead =  0;
+		ledbox_buttons[i].flank =  0;
 	}
 }
 
@@ -276,8 +182,8 @@ uint8_t buttons_get(uint8_t number) {
 		return 0x00;
 	}
 
-	uint8_t result = ledbox_buttons[number].flankRead;
-	ledbox_buttons[number].flankRead = 0;
+	uint8_t result = ledbox_buttons[number].flank;
+	ledbox_buttons[number].flank = 0;
 
 	return result;
 }
@@ -286,9 +192,8 @@ uint8_t buttons_get(uint8_t number) {
 void _ledbox_rgb_update(void) {
 
 
-	static uint8_t X=0;
-	X++;
-	if (!X)X++;
+	static uint8_t X=1;
+	X+=0x10;
 
 	led1_setRed(ledbox_rgb[firstNumber].r>=X);
 	led1_setGreen(ledbox_rgb[firstNumber].g>=X);
@@ -311,13 +216,13 @@ void _ledbox_buttons_and_ir_update(void) {
 	}
  
 	// set ir_led
-	ir_leds.state1=ledbox_ir[firstNumber].read;
+	ir_leds.state1=ledbox_ir[firstNumber].state;
 
 	state = buttons_getBtn1();
 
 	// check for changed state
-	if (state != ledbox_buttons[firstNumber].stateWrite) {
-		ledbox_buttons[firstNumber].stateWrite = state;
+	if (state != ledbox_buttons[firstNumber].state) {
+		ledbox_buttons[firstNumber].state = state;
 
 		// state did change
 		if (ledbox_buttons[firstNumber].countdown == 0x00) {
@@ -325,7 +230,7 @@ void _ledbox_buttons_and_ir_update(void) {
 				// button released
 				ledbox_buttons[firstNumber].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
 			} else {				 // pushed button and no countdown
-				ledbox_buttons[firstNumber].flankWrite = 1;
+				ledbox_buttons[firstNumber].flank = 1;
 			}
 		}
 	}
@@ -336,13 +241,13 @@ void _ledbox_buttons_and_ir_update(void) {
 		}
 	}
 
-	ir_leds.state2=ledbox_ir[secondNumber].read;
+	ir_leds.state2=ledbox_ir[secondNumber].state;
 
 	state = buttons_getBtn2();
 
 	// check for changed state
-	if (state != ledbox_buttons[secondNumber].stateWrite) {
-		ledbox_buttons[secondNumber].stateWrite = state;
+	if (state != ledbox_buttons[secondNumber].state) {
+		ledbox_buttons[secondNumber].state = state;
 
 		// state did change
 		if (ledbox_buttons[secondNumber].countdown == 0x00) {
@@ -350,7 +255,7 @@ void _ledbox_buttons_and_ir_update(void) {
 				// button released
 				ledbox_buttons[secondNumber].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
 			} else {				 // pushed button and no countdown
-				ledbox_buttons[secondNumber].flankWrite = 1;
+				ledbox_buttons[secondNumber].flank = 1;
 			}
 		}
 	}
@@ -363,24 +268,6 @@ void _ledbox_buttons_and_ir_update(void) {
 }
 
 void _ledbox_switchBuffer(){
-
-	uint8_t number;
-	for(number=0;number<LEDBOX_COUNT_MAX;number++){
-		ledbox_ir[number].read = ledbox_ir[number].write;
-
-		ledbox_buttons[number].flankRead |= ledbox_buttons[number].flankWrite;
-		ledbox_buttons[number].flankWrite = 0;
-		//ledbox_buttons[number].stateRead |= ledbox_buttons[number].stateWrite;
-	}
-}
-
-
-//**************************[toggle_clk]***************************************
-void toggle_clk() {
-}
-
-//**************************[toggle_led_load]**********************************
-void toggle_led_load() {
 }
 
 //**************************[delay_licht]**************************************

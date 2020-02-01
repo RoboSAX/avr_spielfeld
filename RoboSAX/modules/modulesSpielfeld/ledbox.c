@@ -90,19 +90,32 @@
 //#define ledbox_ir_get ledbox_ir[working_buffer]
 //#define ledbox_ir_set ledbox_ir[display_buffer]
 //**************************<Types and Variables>******************************
+
+// buttons
+struct sButtonState {
+    uint8_t stateWrite: 1; ///< boolean
+    uint8_t stateRead : 1; ///< boolean
+    uint8_t flankWrite: 1; ///< boolean
+    uint8_t flankRead : 1; ///< boolean
+    uint8_t countdown : 4; ///< 0..15 (* 1ms)
+};
+volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
+
+// rgb leds
+struct sRGB {
+    uint8_t r; ///< red
+    uint8_t g; ///< green
+    uint8_t b; ///< blue
+    uint8_t dataOut[8];///< data for the USART
+};
+volatile struct sRGB ledbox_rgb[LEDBOX_COUNT_MAX];
+
+// ir leds (order is invers!)
 struct sIRLed{
 	uint8_t read  : 1;
 	uint8_t write : 1;
 	uint8_t empty : 6;
 };
-
-// buttons
-volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
-
-// rgb leds
-volatile struct sRGB ledbox_rgb[LEDBOX_COUNT_MAX];
-
-// ir leds (order is invers!)
 volatile struct sIRLed ledbox_ir[LEDBOX_COUNT_MAX];
 
 //**************************<Methods>******************************************
@@ -242,56 +255,6 @@ void ledbox_setup_module_count(void) {
 		ledbox_count_current=LEDBOX_COUNT_MAX;
 }
 
-
-//**************************[rgb_set]******************************************
-void rgb_set(uint8_t number, enum eColor color) {
-
-	if (number >= LEDBOX_COUNT_MAX) {
-		return;
-	}
-
-	#define H2 30
-	switch (color) {
-		case clPurple: rgb_set2(number, 255,   0, 255); break;
-		case clPB	 : rgb_set2(number,  H2,   0, 255); break;
-		case clBlue  : rgb_set2(number,   0,   0, 255); break;
-		case clBC	 : rgb_set2(number,   0,  H2, 255); break;
-		case clCyan  : rgb_set2(number,   0, 255, 255); break;
-		case clCG	 : rgb_set2(number,   0, 255,  H2); break;
-		case clGreen : rgb_set2(number,   0, 255,	0); break;
-		case clGY	 : rgb_set2(number,  H2, 255,	0); break;
-		case clYellow: rgb_set2(number, 255, 255,	0); break;
-		case clYR	 : rgb_set2(number, 255,  H2,	0); break;
-		case clRed	 : rgb_set2(number, 255,   0,	0); break;
-		case clRP	 : rgb_set2(number, 255,   0,  H2); break;
-
-		case clBlack : rgb_set2(number,   0,   0,	0); break;
-		case clWhite : rgb_set2(number, 255, 255, 255); break;
-
-		case clLBlue : rgb_set2(number,  10,  10,  50); break;
-		case clLGreen: rgb_set2(number,  10,  50,  10); break;
-		case clLRed  : rgb_set2(number,  50,  10,  10); break;
-
-		case clBBlue : rgb_set2(number,   0,   0, 100); break;
-		case clBGreen: rgb_set2(number,   0, 100,	0); break;
-		case clBRed  : rgb_set2(number, 100,   0,	0); break;
-
-		case clRain0 : rgb_set (number,(number +11)%12); break;
-		case clRain1 : rgb_set (number,(number +10)%12); break;
-		case clRain2 : rgb_set (number,(number + 9)%12); break;
-		case clRain3 : rgb_set (number,(number + 8)%12); break;
-		case clRain4 : rgb_set (number,(number + 7)%12); break;
-		case clRain5 : rgb_set (number,(number + 6)%12); break;
-		case clRain6 : rgb_set (number,(number + 5)%12); break;
-		case clRain7 : rgb_set (number,(number + 4)%12); break;
-		case clRain8 : rgb_set (number,(number + 3)%12); break;
-		case clRain9 : rgb_set (number,(number + 2)%12); break;
-		case clRain10: rgb_set (number,(number + 1)%12); break;
-		case clRain11: rgb_set (number,(number + 0)%12); break;
-		default		 :									break;
-	}
-}
-
 //**************************[rgb_set2]*****************************************
 void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
 
@@ -306,38 +269,6 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
 
 }
 
-//**************************[rgb_setAll]***************************************
-void rgb_setAll(enum eColor color) {
-
-	uint8_t i;
-
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set(i, color);
-	}
-}
-
-//**************************[rgb_setAll2]**************************************
-void rgb_setAll2(uint8_t r, uint8_t g, uint8_t b) {
-
-	uint8_t i;
-
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set2(i, r, g, b);
-	}
-}
-
-//**************************[rgb_clearAll]*************************************
-void rgb_clearAll() {
-
-	uint8_t i;
-
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set2(i, 0, 0, 0);
-	}
-}
-
-
-
 //**************************[ir_set]*******************************************
 void ir_set(uint8_t number, uint8_t x) {
 
@@ -348,24 +279,6 @@ void ir_set(uint8_t number, uint8_t x) {
 	// order is invers!
 	ledbox_ir[ledbox_count_current - number - 1].write = x ? 1 : 0;
 }
-
-//**************************[ir_setAll]****************************************
-void ir_setAll(uint8_t x) {
-
-	uint8_t i;
-
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		ir_set(i, x);
-	}
-}
-
-//**************************[ir_clearAll]**************************************
-void ir_clearAll(void) {
-
-	ir_setAll(0);
-}
-
-
 
 //**************************[buttons_reset]************************************
 void buttons_reset(void) {

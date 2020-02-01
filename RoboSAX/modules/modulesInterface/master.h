@@ -20,21 +20,6 @@
 
 
 //**************************<Macros>*******************************************
-// leds (only for testing - will be removed)
-#define MASTER_LED1_PORT      PORTD
-#define MASTER_LED1_DDR       DDRD
-#define MASTER_LED1_PIN       _BV(1)
-#define debug_led1(x)        (x ? (MASTER_LED1_PORT&= ~MASTER_LED1_PIN) : \
-                             (MASTER_LED1_PORT|= MASTER_LED1_PIN))
-#define _debug_led1_enable() (MASTER_LED1_DDR|= MASTER_LED1_PIN)
-
-#define MASTER_LED2_PORT      PORTD
-#define MASTER_LED2_DDR       DDRD
-#define MASTER_LED2_PIN       _BV(4)
-#define debug_led2(x)        (x ? (MASTER_LED2_PORT|= MASTER_LED2_PIN) : \
-                             (MASTER_LED2_PORT&= ~MASTER_LED2_PIN))
-#define _debug_led2_enable() (MASTER_LED2_DDR|= MASTER_LED2_PIN)
-
 // buttons
 
 #define master_button1() (master_buttons_get_pushed(1))
@@ -60,9 +45,6 @@
 
 
 //**************************<Types and Variables>******************************
-#define MASTER_BUTTONS_COUNT 3
-// buttons
-volatile struct sButtonState master_buttons[MASTER_BUTTONS_COUNT];
 
 
 //**************************<Prototypes>***************************************
@@ -78,6 +60,7 @@ uint8_t master_buttons_get_push_and_released(uint8_t number);
 uint8_t master_buttons_get_state(uint8_t number);
 
 // update
+uint8_t _master_button(uint8_t number);
 void _master_buttons_update(void);
 
 #endif //#ifndef __MASTER_H

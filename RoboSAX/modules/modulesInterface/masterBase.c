@@ -10,55 +10,56 @@
 
 
 //**************************<Included files>***********************************
-#include "../modulesInterface/master.h"
-#include "../modulesImpl/master.h"
+#include "master.h"
 
 
 //**************************<Macros>*******************************************
+// leds (only for testing - will be removed)
+#define MASTER_LED1_PORT      PORTD
+#define MASTER_LED1_DDR       DDRD
+#define MASTER_LED1_PIN       _BV(1)
+#define debug_led1(x)        (x ? (MASTER_LED1_PORT&= ~MASTER_LED1_PIN) : \
+                             (MASTER_LED1_PORT|= MASTER_LED1_PIN))
+#define _debug_led1_enable() (MASTER_LED1_DDR|= MASTER_LED1_PIN)
+
+#define MASTER_LED2_PORT      PORTD
+#define MASTER_LED2_DDR       DDRD
+#define MASTER_LED2_PIN       _BV(4)
+#define debug_led2(x)        (x ? (MASTER_LED2_PORT|= MASTER_LED2_PIN) : \
+                             (MASTER_LED2_PORT&= ~MASTER_LED2_PIN))
+#define _debug_led2_enable() (MASTER_LED2_DDR|= MASTER_LED2_PIN)
+
 // buttons
 #define MASTER_BUTTONS_COUNT 3
 
 //**************************<Types and Variables>******************************
 // buttons
+struct sButtonState {
+    uint8_t state    	: 1; ///< boolean
+    uint8_t flank    	: 1; ///< boolean
+    uint8_t countdown	: 4; ///< 0..15 (* 1ms)
+	uint8_t empty    	: 2;
+};
+
 volatile struct sButtonState master_buttons[MASTER_BUTTONS_COUNT];
 
 
 //**************************<Methods>******************************************
-//**************************[master_init]**************************************
-void master_init(void) {
-
-    // hardware
-        // leds
-        _debug_led1_enable();
-        _debug_led2_enable();
-
-        debug_led1(0);
-        debug_led2(0);
-
-        // buttons
-        _button1_init();
-        _button2_init();
-        _button3_init();
-
-    // variables
-        // buttons
-        master_buttons_reset();
-}
 
 //**************************[master_buttons_reset]*****************************
 void master_buttons_reset(void) {
 
-    master_buttons[0].stateWrite= 0;
+    master_buttons[0].state= 0;
     master_buttons[0].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
-    master_buttons[0].flankWrite= 0;
+    master_buttons[0].flank= 0;
 
-    master_buttons[1].stateWrite= 0;
+    master_buttons[1].state= 0;
     master_buttons[1].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
-    master_buttons[1].flankWrite= 0;
+    master_buttons[1].flank= 0;
 
-    master_buttons[2].stateWrite= 0;
+    master_buttons[2].state= 0;
     master_buttons[2].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
-    master_buttons[2].flankWrite= 0;
+    master_buttons[2].flank= 0;
 
     master_buttons_clear();
 }
@@ -66,9 +67,9 @@ void master_buttons_reset(void) {
 //**************************[master_buttons_clear]*****************************
 void master_buttons_clear(void) {
 
-    master_buttons[0].flankRead =  0;
-    master_buttons[1].flankRead =  0;
-    master_buttons[2].flankRead =  0;
+    master_buttons[0].flank=  0;
+    master_buttons[1].flank=  0;
+    master_buttons[2].flank=  0;
 }
 
 //**************************[master_buttons_get]*******************************
@@ -79,8 +80,8 @@ uint8_t master_buttons_get_pushed(uint8_t number) {
         return 0x00;
     }
 
-    uint8_t result = master_buttons[number].flankRead;
-    master_buttons[number].flankRead = 0;
+    uint8_t result = master_buttons[number].flank;
+    master_buttons[number].flank= 0;
 
     return result;
 }
@@ -92,8 +93,8 @@ uint8_t master_buttons_get_push_and_released(uint8_t number) {
         return 0x00;
     }
 
-    uint8_t result = (master_buttons[number].flankRead)&&(!master_buttons[number].stateRead);
-    if (result) master_buttons[number].flankRead = 0;
+    uint8_t result = (master_buttons[number].flank)&&(!master_buttons[number].state);
+    if (result) master_buttons[number].flank= 0;
 
     return result;
 }
@@ -105,7 +106,7 @@ uint8_t master_buttons_get_state(uint8_t number) {
         return 0x00;
     }
 
-    return master_buttons[number].stateRead;
+    return master_buttons[number].state;
 }
 
 //**************************[_master_buttons_update]***************************
@@ -124,16 +125,11 @@ void _master_buttons_update(void) {
     for (i = 0; i < MASTER_BUTTONS_COUNT; i++) {
 
         // read current state
-        switch (i) {
-            case  0: state = button1(); break;
-            case  1: state = button2(); break;
-            case  2: state = button3(); break;
-            default: return;
-        }
+		state = _master_button(i);
 
         // check for changed state
-        if (state != master_buttons[i].stateWrite) {
-            master_buttons[i].stateWrite = state;
+        if (state != master_buttons[i].state) {
+            master_buttons[i].state= state;
 
             if (master_buttons[i].countdown == 0x00) {
             // state did change
@@ -141,7 +137,7 @@ void _master_buttons_update(void) {
                     // button released
                     master_buttons[i].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
                 } else {                // pushed button and no countdown
-                    master_buttons[i].flankWrite = 1;
+                    master_buttons[i].flank= 1;
                 }
             }
             continue;
@@ -152,11 +148,5 @@ void _master_buttons_update(void) {
                 master_buttons[i].countdown--;
             }
         }
-
-
-        master_buttons[i].flankRead |= master_buttons[i].flankWrite;
-        master_buttons[i].flankWrite = 0;
-        master_buttons[i].stateRead = master_buttons[i].stateWrite;
-	
     }
 }
