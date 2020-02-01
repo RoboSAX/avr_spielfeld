@@ -14,17 +14,30 @@
 
 //**************************<Methods>******************************************
 void waitAndUpdate () {
+	waitMsAndUpdate(1);
+}
+void waitMsAndUpdate(uint16_t msecs){
 
 	// update asyncron mode
 	// switch working and showing buffers
-	systick_freezUpdate(update_Display);
-	display_switchBuffer();
-	systick_unFreezUpdate(update_Display);
-	systick_freezUpdate(update_others);
-	_ledbox_switchBuffer();
-	systick_unFreezUpdate(update_others);
+	uint8_t a=0,b=0;
 
-	systick_delay(1);
+    uint32_t start;
+
+    start = systick_get();
+
+    while (systick_get() - start < (uint32_t)msecs) {
+		if (!a && systick_freezUpdate(update_Display)){
+			display_switchBuffer();
+			systick_unFreezUpdate(update_Display);
+			a++;
+		}
+		if (!b && systick_freezUpdate(update_others)){
+			_ledbox_switchBuffer();
+			systick_unFreezUpdate(update_others);
+			b++;
+		}
+    }
 }
 
 void showtime (uint16_t time,uint8_t dot) {

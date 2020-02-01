@@ -346,7 +346,7 @@ void ir_set(uint8_t number, uint8_t x) {
 	}
 
 	// order is invers!
-	ledbox_ir[LEDBOX_COUNT_MAX - number - 1].write = x ? 1 : 0;
+	ledbox_ir[ledbox_count_current - number - 1].write = x ? 1 : 0;
 }
 
 //**************************[ir_setAll]****************************************

@@ -306,22 +306,20 @@ void pushButton(uint8_t number){
 				team[teamNr].offGroup = 4;
 			}else{
 				enum eColor colorFinalize;
-				uint8_t timerFinalize;
 				uint8_t numberFinalize;
-				numberFinalize=team[teamNr].points;
+				numberFinalize=team[teamNr].points/POINTS_PER_PRESS;
 				colorFinalize=team[teamNr].teamColor;
 				for (i=0; i<numberFinalize;i++){
 					for (j=1;j<ledbox_count_current;j+=4){
 						for (k=0;k<2;k++){
-							timerFinalize=100;
-	            			while (timerFinalize){
-								rgb_set(j+k,colorFinalize);
-								waitAndUpdate();
-							}
+							rgb_clearAll();
+							rgb_set(j+k,colorFinalize);
+							waitMsAndUpdate(50);
 						}
 					}
 				}
 				team[teamNr].points = 0;
+				team[teamNr].trys = 0;
 			}
 		}
 

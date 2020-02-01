@@ -39,6 +39,8 @@ volatile uint8_t firstNumber;
 volatile uint8_t secondNumber;
 //**************************<Prototypes>***************************************
 
+#define shift_num(number) ((ledbox_state==full_field)?(number+20)%24:number)
+
 // init
 void ledbox_init(void);
 void ledbox_setup_module_count(void);

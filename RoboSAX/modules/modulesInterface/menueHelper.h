@@ -31,6 +31,7 @@ enum eScanModes {
 };
 //**************************<Methods>******************************************
 void waitAndUpdate(void);
+void waitMsAndUpdate(uint16_t msecs);
 
 void showtime (uint16_t time,uint8_t dot);
 void showPoints (uint8_t team1Points,uint8_t team2Points);

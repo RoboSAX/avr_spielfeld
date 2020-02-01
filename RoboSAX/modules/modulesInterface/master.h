@@ -58,6 +58,13 @@
 #define master_button_state3() (master_buttons_get_state(3))
 #define master_button_ok_state() (master_buttons_get_state(3))
 
+
+//**************************<Types and Variables>******************************
+#define MASTER_BUTTONS_COUNT 3
+// buttons
+volatile struct sButtonState master_buttons[MASTER_BUTTONS_COUNT];
+
+
 //**************************<Prototypes>***************************************
 
 // init

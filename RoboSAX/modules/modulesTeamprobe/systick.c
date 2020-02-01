@@ -171,11 +171,10 @@ uint16_t systick_toMsec(uint32_t time) {
 }
 
 //**************************<UPDATE>********************************************
-void systick_freezUpdate(enum eUpdate update){
-    while(makeUpdate & update_activ){
-        nop();
-    }
-    makeUpdate&=~update;
+uint8_t systick_freezUpdate(enum eUpdate update){
+    if (makeUpdate & (update_activ/*|(update<<1)*/)) return 0;
+	makeUpdate&=~update;
+	return 1;
 }
 void systick_unFreezUpdate(enum eUpdate update){
     makeUpdate|=update;
@@ -184,11 +183,17 @@ void update (uint8_t count) {
     makeUpdate|=update_activ;
     if (makeUpdate & update_Display){
         display_show();
-    }
+    	makeUpdate&=~update_Display_planed;
+    }else{
+    	makeUpdate|=update_Display_planed;
+	}
     if (makeUpdate & update_others){
         _ledbox_buttons_and_ir_update();
         _master_buttons_update();
-    }
+    	makeUpdate&=~update_others_planed;
+    }else{
+    	makeUpdate|=update_others_planed;
+	}
     _ledbox_rgb_update();
     makeUpdate&=~update_activ;
 }
@@ -199,7 +204,7 @@ ISR(TIMER0_COMPA_vect) {
     systick_count++;
 
     // turn on interrupts
-    TIMSK2&= ~ _BV(OCIE2A);
+    TIMSK0&= ~ _BV(OCIE0A);
     sei();
 
     // update

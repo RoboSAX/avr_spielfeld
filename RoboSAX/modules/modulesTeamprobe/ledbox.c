@@ -101,19 +101,20 @@ void ledbox_init(void) {
 	// startup time
 	delay_ms(50);
 
-	// variables
-	// leds
-	rgb_clearAll();
-	ir_clearAll();
-
 	// buttons
-	buttons_reset();
 	sei();
 
 	ledbox_setup_module_count();
 
 	firstNumber=0;
 	secondNumber=1;
+
+	// variables
+	// leds
+	rgb_clearAll();
+	ir_clearAll();
+
+	buttons_reset();
 }
 
 //**************************[ledbox_set_modul_count]**************************************
@@ -223,8 +224,7 @@ void ir_set(uint8_t number, uint8_t x) {
 		return;
 	}
 
-	// order is invers!
-	ledbox_ir[LEDBOX_COUNT_MAX - number - 1].write = x ? 1 : 0;
+	ledbox_ir[number].write = x ? 1 : 0;
 }
 
 //**************************[ir_setAll]****************************************
@@ -288,14 +288,15 @@ void _ledbox_rgb_update(void) {
 
 	static uint8_t X=0;
 	X++;
+	if (!X)X++;
 
-	led1_setRed(ledbox_rgb[firstNumber].r>X);
-	led1_setGreen(ledbox_rgb[firstNumber].g>X);
-	led1_setBlue(ledbox_rgb[firstNumber].b>X);
+	led1_setRed(ledbox_rgb[firstNumber].r>=X);
+	led1_setGreen(ledbox_rgb[firstNumber].g>=X);
+	led1_setBlue(ledbox_rgb[firstNumber].b>=X);
 
-	led2_setRed(ledbox_rgb[secondNumber].r>X);
-	led2_setGreen(ledbox_rgb[secondNumber].g>X);
-	led2_setBlue(ledbox_rgb[secondNumber].b>X);
+	led2_setRed(ledbox_rgb[secondNumber].r>=X);
+	led2_setGreen(ledbox_rgb[secondNumber].g>=X);
+	led2_setBlue(ledbox_rgb[secondNumber].b>=X);
 }
 
 //**************************[_ledbox_buttons_and_ir_update]********************
@@ -369,7 +370,7 @@ void _ledbox_switchBuffer(){
 
 		ledbox_buttons[number].flankRead |= ledbox_buttons[number].flankWrite;
 		ledbox_buttons[number].flankWrite = 0;
-		ledbox_buttons[number].stateRead |= ledbox_buttons[number].stateWrite;
+		//ledbox_buttons[number].stateRead |= ledbox_buttons[number].stateWrite;
 	}
 }
 
@@ -384,14 +385,13 @@ void toggle_led_load() {
 
 //**************************[delay_licht]**************************************
 ISR(TIMER2_COMPA_vect) {
-
-    if (ir_leds.counter) {
-        ir_leds.counter = 0;
-        leds_setIr1(ir_leds.state1);
-        leds_setIr2(ir_leds.state2);
-    } else {
-        ir_leds.counter = 1;
-        leds_setIr1(0);
-        leds_setIr2(0);
-    }
+	if (ir_leds.counter) {
+		ir_leds.counter = 0;
+		leds_setIr1(ir_leds.state1);
+		leds_setIr2(ir_leds.state2);
+	} else {
+		ir_leds.counter = 1;
+		leds_setIr1(0);
+		leds_setIr2(0);
+	}
 }

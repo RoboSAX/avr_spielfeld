@@ -31,10 +31,12 @@
 //*********************************<Variables>**********************************
 
 enum eUpdate {
-    update_Display = 1,
-    update_others  = 2,
-    update_all     = 3,
-    update_activ   = 0x80,
+    update_Display 			= 0b0001,
+    update_Display_planed	= update_Display<<1,
+    update_others  			= 0b0100,
+    update_others_planed	= update_others<<1,
+    update_all     			= 0b0101,
+    update_activ   			= 0x80,
 };
 
 //*********************************<Macros>*************************************
@@ -45,7 +47,7 @@ enum eUpdate {
 void systick_init(void);
 void systick_reset(void);
 
-void systick_freezUpdate(enum eUpdate update);
+uint8_t systick_freezUpdate(enum eUpdate update);//bool
 void systick_unFreezUpdate(enum eUpdate update);
 
 void systick_delay(uint16_t mseconds);
