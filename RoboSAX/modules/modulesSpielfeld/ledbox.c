@@ -275,7 +275,7 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
 //**************************[ir_set]*******************************************
 void ir_set(uint8_t number, uint8_t x) {
 
-	if (number >= LEDBOX_COUNT_MAX) {
+	if (number >= ledbox_count_current) {
 		return;
 	}
 
