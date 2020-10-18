@@ -8,13 +8,11 @@
 *                                                                             *
 ******************************************************************************/
 
-#ifndef __GAMEMODES_H
-#define __GAMEMODES_H
+#ifndef __GAMEMODES_YEARS_H
+#define __GAMEMODES_YEARS_H
 
 
 //**************************<Included files>***********************************
-//#include "robolib.h"
-#include "gamemodesYear.h"
 
 #include <avr/io.h>
 #include <inttypes.h>
@@ -25,27 +23,42 @@
 //**************************<Types and Variables>******************************
 // leds
 
-extern uint8_t maxGameModes;
+//the last Year in the list counts as the current Year
+#define ProcessYears \
+		YEAR_ACTION(2018)\
+		YEAR_ACTION(2019)\
+		YEAR_ACTION(2020)\
+
+
+enum eOperationModes {
+    omGame,
+    omTest,
+};
+
+enum eBaseSystem {
+    bsSpielfeld,
+    bsTeamprobe,
+};
 
 //**************************<Prototypes>***************************************
-void game_to_display(uint8_t gameNr, 
-					uint8_t const** displayOut1, uint8_t const** displayOut2, 
-					uint8_t const** displayOut3, uint8_t const** displayOut4);
-void curr_game_to_display( 
-					uint8_t const** displayOut1, uint8_t const** displayOut2, 
-					uint8_t const** displayOut3, uint8_t const** displayOut4);
-void change_gameNr(uint8_t gameNr);
+#define YEAR_ACTION(YEAR) \
+void gamemode_init_##YEAR(void);\
+uint8_t gamemode_start_##YEAR(uint8_t gameMode, enum eOperationModes operationMode, enum eBaseSystem system);\
+void gamemode_update_##YEAR(void);\
+void gamemode_finalize_##YEAR(uint8_t count, uint8_t mode);\
+\
+void gamemode_to_display_##YEAR(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2);
 
-typedef void (*gamemode_init_pointer)(void);
-extern gamemode_init_pointer gamemode_init;
-typedef uint8_t (*gamemode_start_pointer)(uint8_t gameMode, enum eOperationModes operationMode, enum eBaseSystem system);
-extern gamemode_start_pointer gamemode_start;
-typedef void (*gamemode_update_pointer)(void);
-extern gamemode_update_pointer gamemode_update;
-typedef void (*gamemode_finalize_pointer)(uint8_t count, uint8_t mode);
-extern gamemode_finalize_pointer gamemode_finalize;
+ProcessYears
+#undef YEAR_ACTION
 
-typedef void (*gamemode_to_display_pointer)(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2);
-extern gamemode_to_display_pointer gamemode_to_display;
+#define YEAR_ACTION(YEAR) GameOfYear##YEAR,
+enum eAvailibleYears {
+GameOfCurrentYear,
+ProcessYears
+NumberOfAvailibleYears
+};
+static const uint8_t maxGameNr=NumberOfAvailibleYears-1;
+#undef YEAR_ACTION
 
 #endif //#ifndef __GAMEMODES_H

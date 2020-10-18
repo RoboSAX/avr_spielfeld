@@ -90,7 +90,7 @@ const uint8_t display_superSegOffset[SEGMENTS_COUNT]={0,5,0,5};
 uint8_t display_superSegWindowStart[SUPER_SEGMENTS_COUNT];
 
 
-volatile uint8_t needsUpdate; 
+volatile uint8_t displayNeedsUpdate; 
 
 //**************************<Methods>******************************************
 
@@ -117,7 +117,7 @@ void init_display(void) {
 	display_double_dot=0;
 	display_current_display_buffer=0;
 	display_current_working_buffer=0;
-	needsUpdate=1;
+	displayNeedsUpdate=1;
 
 	int8_t i;
 	for(i=0;i<SUPER_SEGMENTS_COUNT;i++){
@@ -137,7 +137,7 @@ void display_setSegment(const uint8_t *pict,uint8_t segmentnumber){
 			display_working_supersegmentbuffer[superSeg][i]&=mask;
 			display_working_supersegmentbuffer[superSeg][i]|=(pict[i] & 0x1F) << posLast;
 		}
-		needsUpdate=1;
+		displayNeedsUpdate=1;
 	}
 }
 
@@ -153,7 +153,7 @@ void display_invertSegment(uint8_t segmentnumber){
 					(display_working_supersegmentbuffer[superSeg][i] & mask)
 					| (~display_working_supersegmentbuffer[superSeg][i] & ~mask);
 		}
-		needsUpdate=1;
+		displayNeedsUpdate=1;
 	}
 }
 /*void display_shiftright(uint8_t number){
@@ -164,7 +164,7 @@ void display_invertSegment(uint8_t segmentnumber){
 			display_segmentbuffer[i][j]=display_segmentbuffer[i-number][j];
 		}
 	}
-	needsUpdate=1;
+	displayNeedsUpdate=1;
 }
 void display_shiftleft(uint8_t number){
 	int8_t i;
@@ -174,7 +174,7 @@ void display_shiftleft(uint8_t number){
 			display_segmentbuffer[i-number][j]=display_segmentbuffer[i][j];
 		}
 	}
-	needsUpdate=1;
+	displayNeedsUpdate=1;
 }
 */
  
@@ -193,7 +193,7 @@ void display_setSuperSegment(const uint16_t *pict,uint8_t supersegmentnumber){
 				display_working_supersegmentbuffer[supersegmentnumber][i]=0x0000;
 			}
 		}
-		needsUpdate=1;
+		displayNeedsUpdate=1;
 	}
 }
 
@@ -203,7 +203,7 @@ void display_clearSuperSegment(uint8_t supersegmentnumber){
 		for(i=0;i<8;i++){
 			display_working_supersegmentbuffer[supersegmentnumber][i]=0x0000;
 		}
-		needsUpdate=1;
+		displayNeedsUpdate=1;
 	}
 }
 
@@ -213,7 +213,7 @@ void display_invertSuperSegment(uint8_t supersegmentnumber){
 		for(i=0;i<SUPER_SEGMENT_HIGHT;i++){
 			display_working_supersegmentbuffer[supersegmentnumber][i]= ~display_working_supersegmentbuffer[supersegmentnumber][i];
 		}
-		needsUpdate=1;
+		displayNeedsUpdate=1;
 	}
 }
 void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t sparse){
@@ -236,7 +236,7 @@ void display_addLeft(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spar
 				display_working_supersegmentbuffer[supersegmentnumber][i]|=((uint16_t)(pict[i]) & ((1<<width)-1))<<(16-width);
 			}
 		}
-		needsUpdate=1;
+		displayNeedsUpdate=1;
 	}
 }
 
@@ -259,7 +259,7 @@ void display_addRight(const uint8_t *pict,uint8_t supersegmentnumber,uint8_t spa
 				display_working_supersegmentbuffer[supersegmentnumber][i]|=(uint16_t)(pict[i] & ((1<<width)-1))<<(16-oldwidth-width);
 			}
 		}
-		needsUpdate=1;
+		displayNeedsUpdate=1;
 	}
 }
 
@@ -342,7 +342,7 @@ void display_show(){
 
 void display_switchBuffer(){
 
-	if (needsUpdate) if(systick_freezUpdate(update_Display)){
+	if (displayNeedsUpdate) if(systick_freezUpdate(update_Display)){
 		display_current_display_buffer=0;
 		display_current_working_buffer=1;
 
@@ -352,7 +352,7 @@ void display_switchBuffer(){
 			for(j=0;j<8;j++)
 				display_showing_supersegmentbuffer[i][j]=display_working_supersegmentbuffer[i][j];
 
-		needsUpdate=0;
+		displayNeedsUpdate=0;
 		systick_unFreezUpdate(update_buttons);
 	}
 }

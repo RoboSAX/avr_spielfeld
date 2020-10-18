@@ -46,18 +46,18 @@ struct sTeam {
     enum eColor error_color;
     uint8_t activate_LEDS[LED_PER_TEAM];
 };
-struct sTeam team1,team2;
-enum eGamemodes gamemode;
+static struct sTeam team1,team2;
+static enum eGamemodes gamemode;
 //**************************<Methods>******************************************
-uint8_t punishment(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
-void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
+static uint8_t punishment(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
+static void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
 
-void gamemode_init(void){
+void gamemode_init_2018(void){
     maxGameModes=MaxGameModes;
     gamemode_start(gmNothing, omTest, bsSpielfeld);
 }
 
-uint8_t gamemode_start(uint8_t gameModeIn, enum eOperationModes operationMode, enum eBaseSystem system){
+uint8_t gamemode_start_2018(uint8_t gameModeIn, enum eOperationModes operationMode, enum eBaseSystem system){
     gamemode=gameModeIn;
     team1.error_countdown=0;
     team2.error_countdown=0;
@@ -69,7 +69,7 @@ uint8_t gamemode_start(uint8_t gameModeIn, enum eOperationModes operationMode, e
 	return 0;
 }
 
-void setLEDs(void){
+static void setLEDs(void){
     uint8_t i;
     for(i=0;i<LED_PER_TEAM;i++){
         uint8_t number1=(i<(LED_PER_TEAM-LED_TEAM1_0_to))?(i+(LED_PER_TEAM+LED_TEAM1_0_to)):(i-(LED_PER_TEAM-LED_TEAM1_0_to));
@@ -104,7 +104,7 @@ void setLEDs(void){
     }
 }
 
-void pushButton(uint8_t number){
+static void pushButton(uint8_t number){
     struct sTeam *myteam,*enemy;
     uint8_t mynumber;
     if (number<LED_TEAM1_0_to){
@@ -153,7 +153,7 @@ void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber){
     if ((gamemode==gmPunishAndEnemy)||(gamemode==gmEnemy))enemy->activate_LEDS[mynumber]=0;
 }
 
-void gamemode_update(){
+void gamemode_update_2018(){
 	int i;
        	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
        		if (buttons_get(i)) {
@@ -163,7 +163,7 @@ void gamemode_update(){
        	setLEDs();
 }
 
-void gamemode_finalize(uint8_t count, uint8_t mode){
+void gamemode_finalize_2018(uint8_t count, uint8_t mode){
     //game end
 
     uint8_t points1 = 0;
@@ -183,7 +183,7 @@ void gamemode_finalize(uint8_t count, uint8_t mode){
     showPoints(points1, points2);
 }
 
-void gamemode_to_display(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
+void gamemode_to_display_2018(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
     switch (gameMode) {
     case gmNothing:
         *displayOut1=numbers[1];

@@ -53,7 +53,7 @@ void init () {
 	ledbox_init();
 	init_display();
 	systick_init();
-	gamemode_init();
+	change_gameNr(0);
 
 	waitAndUpdate();
 
@@ -111,13 +111,14 @@ int main () {
 
 	init();
 
-	uint8_t maxModes[MaxMasterModes];
+	uint8_t maxMasterModes=DefaultMasterModes+maxGameNr;
+	uint8_t maxModes[maxMasterModes];
 	uint8_t i;
-	for (i=0;i<MaxMasterModes;i++){
+	for (i=0;i<maxMasterModes;i++){
 		switch (i){
 			case mmGameMode:
 			case mmTestMode:
-				maxModes[i]=maxGameModes;
+				maxModes[i]=maxGameModes+1;
 			break;
 			case mmScanMode:
 				maxModes[i]=MaxScanModes;
@@ -221,11 +222,11 @@ int main () {
 			case rsSelectMasterMode:
 				if (master_button_up()) {
 					masterMode++;
-					masterMode %= MaxMasterModes;
+					masterMode %= maxMasterModes;
 					//writeModesToDisplay(masterMode, submode);
 				}
 				if (master_button_down()) {
-					(masterMode <=	0)? masterMode = MaxMasterModes - 1 : masterMode-- ;
+					(masterMode <=	0)? masterMode = maxMasterModes - 1 : masterMode-- ;
 					//writeModesToDisplay(masterMode, submode);
 				}
 			break;
@@ -247,26 +248,42 @@ int main () {
 					if (masterMode == mmTestMode) invalidMode = gamemode_start(submode, omTest, bsSpielfeld);
 					buttons_reset();
 				}
-				if (masterMode == mmGameMode)
-				{
-					menuemode=rsGameModeStarting;
-					itteration = 0;
-					systick_reset();
-					currentTime = systick_get();
-					starttime=currentTime;
-				}
-				if (masterMode == mmTestMode)
-				{
-					menuemode=rsTestModeRunning;
-				}
-				if (masterMode == mmOldGameMode)
-				{
-					pointsMode = 0;
-					menuemode=rsGameModeFinished;
-				}
-				if (masterMode == mmScanMode)
-				{
-					scanmode_start(submode);
+				switch (masterMode){
+					case mmGameMode:
+						menuemode=rsGameModeStarting;
+						itteration = 0;
+						systick_reset();
+						currentTime = systick_get();
+						starttime=currentTime;
+						break;
+					case mmTestMode:
+						menuemode=rsTestModeRunning;
+						break;
+					case mmOldGameMode:
+						pointsMode = 0;
+						menuemode=rsGameModeFinished;
+						break;
+					case mmScanMode:
+						scanmode_start(submode);
+						break;
+					default:
+						change_gameNr(masterMode-DefaultMasterModes+1);
+						for (i=0;i<maxMasterModes;i++){
+							switch (i){
+								case mmGameMode:
+								case mmTestMode:
+									maxModes[i]=maxGameModes+1;
+								break;
+								case mmScanMode:
+									maxModes[i]=MaxScanModes;
+								break;
+								case mmOldGameMode:
+								default:
+									maxModes[i]=1;
+								break;
+							}
+						}
+						menuemode=rsSelectMasterMode;
 				}
 				if(invalidMode){
 					if (maxModes[masterMode]>1){

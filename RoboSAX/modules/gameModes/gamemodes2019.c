@@ -78,7 +78,7 @@ struct sTeam {
     struct sBlink error;
 };
 
-volatile struct sTeam team[3];
+static volatile struct sTeam team[3];
 
 enum eTeamNumber {
     team1,
@@ -90,15 +90,15 @@ struct sGlobalLED{
     uint8_t teamNr : 4;
     uint8_t LEDNr : 4;
 };
-struct sGlobalLED LEDToTeam[LEDBOX_COUNT_MAX];
+static struct sGlobalLED LEDToTeam[LEDBOX_COUNT_MAX];
 
 //**************************<Methods>******************************************
-void pushButton(uint8_t number);
-void setLEDs(void);
-void diasbleOneLEDForTeam(volatile struct sTeam *team);
-void setLEDForTeam(volatile struct sTeam *team);
+static void pushButton(uint8_t number);
+static void setLEDs(void);
+static void diasbleOneLEDForTeam(volatile struct sTeam *team);
+static void setLEDForTeam(volatile struct sTeam *team);
 
-void gamemode_init(void){
+void gamemode_init_2019(void){
 	maxGameModes=1;
     random_init();
 
@@ -207,7 +207,7 @@ void gamemode_init(void){
     */
 }
 
-uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes operationMode, enum eBaseSystem system){
+uint8_t gamemode_start_2019(uint8_t gameMode, enum eOperationModes operationMode, enum eBaseSystem system){
 
     //set all LEDs to on
     uint8_t  j;
@@ -230,7 +230,7 @@ uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes operationMode, enu
 	return 0;
 }
 
-void gamemode_update(){
+void gamemode_update_2019(){
     uint8_t i;
     for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
         if (buttons_get(i)) {
@@ -250,7 +250,7 @@ void gamemode_update(){
     showPoints(team[team1].points, team[team2].points);
 }
 
-void gamemode_finalize(uint8_t count, uint8_t mode){
+void gamemode_finalize_2019(uint8_t count, uint8_t mode){
     //game end
 
     uint8_t points1;
@@ -375,7 +375,7 @@ void setLEDs(void){
     }
 }
 
-void calculateLEDNumber(volatile struct sTeam *team){
+static void calculateLEDNumber(volatile struct sTeam *team){
     if (team->disabledLeds >= PHASE0) team->numberOfActivLeds = 0;
     else if (team->disabledLeds >= PHASE1) team->numberOfActivLeds = 1;
     else if (team->disabledLeds >= PHASE2) team->numberOfActivLeds = 2;
@@ -562,7 +562,7 @@ void setLEDForTeam(volatile struct sTeam *team){
     }
 }
 
-void gamemode_to_display(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
+void gamemode_to_display_2019(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
 	*displayOut1=numbers[gameMode / 10];
 	*displayOut2=numbers[gameMode % 10];
 }

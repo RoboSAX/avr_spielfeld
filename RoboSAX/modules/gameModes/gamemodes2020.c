@@ -74,7 +74,7 @@ struct sTeam {
     enum eColor good_color;
 };
 
-volatile struct sTeam team[2];
+static volatile struct sTeam team[2];
 
 enum eTeamNumber {
 	team1,
@@ -86,18 +86,17 @@ struct sGlobalLED{
 	uint8_t GroupNr : 3;
 	uint8_t LEDNr : 3;
 };
-struct sGlobalLED LEDToTeam[LEDBOX_COUNT_MAX];
+static struct sGlobalLED LEDToTeam[LEDBOX_COUNT_MAX];
 
-enum eGamemodes usedGamemode;
-enum eOperationModes operationMode;
-enum eBaseSystem baseSystem;
-
+static enum eGamemodes usedGamemode;
+static enum eOperationModes operationMode;
+static enum eBaseSystem baseSystem;
 
 //**************************<Methods>******************************************
-void pushButton(uint8_t number);
-void setLEDs(void);
+static void pushButton(uint8_t number);
+static void setLEDs(void);
 
-void gamemode_init(void){
+void gamemode_init_2020(void){
 	maxGameModes=MaxGameModes;
 	random_init();
 
@@ -106,7 +105,7 @@ void gamemode_init(void){
 
 }
 
-uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes oM, enum eBaseSystem system){
+uint8_t gamemode_start_2020(uint8_t gameMode, enum eOperationModes oM, enum eBaseSystem system){
 	if ((ledbox_state == full_field && gameMode == gm2P)||
 		((ledbox_state == full_field || ledbox_state == half_field ) && gameMode == gm1P)){
 
@@ -175,7 +174,7 @@ uint8_t gamemode_start(uint8_t gameMode, enum eOperationModes oM, enum eBaseSyst
 	}
 }
 
-void gamemode_update(){
+void gamemode_update_2020(){
 	uint8_t i;
 	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
 		if (buttons_get(shift_num(i))) {
@@ -187,7 +186,7 @@ void gamemode_update(){
 	showPoints(team[team1].points, team[team2].points);
 }
 
-void gamemode_finalize(uint8_t count, uint8_t mode){
+void gamemode_finalize_2020(uint8_t count, uint8_t mode){
 	//game end
 
 	uint8_t points1MaxVal= MAX_TRYS * POINTS_PER_PRESS;
@@ -217,7 +216,7 @@ void gamemode_finalize(uint8_t count, uint8_t mode){
 	}
 }
 
-void gamemode_to_display(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
+void gamemode_to_display_2020(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){
 	switch (gameMode) {
 	case gm1P:
 		*displayOut1=numbers[1];

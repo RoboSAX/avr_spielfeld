@@ -77,11 +77,11 @@ enum fieldState{
 	half_field = 2
 };
 
-volatile uint8_t ledbox_count_current;
-volatile enum fieldState ledbox_state;
+volatile extern uint8_t ledbox_count_current;
+volatile extern enum fieldState ledbox_state;
 
-volatile uint8_t firstNumber;
-volatile uint8_t secondNumber;
+volatile extern uint8_t firstNumber;
+volatile extern uint8_t secondNumber;
 //**************************<Prototypes>***************************************
 
 #define shift_num(number) \

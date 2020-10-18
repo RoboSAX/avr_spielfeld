@@ -130,7 +130,17 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
 	display_double_dot=0;
 	switch (masterMode){
 	case mmGameMode:
-		if (subMode >= 0){
+		if (subMode==maxGameModes){
+			uint8_t const* display4Chars[4];
+			curr_game_to_display(&display4Chars[0], &display4Chars[1], &display4Chars[2], &display4Chars[3]);
+			display_clearSuperSegment(0);
+			display_addRight(display4Chars[0],0,1);
+			display_addRight(display4Chars[1],0,1);
+			display_clearSuperSegment(1);
+			display_addRight(display4Chars[2],1,1);
+			display_addRight(display4Chars[3],1,1);
+		}
+		else if (subMode >= 0){
 			display_clearSuperSegment(0);
 			display_addRight(alpaG,0,1);
 			display_addRight(alpaM,0,1);
@@ -150,7 +160,17 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
 		}
 	break;
 	case mmTestMode:
-		if (subMode >= 0){
+		if (subMode==maxGameModes){
+			uint8_t const* display4Chars[4];
+			curr_game_to_display(&display4Chars[0], &display4Chars[1], &display4Chars[2], &display4Chars[3]);
+			display_clearSuperSegment(0);
+			display_addRight(display4Chars[0],0,1);
+			display_addRight(display4Chars[1],0,1);
+			display_clearSuperSegment(1);
+			display_addRight(display4Chars[2],1,1);
+			display_addRight(display4Chars[3],1,1);
+		}
+		else if (subMode >= 0){
 			display_clearSuperSegment(0);
 			display_addRight(alpaT,0,0);
 			display_addRight(alpaM,0,0);
@@ -219,13 +239,16 @@ void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
 			break;
 		}
 	break;
-	default:
-		display_clearSuperSegment(0);
-		display_addRight(qestM,0,1);
-		display_addRight(qestM,0,1);
-		display_clearSuperSegment(1);
-		display_addRight(qestM,1,1);
-		display_addRight(qestM,1,1);
+	default:{
+			uint8_t const* display4Chars[4];
+			game_to_display(masterMode-DefaultMasterModes+1, &display4Chars[0], &display4Chars[1], &display4Chars[2], &display4Chars[3]);
+			display_clearSuperSegment(0);
+			display_addRight(display4Chars[0],0,1);
+			display_addRight(display4Chars[1],0,1);
+			display_clearSuperSegment(1);
+			display_addRight(display4Chars[2],1,1);
+			display_addRight(display4Chars[3],1,1);
+		}
 	break;
 	}
 }

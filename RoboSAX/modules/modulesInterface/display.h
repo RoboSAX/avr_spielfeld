@@ -30,7 +30,7 @@
 #define INVERT_DISPLAY
 
 //**************************<Types and Variables>******************************
-uint8_t display_double_dot;
+extern uint8_t display_double_dot;
 
 
 //**************************<Prototypes>***************************************

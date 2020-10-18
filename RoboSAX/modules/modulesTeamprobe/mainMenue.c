@@ -59,7 +59,7 @@ void init () {
 	ledbox_init();
 	init_display();
 	systick_init();
-	gamemode_init();
+	change_gameNr(0);
 
 	uint8_t i;
 

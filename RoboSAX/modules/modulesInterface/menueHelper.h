@@ -22,7 +22,7 @@ enum eMasterModes {
 	mmTestMode		,
 	mmOldGameMode	,
 	mmScanMode		,
-	MaxMasterModes
+	DefaultMasterModes
 };
 enum eScanModes {
 	scLedboxCount = 0,
