@@ -11,6 +11,7 @@
 
 //**************************<Included files>***********************************
 #include "../modulesInterface/ledbox.h"
+#include "../modulesInterface/systick.h"
 
 
 //**************************<Macros>*******************************************
@@ -94,10 +95,9 @@
 // buttons
 struct sButtonState {
     uint8_t stateWrite: 1; ///< boolean
-    uint8_t stateRead : 1; ///< boolean
     uint8_t flankWrite: 1; ///< boolean
     uint8_t flankRead : 1; ///< boolean
-    uint8_t countdown : 4; ///< 0..15 (* 1ms)
+    uint8_t countdown : 5; ///< 0..31 (* 1ms)
 };
 volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
 
@@ -117,6 +117,7 @@ struct sIRLed{
 	uint8_t empty : 6;
 };
 volatile struct sIRLed ledbox_ir[LEDBOX_COUNT_MAX];
+volatile enum eUpdate needsUpdate; 
 
 //**************************<Methods>******************************************
 
@@ -195,6 +196,8 @@ void ledbox_init(void) {
 	sei();
 
 	ledbox_setup_module_count();
+
+	needsUpdate=update_all;
 }
 
 //**************************[ledbox_set_modul_count]**************************************
@@ -266,7 +269,7 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
 	ledbox_rgb[number].g = g;
 	ledbox_rgb[number].b = b;
 
-
+	needsUpdate|=update_RGBLeds;
 }
 
 //**************************[ir_set]*******************************************
@@ -278,6 +281,7 @@ void ir_set(uint8_t number, uint8_t x) {
 
 	// order is invers!
 	ledbox_ir[ledbox_count_current - number - 1].write = x ? 1 : 0;
+	needsUpdate|=update_buttons;
 }
 
 //**************************[buttons_reset]************************************
@@ -378,6 +382,7 @@ void _ledbox_buttons_and_ir_update(void) {
 					ledbox_buttons[i].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
 				} else {				 // pushed button and no countdown
 					ledbox_buttons[i].flankWrite = 1;
+					needsUpdate|=update_buttons;
 				}
 			}
 			continue;
@@ -394,14 +399,20 @@ void _ledbox_buttons_and_ir_update(void) {
 
 void _ledbox_switchBuffer(){
 
-	uint8_t number;
-	for(number=0;number<LEDBOX_COUNT_MAX;number++){
+	if (needsUpdate & update_buttons) if(systick_freezUpdate(update_buttons)){
+		uint8_t number;
+		for(number=0;number<LEDBOX_COUNT_MAX;number++){
 			ledbox_ir[number].read = ledbox_ir[number].write;
 
 			ledbox_buttons[number].flankRead |= ledbox_buttons[number].flankWrite;
 			ledbox_buttons[number].flankWrite = 0;
-			ledbox_buttons[number].stateRead |= ledbox_buttons[number].stateWrite;
-
+		}
+		needsUpdate&=~update_buttons;
+		systick_unFreezUpdate(update_buttons);
+	}
+	if (needsUpdate & update_RGBLeds) if(systick_freezUpdate(update_RGBLeds)){
+		uint8_t number;
+		for(number=0;number<LEDBOX_COUNT_MAX;number++){
 
 			uint8_t j;
 
@@ -458,6 +469,9 @@ void _ledbox_switchBuffer(){
 			if ((d & 0x04) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x01;}
 			if ((d & 0x02) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x08;}
 			if ((d & 0x01) == 0x00) {ledbox_rgb[number].dataOut[7]|= 0x40;}
+		}
+		needsUpdate&=~update_RGBLeds;
+		systick_unFreezUpdate(update_RGBLeds);
 	}
 }
 

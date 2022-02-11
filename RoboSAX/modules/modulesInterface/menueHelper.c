@@ -20,23 +20,13 @@ void waitMsAndUpdate(uint16_t msecs){
 
 	// update asyncron mode
 	// switch working and showing buffers
-	uint8_t a=0,b=0;
-
     uint32_t start;
 
     start = systick_get();
 
     while (systick_get() - start < (uint32_t)msecs) {
-		if (!a && systick_freezUpdate(update_Display)){
-			display_switchBuffer();
-			systick_unFreezUpdate(update_Display);
-			a++;
-		}
-		if (!b && systick_freezUpdate(update_others)){
-			_ledbox_switchBuffer();
-			systick_unFreezUpdate(update_others);
-			b++;
-		}
+		display_switchBuffer();
+		_ledbox_switchBuffer();
     }
 }
 
