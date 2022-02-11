@@ -111,22 +111,13 @@ void update () {
 
 	if(makeUpdate & update_Display){
 		display_show();
-		makeUpdate&=~update_Display_planed;
-	}else{
-		makeUpdate|=update_Display_planed;
 	}
 	if(makeUpdate & update_RGBLeds){
 		_ledbox_rgb_update();
-		makeUpdate&=~update_RGBLeds_planed;
-	}else{
-		makeUpdate|=update_RGBLeds_planed;
 	}
 	if(makeUpdate & update_buttons){
 		_ledbox_buttons_and_ir_update();
 		_master_buttons_update();
-		makeUpdate&=~update_buttons_planed;
-	}else{
-		makeUpdate|=update_buttons_planed;
 	}
 	makeUpdate&=~update_activ;
 }

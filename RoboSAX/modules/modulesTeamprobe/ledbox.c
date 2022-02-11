@@ -11,6 +11,8 @@
 
 //**************************<Included files>***********************************
 #include "../modulesInterface/ledbox.h"
+#include "../modulesInterface/systick.h"
+
 
 //**************************<Macros>*******************************************
 #define leds_setIr1(x)	  ( x ? (PORTD|= _BV(3)) : (PORTD&= ~_BV(3)))
@@ -76,6 +78,9 @@ struct sIrLedsIntern {
 };
 volatile struct sIrLedsIntern ir_leds;
 
+volatile enum eUpdate needsUpdate; 
+
+
 //**************************<Methods>******************************************
 
 //**************************[ledbox_init]**************************************
@@ -119,6 +124,8 @@ void ledbox_init(void) {
 	ir_clearAll();
 
 	buttons_reset();
+
+	needsUpdate=update_all;
 }
 
 //**************************[ledbox_set_modul_count]**************************************
@@ -138,6 +145,8 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b) {
 	ledbox_rgb[number].r = r;
 	ledbox_rgb[number].g = g;
 	ledbox_rgb[number].b = b;
+
+	needsUpdate|=update_RGBLeds;
 }
 
 //**************************[ir_set]*******************************************
@@ -148,6 +157,7 @@ void ir_set(uint8_t number, uint8_t x) {
 	}
 
 	ledbox_ir[number].state = x ? 1 : 0;
+	needsUpdate|=update_buttons;
 }
 
 //**************************[buttons_reset]************************************
@@ -230,6 +240,7 @@ void _ledbox_buttons_and_ir_update(void) {
 				ledbox_buttons[firstNumber].countdown = LEDBOX_BUTTONS_DEBOUNCE_TIME;
 			} else {				 // pushed button and no countdown
 				ledbox_buttons[firstNumber].flank = 1;
+				needsUpdate|=update_buttons;
 			}
 		}
 	}
@@ -267,6 +278,14 @@ void _ledbox_buttons_and_ir_update(void) {
 }
 
 void _ledbox_switchBuffer(){
+	if (needsUpdate & update_buttons) if(systick_freezUpdate(update_buttons)){
+		needsUpdate&=~update_buttons;
+		systick_unFreezUpdate(update_buttons);
+	}
+	if (needsUpdate & update_RGBLeds) if(systick_freezUpdate(update_RGBLeds)){
+		needsUpdate&=~update_RGBLeds;
+		systick_unFreezUpdate(update_RGBLeds);
+	}
 }
 
 //**************************[delay_licht]**************************************

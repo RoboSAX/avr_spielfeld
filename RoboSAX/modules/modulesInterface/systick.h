@@ -32,11 +32,8 @@
 
 enum eUpdate {
     update_Display	= 0b00000001,
-    update_Display_planed	= update_Display<<1,
     update_RGBLeds 	= 0b00000100,
-    update_RGBLeds_planed	= update_RGBLeds<<1,
     update_buttons 	= 0b00010000,
-    update_buttons_planed	= update_buttons<<1,
     update_all    	= 0b00010101,
     update_activ  	= 0b10000000,
 };

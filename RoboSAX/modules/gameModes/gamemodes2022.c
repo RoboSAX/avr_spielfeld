@@ -144,7 +144,6 @@ void gamemode_to_display_2022(uint8_t gameMode, uint8_t const** displayOut1, uin
 //Game priate
 
 void setLEDs(void){
-	rgb_setAll(NOCOLOR);
 	for(uint8_t i=0;i< ledbox_count_current;i++){
 		if(LEDs[i].on){
 			rgb_set(i, ONCOLOR);
