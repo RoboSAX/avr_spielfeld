@@ -28,6 +28,8 @@
 		YEAR_ACTION(2018)\
 		YEAR_ACTION(2019)\
 		YEAR_ACTION(2020)\
+		YEAR_ACTION(2022)\
+
 
 
 enum eOperationModes {

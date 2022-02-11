@@ -14,7 +14,7 @@
 
 //**************************<Methods>******************************************
 void waitAndUpdate () {
-	waitMsAndUpdate(1);
+	waitMsAndUpdate(0);
 }
 void waitMsAndUpdate(uint16_t msecs){
 
@@ -24,17 +24,16 @@ void waitMsAndUpdate(uint16_t msecs){
 
     start = systick_get();
 
-    while (systick_get() - start < (uint32_t)msecs) {
+	do{
 		display_switchBuffer();
 		_ledbox_switchBuffer();
-    }
+	}while (systick_get() - start < (uint32_t)msecs);
 }
 
 void showtime (uint16_t time,uint8_t dot) {
 	if(dot)
 	{
-//	  display_double_dot=1;
-		display_double_dot=0;
+		display_double_dot=1;
 	}
 	else
 	{
