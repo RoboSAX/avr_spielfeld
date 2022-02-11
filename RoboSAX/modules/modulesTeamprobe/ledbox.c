@@ -50,7 +50,8 @@
 struct sButtonState {
     uint8_t state    	: 1; ///< boolean
     uint8_t flank    	: 1; ///< boolean
-    uint8_t countdown	: 6; ///< 0..63 (* 1ms)
+    uint8_t countdown	: 4; ///< 0..15 (* 1ms)
+	uint8_t empty    	: 2;
 };
 volatile struct sButtonState ledbox_buttons[LEDBOX_COUNT_MAX];
 

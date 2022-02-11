@@ -31,11 +31,12 @@
 //*********************************<Variables>**********************************
 
 enum eUpdate {
-    update_Display	= 0b0001,
-    update_RGBLeds 	= 0b0010,
-    update_buttons 	= 0b0100,
-    update_all    	= 0b0111,
-    update_activ  	= 0x80,
+    update_Display 			= 0b0001,
+    update_Display_planed	= update_Display<<1,
+    update_others  			= 0b0100,
+    update_others_planed	= update_others<<1,
+    update_all     			= 0b0101,
+    update_activ   			= 0x80,
 };
 
 //*********************************<Macros>*************************************

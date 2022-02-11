@@ -18,11 +18,12 @@
 
 //**************************<Types and Variables>******************************
 
-//debounce=debounce[ms](max 63)
-#define MASTER_BUTTONS_DEBOUNCE_TIME 63
+//debounce=debounce*(global+1)*(update+1)[ms]
+#define MASTER_BUTTONS_DEBOUNCE_TIME 15
+#define MASTER_BUTTONS_GLOBAL_TIME 2
 
-//debounce=debounce(max 31)*(global+1)[ms]
-#define LEDBOX_BUTTONS_DEBOUNCE_TIME 31
-#define LEDBOX_BUTTONS_GLOBAL_TIME 8
+//debounce=debounce*(global+1)*(update+1)[ms]
+#define LEDBOX_BUTTONS_DEBOUNCE_TIME 15
+#define LEDBOX_BUTTONS_GLOBAL_TIME 9
 
 #endif //#ifndef __GLOBAL_H

@@ -35,9 +35,10 @@
 //**************************<Types and Variables>******************************
 // buttons
 struct sButtonState {
-	uint8_t state    	: 1; ///< boolean
-	uint8_t flank    	: 1; ///< boolean
-	uint8_t countdown	: 6; ///< 0..63 (* 2ms)
+    uint8_t state    	: 1; ///< boolean
+    uint8_t flank    	: 1; ///< boolean
+    uint8_t countdown	: 4; ///< 0..15 (* 1ms)
+	uint8_t empty    	: 2;
 };
 
 volatile struct sButtonState master_buttons[MASTER_BUTTONS_COUNT];
@@ -48,95 +49,104 @@ volatile struct sButtonState master_buttons[MASTER_BUTTONS_COUNT];
 //**************************[master_buttons_reset]*****************************
 void master_buttons_reset(void) {
 
-	master_buttons[0].state= 0;
-	master_buttons[0].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
-	master_buttons[0].flank= 0;
+    master_buttons[0].state= 0;
+    master_buttons[0].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
+    master_buttons[0].flank= 0;
 
-	master_buttons[1].state= 0;
-	master_buttons[1].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
-	master_buttons[1].flank= 0;
+    master_buttons[1].state= 0;
+    master_buttons[1].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
+    master_buttons[1].flank= 0;
 
-	master_buttons[2].state= 0;
-	master_buttons[2].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
-	master_buttons[2].flank= 0;
+    master_buttons[2].state= 0;
+    master_buttons[2].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
+    master_buttons[2].flank= 0;
 
-	master_buttons_clear();
+    master_buttons_clear();
 }
 
 //**************************[master_buttons_clear]*****************************
 void master_buttons_clear(void) {
 
-	master_buttons[0].flank=  0;
-	master_buttons[1].flank=  0;
-	master_buttons[2].flank=  0;
+    master_buttons[0].flank=  0;
+    master_buttons[1].flank=  0;
+    master_buttons[2].flank=  0;
 }
 
 //**************************[master_buttons_get]*******************************
 uint8_t master_buttons_get_pushed(uint8_t number) {
 
-	number--;
-	if (number >= MASTER_BUTTONS_COUNT) {
-		return 0x00;
-	}
+    number--;
+    if (number >= MASTER_BUTTONS_COUNT) {
+        return 0x00;
+    }
 
-	uint8_t result = master_buttons[number].flank;
-	master_buttons[number].flank= 0;
+    uint8_t result = master_buttons[number].flank;
+    master_buttons[number].flank= 0;
 
-	return result;
+    return result;
 }
 
 uint8_t master_buttons_get_push_and_released(uint8_t number) {
 
-	number--;
-	if (number >= MASTER_BUTTONS_COUNT) {
-		return 0x00;
-	}
+    number--;
+    if (number >= MASTER_BUTTONS_COUNT) {
+        return 0x00;
+    }
 
-	uint8_t result = (master_buttons[number].flank)&&(!master_buttons[number].state);
-	if (result) master_buttons[number].flank= 0;
+    uint8_t result = (master_buttons[number].flank)&&(!master_buttons[number].state);
+    if (result) master_buttons[number].flank= 0;
 
-	return result;
+    return result;
 }
 
 uint8_t master_buttons_get_state(uint8_t number) {
 
-	number--;
-	if (number >= MASTER_BUTTONS_COUNT) {
-		return 0x00;
-	}
+    number--;
+    if (number >= MASTER_BUTTONS_COUNT) {
+        return 0x00;
+    }
 
-	return master_buttons[number].state;
+    return master_buttons[number].state;
 }
 
 //**************************[_master_buttons_update]***************************
 void _master_buttons_update(void) {
 
-	uint8_t i;
-	uint8_t state;
+    uint8_t i;
+    uint8_t state;
 
-	for (i = 0; i < MASTER_BUTTONS_COUNT; i++) {
+    static uint8_t global_button_countdown = 0;
+    if (global_button_countdown){global_button_countdown--;}
+    else{
+        global_button_countdown=MASTER_BUTTONS_GLOBAL_TIME;
+    }
 
-		// read current state
+
+    for (i = 0; i < MASTER_BUTTONS_COUNT; i++) {
+
+        // read current state
 		state = _master_button(i);
 
-		// check for changed state
-		if (state != master_buttons[i].state) {
-			master_buttons[i].state= state;
+        // check for changed state
+        if (state != master_buttons[i].state) {
+            master_buttons[i].state= state;
 
-			if (master_buttons[i].countdown == 0x00) {
-			// state did change
-				if (!state) {
-					// button released
-					master_buttons[i].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
-				} else {// pushed button and no countdown
-					master_buttons[i].flank= 1;
-				}
-			}
-			continue;
-		}
+            if (master_buttons[i].countdown == 0x00) {
+            // state did change
+                if (!state) {
+                    // button released
+                    master_buttons[i].countdown = MASTER_BUTTONS_DEBOUNCE_TIME;
+                } else {                // pushed button and no countdown
+                    master_buttons[i].flank= 1;
+                }
+            }
+            continue;
+        }
 
-		if (master_buttons[i].countdown) {
-			master_buttons[i].countdown--;
-		}
-	}
+        if (!global_button_countdown){
+            if (master_buttons[i].countdown) {
+                master_buttons[i].countdown--;
+            }
+        }
+    }
 }
