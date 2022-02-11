@@ -98,5 +98,13 @@ void systick_init(void) {
 
 //**************************[ISR(TIMER0_COMPA_vect)]****************************
 ISR(TIMER2_COMPA_vect) {
+	// turn on interrupts
+	TIMSK2&= ~ _BV(OCIE2A);
+	sei();
+
 	update();
+
+	// turn off interrupts
+	cli();
+	TIMSK2|= _BV(OCIE2A);
 }

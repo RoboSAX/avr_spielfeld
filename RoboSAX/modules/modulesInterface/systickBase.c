@@ -107,10 +107,6 @@ void update () {
 	// count up
 	systick_count++;
 
-	// turn on interrupts
-	TIMSK0&= ~ _BV(OCIE0A);
-	sei();
-
 	makeUpdate|=update_activ;
 
 	uint8_t trys;
@@ -131,8 +127,4 @@ void update () {
 		}
 	}
 	makeUpdate&=~update_activ;
-
-	// turn off interrupts
-	cli();
-	TIMSK0|= _BV(OCIE0A);
 }
