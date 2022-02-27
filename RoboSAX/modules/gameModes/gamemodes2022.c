@@ -96,6 +96,11 @@ uint8_t gamemode_start_2022(uint8_t gameMode, enum eOperationModes oM, enum eBas
 
 void gamemode_update_2022(){
 	uint8_t i;
+
+	if(master_button_down_full()){
+		team.points=0;
+	}
+
 	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
 		if (buttons_get(i)) {
 			pushButton(i);

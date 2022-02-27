@@ -141,6 +141,7 @@ int main () {
 		Modus1();
 		gamemode_start(gamemode, omTest, bsTeamprobe);
 	}else{
+		gamemode = 1;
 		Modus2();
 		gamemode_start(gamemode, omGame, bsTeamprobe);
 	}
@@ -150,10 +151,14 @@ int main () {
 		waitAndUpdate();
 		if master_button_ok_full()
 		{
-			firstNumber += (firstNumber<3)?16:4;
-			firstNumber %= 24;
-			secondNumber += (secondNumber<3)?16:4;
-			secondNumber %= 24;
+			if (gamemode){
+				firstNumber += teamprobeIncrementPerMasterPress;
+				firstNumber %= ledbox_count_current;
+				secondNumber += teamprobeIncrementPerMasterPress;
+				secondNumber %= ledbox_count_current;
+			}else{
+				gamemode_start(gamemode, omTest, bsTeamprobe);
+			}
 		}
 	}
 	return (0);

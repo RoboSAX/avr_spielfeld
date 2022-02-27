@@ -82,6 +82,7 @@ volatile extern enum fieldState ledbox_state;
 
 volatile extern uint8_t firstNumber;
 volatile extern uint8_t secondNumber;
+volatile extern uint8_t teamprobeIncrementPerMasterPress;
 //**************************<Prototypes>***************************************
 
 #define shift_num(number) \

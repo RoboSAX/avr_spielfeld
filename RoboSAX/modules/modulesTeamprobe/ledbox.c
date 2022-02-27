@@ -117,6 +117,7 @@ void ledbox_init(void) {
 
 	firstNumber=0;
 	secondNumber=1;
+	teamprobeIncrementPerMasterPress=1;
 
 	// variables
 	// leds

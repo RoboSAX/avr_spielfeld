@@ -19,6 +19,7 @@ volatile enum fieldState ledbox_state;
 
 volatile uint8_t firstNumber;
 volatile uint8_t secondNumber;
+volatile uint8_t teamprobeIncrementPerMasterPress;
 
 //**************************<Methods>******************************************
 
