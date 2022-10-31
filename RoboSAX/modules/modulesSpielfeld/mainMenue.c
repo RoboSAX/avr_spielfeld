@@ -47,6 +47,40 @@ enum eRunningState {
 	rsGameModeFinished
 };
 //**************************[init]*********************************************
+void yearSelect () {
+	uint8_t maxMasterModes=maxGameNr;
+	uint8_t masterMode = 0;
+
+	uint32_t currentTime = systick_get();
+	uint32_t rainbowStartTime = currentTime;
+	uint8_t rainbowNumber = 0;
+	uint8_t newPress=0;
+	while (1) {
+		if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)||(currentTime<rainbowStartTime)){
+			rainbowNumber++;
+			rainbowNumber %= NUM_RAINBOWS;
+			rainbowStartTime = currentTime;
+			rgb_setAll(clRainbows[rainbowNumber]);
+		}
+		currentTime = systick_get();
+		if (!master_button_ok()) newPress=1;
+		if (newPress){
+			if (master_button_full3()) {
+				change_gameNr(masterMode+1);
+				return;
+			}
+			if (master_button_up()) {
+				masterMode++;
+				masterMode %= maxMasterModes;
+			}
+			if (master_button_down()) {
+				(masterMode <=	0)? masterMode = maxMasterModes - 1 : masterMode-- ;
+			}
+			writeModesToDisplay(masterMode+DefaultMasterModes, 0);
+		}
+		waitAndUpdate();
+	}
+}
 void init () {
 	// initialization
 	master_init();
@@ -57,6 +91,8 @@ void init () {
 
 	waitAndUpdate();
 
+	default_display();
+	if (master_button_ok()) yearSelect();
 	default_display();
 }
 //**************************[default display]**********************************
@@ -111,14 +147,14 @@ int main () {
 
 	init();
 
-	uint8_t maxMasterModes=DefaultMasterModes+maxGameNr;
+	uint8_t maxMasterModes=DefaultMasterModes;//+maxGameNr;
 	uint8_t maxModes[maxMasterModes];
 	uint8_t i;
 	for (i=0;i<maxMasterModes;i++){
 		switch (i){
 			case mmGameMode:
 			case mmTestMode:
-				maxModes[i]=maxGameModes+1;
+				maxModes[i]=maxGameModes;
 			break;
 			case mmScanMode:
 				maxModes[i]=MaxScanModes;
