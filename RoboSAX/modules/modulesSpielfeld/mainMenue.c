@@ -12,7 +12,7 @@
 #define STARTTIME ((uint32_t)(10UL*1000UL))
 #define LASTSEC ((uint32_t)(15UL*1000UL))
 
-#define SWITCHTIME ((uint32_t)(3UL*1000UL))
+#define SWITCHTIME ((uint32_t)(5UL*1000UL))
 #define UPDATETIME ((uint32_t)(100UL))
 //ms for blinking of activ changed elements
 #define BLINKTIMEON ((uint32_t)(420UL))
@@ -63,9 +63,9 @@ void yearSelect () {
 			rgb_setAll(clRainbows[rainbowNumber]);
 		}
 		currentTime = systick_get();
-		if (!master_button_ok()) newPress=1;
+		if (master_button_ok_state()) newPress=1;
 		if (newPress){
-			if (master_button_full3()) {
+			if (master_button_ok()) {
 				change_gameNr(masterMode+1);
 				return;
 			}
@@ -89,10 +89,10 @@ void init () {
 	systick_init();
 	change_gameNr(0);
 
-	waitAndUpdate();
+	waitMsAndUpdate(100);	
 
 	default_display();
-	if (master_button_ok()) yearSelect();
+	if (master_button_ok_state()) yearSelect();
 	default_display();
 }
 //**************************[default display]**********************************
@@ -108,6 +108,7 @@ void scanmode_start(enum eScanModes scanMode){
 	case scLedboxCount:
 		ledbox_setup_module_count();
 		showPoints(ledbox_count_current,LEDBOX_COUNT_MAX);
+		waitMsAndUpdate(333);	
 		break;
 		
 	case scTesting:
@@ -129,9 +130,12 @@ void scanmode_start(enum eScanModes scanMode){
 			ir_clearAll();
             ir_set(number,1);
 			//Buttontest&next
-			if (buttons_get(number)) number++;
+			if (buttons_get(number)){
+				   number++;
+				   if(number>=ledbox_count_current) number=0;
+			}
 			if (master_button_up()) {
-				number++;
+				if (number<ledbox_count_current-1) number++;
 			}
 			if (master_button_down()) {
 				if (number>0)	number--;
@@ -185,7 +189,13 @@ int main () {
 			case rsSelectMasterMode:
 			case rsSelectSubMode:
 				if(invalidMode){
-					rgb_setAll(clRed);
+					for(int i=0;i<5;i++){
+						rgb_setAll(clRed);
+						waitMsAndUpdate(333);
+						rgb_setAll(clBlack);
+						waitMsAndUpdate(333);
+					}	
+					invalidMode = 0;
 				}else{
 					if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)||(currentTime<rainbowStartTime)){
 						rainbowNumber++;
@@ -287,48 +297,50 @@ int main () {
 						buttons_reset();
 					}
 				}
-				switch (masterMode){
-					case mmGameMode:
-						menuemode=rsGameModeStarting;
-						itteration = 0;
-						systick_reset();
-						currentTime = systick_get();
-						starttime=currentTime;
-						break;
-					case mmTestMode:
-						menuemode=rsTestModeRunning;
-						break;
-					case mmOldGameMode:
-						pointsMode = 0;
-						menuemode=rsGameModeFinished;
-						break;
-					case mmScanMode:
-						scanmode_start(submode);
-						break;
-					default:
-						change_gameNr(masterMode-DefaultMasterModes+1);
-						for (i=0;i<maxMasterModes;i++){
-							switch (i){
-								case mmGameMode:
-								case mmTestMode:
-									maxModes[i]=maxGameModes+1;
-								break;
-								case mmScanMode:
-									maxModes[i]=MaxScanModes;
-								break;
-								case mmOldGameMode:
-								default:
-									maxModes[i]=1;
-								break;
-							}
-						}
-						menuemode=rsSelectMasterMode;
-				}
 				if(invalidMode){
 					if (maxModes[masterMode]>1){
 						menuemode = rsSelectSubMode;
 					} else if (maxModes[masterMode]==1){
 						menuemode = rsSelectMasterMode;
+					}
+				}
+				else{
+					switch (masterMode){
+						case mmGameMode:
+							menuemode=rsGameModeStarting;
+							itteration = 0;
+							systick_reset();
+							currentTime = systick_get();
+							starttime=currentTime;
+							break;
+						case mmTestMode:
+							menuemode=rsTestModeRunning;
+							break;
+						case mmOldGameMode:
+							pointsMode = 0;
+							menuemode=rsGameModeFinished;
+							break;
+						case mmScanMode:
+							scanmode_start(submode);
+							break;
+						default:
+							change_gameNr(masterMode-DefaultMasterModes+1);
+							for (i=0;i<maxMasterModes;i++){
+								switch (i){
+									case mmGameMode:
+									case mmTestMode:
+										maxModes[i]=maxGameModes+1;
+									break;
+									case mmScanMode:
+										maxModes[i]=MaxScanModes;
+									break;
+									case mmOldGameMode:
+									default:
+										maxModes[i]=1;
+									break;
+								}
+							}
+							menuemode=rsSelectMasterMode;
 					}
 				}
 			break;

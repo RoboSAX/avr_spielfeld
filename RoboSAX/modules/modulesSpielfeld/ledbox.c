@@ -207,7 +207,7 @@ void ledbox_setup_module_count(void) {
 	return_btn(0);
 
 	bus_btn_load(1);
-	delay_us(1);
+	delay_us(100);
 
 	uint8_t i;
 	uint8_t state;

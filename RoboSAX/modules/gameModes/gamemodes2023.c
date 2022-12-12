@@ -129,23 +129,42 @@ void gamemode_update_2023(){
 void gamemode_finalize_2023(uint8_t count, uint8_t mode){
     //game end
 
-    uint8_t points1 = 0;
-    uint8_t points2 = 0;
+	if (gamemode == gm1P){
+    	uint8_t points = 0;
+   		uint8_t numberMax = ledbox_count_current;
+   		uint8_t number = (count > numberMax)? numberMax: count;
     
-    uint8_t i;
+    	uint8_t i;
+    	for(i=0;i<LED_PER_TEAM;i++){
+    	    if (!team1.activate_LEDS[i]){
+		    	points+=3;
+    	    }
+    	}
 
-    for(i=0;i<LED_PER_TEAM;i++){
-        if (!team1.activate_LEDS[i]){
-	    points1+=3;
-        }
-        if (!team2.activate_LEDS[i]){
-	    points2+=3;
-        }
-    }
+		// bälle?
+    	showOnePointsLed(points, TEAM1COLOR, 3*LED_PER_TEAM, number);
+	}
+	else{
+			uint8_t points1 = 0;
+			uint8_t points2 = 0;
+			uint8_t numberMax = LEDBOX_COUNT_MAX / 2;
+			uint8_t number = (count > numberMax)? numberMax: count;
+			
+			uint8_t i;
 
-	// bälle?
+			for(i=0;i<LED_PER_TEAM;i++){
+				if (!team1.activate_LEDS[i]){
+				points1+=3;
+				}
+				if (!team2.activate_LEDS[i]){
+				points2+=3;
+				}
+			}
 
-    showPoints(points1, points2);
+			// bälle?
+
+			showPointsLed(points1, TEAM1COLOR, points2, TEAM2COLOR, 3*LED_PER_TEAM, number);
+	}
 }
 
 void gamemode_to_display_2023(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){

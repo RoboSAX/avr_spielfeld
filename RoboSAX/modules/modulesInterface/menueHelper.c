@@ -123,6 +123,35 @@ void showOnePoints (uint8_t teamPoints) {
 	}
 }
 
+void showPointsLed (uint8_t team1Points,enum eColor color1, uint8_t team2Points, enum eColor color2, uint8_t maxPoints, uint8_t numberLeds){
+	showPoints(team1Points,team2Points);
+	if(numberLeds>ledbox_count_current/2)numberLeds=ledbox_count_current/2;
+    for (uint8_t i = 0; i < numberLeds; i++) {
+       if(((i * maxPoints)/(numberLeds - 1U)) < (team1Points)){
+            rgb_set(i, color1);
+        } else {
+            rgb_set(i, clBlack);
+        }
+    }
+    for (uint8_t i = 0; i < numberLeds; i++) {
+       if(((i * maxPoints)/(numberLeds - 1U)) < (team2Points)){
+            rgb_set(ledbox_count_current-1-i, color2);
+        } else {
+            rgb_set(ledbox_count_current-1-i, clBlack);
+        }
+    }
+}
+void showOnePointsLed (uint8_t teamPoints,uint8_t maxPoints, enum eColor color, uint8_t numberLeds){
+	showOnePoints(teamPoints);
+    for (uint8_t i = 0; i < numberLeds; i++) {
+       if(((i * maxPoints)/(numberLeds - 1U)) < (teamPoints)){
+            rgb_set(i, color);
+        } else {
+            rgb_set(i, clBlack);
+        }
+    }
+}
+
 void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode){
 	display_double_dot=0;
 	switch (masterMode){
