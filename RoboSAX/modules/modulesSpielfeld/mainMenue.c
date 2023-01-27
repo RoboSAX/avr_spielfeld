@@ -146,7 +146,7 @@ void scanmode_start(enum eScanModes scanMode){
 		break;
 	}
  }
-//**************************[main]*********************************************
+//**************************[main]*********************LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS************************
 int main () {
 
 	init();
@@ -170,66 +170,91 @@ int main () {
 		}
 	}
 
-	uint32_t currentTime = systick_get();
 	enum eRunningState menuemode=rsNone;
-	uint32_t starttime = currentTime;
-	uint32_t pointstime = currentTime;
-	uint32_t rainbowStartTime = currentTime;
+
+	uint32_t currentTime = systick_get();
+	uint32_t endtime = currentTime;
+	uint32_t pointsNextTime = currentTime + SWITCHTIME;
+	uint32_t rainbowSwitchTime = currentTime;
+
+	uint32_t display_next_blink_time = currentTime + BLINKTIMEOFF;
+	uint8_t display_blink_status = 0;
+
 	uint32_t submode = 0;
 	enum eMasterModes masterMode = 0;
-	uint32_t display_blink_time = currentTime;
-	uint8_t display_blink_status = 0;
 	uint8_t rainbowNumber = 0;
 	uint8_t itteration = 0;
 	uint8_t gameRunningShowPoints = 0;
 	uint8_t pointsMode = 1;
 	uint8_t invalidMode = 0;
 	while (1) {
-		if (currentTime>(SWITCHTIME+pointstime)){
-			pointstime=currentTime;
+		// zeitsteuerung:
+		currentTime = systick_get();
+		// todo time overflow -> alle 49Tage... hinreichend irrelevant
+		if (currentTime>pointsNextTime){
+			pointsNextTime=currentTime+SWITCHTIME;
 			pointsMode++;
 		}
-		switch (menuemode){
-			case rsNone:
-			case rsSelectMasterMode:
-			case rsSelectSubMode:
-				if(invalidMode){
-					for(int i=0;i<5;i++){
-						rgb_setAll(clRed);
-						waitMsAndUpdate(333);
-						rgb_setAll(clBlack);
-						waitMsAndUpdate(333);
-					}	
-					invalidMode = 0;
+		if (currentTime>display_next_blink_time){
+			if(display_blink_status==1){
+				if(menuemode==rsSelectMasterMode){
+					//writeModesToDisplay(masterMode, submode);
+					//display_invertSegment(0);
+					//display_invertSegment(1);
+					//display_setSegment(qestM,0);
+					//display_setSegment(qestM,1);
+					display_setSegment(space,0);
+					display_setSegment(space,1);
+					display_blink_status = 0;
+					display_next_blink_time = currentTime+BLINKTIMEOFF;
+				}else if(menuemode==rsSelectSubMode){
+					//writeModesToDisplay(masterMode, submode);
+					//display_invertSegment(2);
+					//display_invertSegment(3);
+					//display_setSegment(qestM,2);
+					//display_setSegment(qestM,3);
+					display_setSegment(space,2);
+					display_setSegment(space,3);
+					display_blink_status = 0;
+					display_next_blink_time = currentTime+BLINKTIMEOFF;
 				}else{
-					if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)||(currentTime<rainbowStartTime)){
-						rainbowNumber++;
-						rainbowNumber %= NUM_RAINBOWS;
-						rainbowStartTime = currentTime;
-						rgb_setAll(clRainbows[rainbowNumber]);
-					}
+					display_next_blink_time = currentTime+BLINKTIMEON;
 				}
-			break;
-			case rsGameModeStarting:
-				if((((itteration + 1)*STARTTIME)/(ledbox_count_current))<(currentTime-starttime)){
-					rainbowNumber++;
-					itteration++;
-					rainbowNumber %= NUM_RAINBOWS;
-					rainbowStartTime = currentTime;
-					rgb_setAll(clRainbows[rainbowNumber]);
-					uint32_t i;
-					for (i = 0; i < itteration; i++) {
-							rgb_set(i, clBlack);
-					}
+			}else{
+				if(menuemode==rsSelectMasterMode){
+					writeModesToDisplay(masterMode, -1);
+				}else if(menuemode==rsSelectSubMode){
+					writeModesToDisplay(masterMode, submode);
 				}
-			break;
-			case rsStartMode:
-			case rsGameModeRunning:
-			case rsTestModeRunning:
-			case rsGameModeFinished:
-			break;
+				display_blink_status = 1;
+				display_next_blink_time = currentTime+BLINKTIMEON;
+			}
 		}
-		currentTime = systick_get();
+		if((currentTime>rainbowSwitchTime)&&
+				((menuemode<=rsSelectSubMode)||(menuemode==rsGameModeStarting))){
+			rainbowNumber++;
+			rainbowNumber %= NUM_RAINBOWS;
+			rgb_setAll(clRainbows[rainbowNumber]);
+			if(menuemode==rsGameModeStarting){
+				rainbowSwitchTime += STARTTIME / ledbox_count_current;
+				itteration++;
+				uint32_t i;
+				for (i = 0; i < itteration; i++) rgb_set(i, clBlack);
+			}else{
+				rainbowSwitchTime = currentTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS;
+			}
+		}
+		//led controll
+		if((menuemode<=rsSelectSubMode)&&invalidMode){
+			for(int i=0;i<5;i++){
+				rgb_setAll(clRed);
+				waitMsAndUpdate(333);
+				rgb_setAll(clBlack);
+				waitMsAndUpdate(333);
+			}	
+			invalidMode = 0;
+		}
+		//Knoepfe
 		if (master_button_full3()) {
 			invalidMode = 0;
 			switch (menuemode){
@@ -262,46 +287,19 @@ int main () {
 					if(master_button_state1() && master_button_state2()){
 						menuemode = rsGameModeFinished;
 						pointsMode = 0;
-						pointstime=currentTime;
+						pointsNextTime = currentTime + SWITCHTIME;
 					}
 					else{
 						gameRunningShowPoints=!gameRunningShowPoints;
 					}
 				break;
 			}
-		}
-		switch (menuemode){
-			case rsSelectMasterMode:
-				if (master_button_up()) {
-					masterMode++;
-					masterMode %= maxMasterModes;
-					//writeModesToDisplay(masterMode, submode);
-				}
-				if (master_button_down()) {
-					(masterMode <=	0)? masterMode = maxMasterModes - 1 : masterMode-- ;
-					//writeModesToDisplay(masterMode, submode);
-				}
-			break;
-			case rsSelectSubMode:
-				if (master_button_up()) {
-					submode++;
-					submode %= maxModes[masterMode];
-					//writeModesToDisplay(masterMode, submode);
-				}
-				if (master_button_down()) {
-					(submode <=  0)? submode = maxModes[masterMode] - 1 : submode-- ;
-					//writeModesToDisplay(masterMode, submode);
-				}
-			break;
-			case rsStartMode:
-				if ((masterMode == mmGameMode) || (masterMode == mmTestMode))
-				{
+			if(menuemode==rsStartMode){
+				if ((masterMode == mmGameMode) || (masterMode == mmTestMode)){
 					if (submode>=maxGameModes) invalidMode=1;
-					else{
-						if (masterMode == mmGameMode) invalidMode = gamemode_start(submode, omGame, bsSpielfeld);
-						if (masterMode == mmTestMode) invalidMode = gamemode_start(submode, omTest, bsSpielfeld);
-						buttons_reset();
-					}
+					else if (masterMode == mmGameMode) invalidMode = gamemode_start(submode, omGame, bsSpielfeld);
+					else if (masterMode == mmTestMode) invalidMode = gamemode_start(submode, omTest, bsSpielfeld);
+					buttons_reset();
 				}
 				if(invalidMode){
 					if (maxModes[masterMode]>1){
@@ -309,144 +307,88 @@ int main () {
 					} else if (maxModes[masterMode]==1){
 						menuemode = rsSelectMasterMode;
 					}
-				}
-				else{
-					switch (masterMode){
-						case mmGameMode:
-							menuemode=rsGameModeStarting;
-							itteration = 0;
-							systick_reset();
-							currentTime = systick_get();
-							starttime=currentTime;
+				}else if(masterMode==mmGameMode){
+					menuemode=rsGameModeStarting;
+					itteration = 0;
+					systick_reset();
+					currentTime = systick_get();
+					display_next_blink_time = currentTime;
+					endtime = currentTime + STARTTIME;
+					rainbowSwitchTime = currentTime + STARTTIME / ledbox_count_current;
+				}else if(masterMode==mmTestMode){
+					menuemode=rsTestModeRunning;
+				}else if(masterMode==mmOldGameMode){
+					pointsMode = 0;
+					pointsNextTime = currentTime + SWITCHTIME;
+					menuemode=rsGameModeFinished;
+				}else if(masterMode==mmScanMode){
+					scanmode_start(submode);
+				}else {
+					change_gameNr(masterMode-DefaultMasterModes+1);
+					for (i=0;i<maxMasterModes;i++){
+						switch (i){
+							case mmGameMode:
+							case mmTestMode:
+								maxModes[i]=maxGameModes+1;
 							break;
-						case mmTestMode:
-							menuemode=rsTestModeRunning;
+							case mmScanMode:
+								maxModes[i]=MaxScanModes;
 							break;
-						case mmOldGameMode:
-							pointsMode = 0;
-							pointstime=currentTime;
-							menuemode=rsGameModeFinished;
+							case mmOldGameMode:
+							default:
+								maxModes[i]=1;
 							break;
-						case mmScanMode:
-							scanmode_start(submode);
-							break;
-						default:
-							change_gameNr(masterMode-DefaultMasterModes+1);
-							for (i=0;i<maxMasterModes;i++){
-								switch (i){
-									case mmGameMode:
-									case mmTestMode:
-										maxModes[i]=maxGameModes+1;
-									break;
-									case mmScanMode:
-										maxModes[i]=MaxScanModes;
-									break;
-									case mmOldGameMode:
-									default:
-										maxModes[i]=1;
-									break;
-								}
-							}
-							menuemode=rsSelectMasterMode;
+						}
 					}
+					menuemode=rsSelectMasterMode;
 				}
-			break;
-			case rsGameModeStarting:
-				if (currentTime>(STARTTIME+starttime)){
-					menuemode=rsGameModeRunning;
-					buttons_reset();
-					starttime=currentTime;
-				}
-				else{
-					showtime((STARTTIME+starttime-currentTime)/10,0);
-				}
-			break;
-			case rsGameModeRunning:
+			}
+		}
+		if (master_button_up()) {
+			if(menuemode==rsSelectMasterMode){
+				masterMode++;
+				masterMode %= maxMasterModes;
+			}else if(menuemode==rsSelectSubMode){
+				submode++;
+				submode %= maxModes[masterMode];
+			}
+		}
+		if (master_button_down()) {
+			if(menuemode==rsSelectMasterMode){
+				(masterMode <=	0)? masterMode = maxMasterModes - 1 : masterMode-- ;
+			}else if(menuemode==rsSelectSubMode){
+				(submode <=  0)? submode = maxModes[masterMode] - 1 : submode-- ;
+			}
+		}
+		//(Re)aktionen
+		if(menuemode==rsGameModeStarting){
+			if (currentTime<endtime){
+				showtime((endtime-currentTime)/10,0);
+			}else{
+				menuemode=rsGameModeRunning;
+				gameRunningShowPoints=0;
+				buttons_reset();
+				endtime=currentTime+ROUNDTIME;
+			}
+		}else if(menuemode==rsGameModeRunning){
 				gamemode_update();
-				if(ROUNDTIME+starttime-LASTSEC<currentTime){
-					gameRunningShowPoints = 0;
-				}
-				if(!gameRunningShowPoints){
-					showtime((ROUNDTIME+starttime-currentTime)/(1000UL),1);
+				if(endtime<currentTime){
+					menuemode=rsGameModeFinished;
+					pointsMode = 0;
+					pointsNextTime = currentTime + SWITCHTIME;
+					default_display();
+				}else if(!gameRunningShowPoints||(endtime-LASTSEC<currentTime)){
+					showtime((endtime-currentTime)/(1000UL),1);
 				}else{
 					pointMagic(gamemode_points(pointsMode));
 				}
-				if(ROUNDTIME+starttime<currentTime){
-					menuemode=rsGameModeFinished;
-					pointsMode = 0;
-					pointstime=currentTime;
-					default_display();
-				}
-			break;
-			case rsTestModeRunning:
+		}else if(menuemode==rsTestModeRunning){
 				gamemode_update();
-			break;
-			case rsGameModeFinished:
-				pointLedMagic(gamemode_points(pointsMode), (currentTime-starttime) / UPDATETIME);
-			break;
-			case rsNone:
-			default:
-		break;
+				pointMagic(gamemode_points(pointsMode));
+		}else if(menuemode==rsGameModeFinished){
+				pointLedMagic(gamemode_points(pointsMode),(currentTime-endtime)/UPDATETIME);
 		}
 
-		if(display_blink_status==1){
-			if((display_blink_time+BLINKTIMEON<currentTime)||(currentTime<display_blink_time)){
-				switch (menuemode){
-					case rsSelectMasterMode:
-						//writeModesToDisplay(masterMode, submode);
-						//display_invertSegment(0);
-						//display_invertSegment(1);
-						//display_setSegment(qestM,0);
-						//display_setSegment(qestM,1);
-						display_setSegment(space,0);
-						display_setSegment(space,1);
-						display_blink_status = 0;
-					//break;
-					case rsSelectSubMode:
-						//writeModesToDisplay(masterMode, submode);
-						//display_invertSegment(2);
-						//display_invertSegment(3);
-						//display_setSegment(qestM,2);
-						//display_setSegment(qestM,3);
-						display_setSegment(space,2);
-						display_setSegment(space,3);
-						display_blink_status = 0;
-					break;
-					case rsNone:
-					case rsStartMode:
-					case rsTestModeRunning:
-					case rsGameModeStarting:
-					case rsGameModeRunning:
-					case rsGameModeFinished:
-					default:
-					break;
-				}
-				display_blink_time = currentTime;
-			}
-		}
-		if(display_blink_status==0){
-			if((display_blink_time+BLINKTIMEOFF<currentTime)||(currentTime<display_blink_time)){
-				switch (menuemode){
-					case rsSelectMasterMode:
-						writeModesToDisplay(masterMode, -1);
-						display_blink_status = 1;
-					break;
-					case rsSelectSubMode:
-						writeModesToDisplay(masterMode, submode);
-						display_blink_status = 1;
-					break;
-					case rsNone:
-					case rsStartMode:
-					case rsTestModeRunning:
-					case rsGameModeStarting:
-					case rsGameModeRunning:
-					case rsGameModeFinished:
-					default:
-					break;
-				}
-				display_blink_time = currentTime;
-			}
-		}
 		waitAndUpdate();
 	}
 	return (0);
