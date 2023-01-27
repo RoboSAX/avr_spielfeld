@@ -250,57 +250,29 @@ void gamemode_update_2019(){
     showPoints(team[team1].points, team[team2].points);
 }
 
-void gamemode_finalize_2019(uint8_t count, uint8_t mode){
+struct Points gamemode_points_2019(uint8_t mode){
     //game end
 
-    uint8_t points1;
-    uint8_t points2;
-
-    uint8_t points1MaxVal;
-    uint8_t points2MaxVal;
-    
-    uint8_t i;
-    uint8_t numberMax = LEDBOX_COUNT_MAX / 2;
-    uint8_t number = (count > numberMax)? numberMax: count;
-
-    //for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-    //    rgb_set(i, clBlack);
-    //}
+	struct Points points;
     if (mode % 2){
-        points1 = team1;
-        points2 = team2;
+		points.team1=team1;
+		points.team2=team2;
+		points.type=ptBeide;
 
-        points1MaxVal = (PHASE0 * (POINTSFORNEUTRAL + POINTSFOROWNCOLOR)) - 1U;
-        points2MaxVal = (PHASE0 * (POINTSFORNEUTRAL + POINTSFOROWNCOLOR)) - 1U;
-
-        showPoints(team[points1].points, team[points2].points);
+		points.maxPoints=(PHASE0 * (POINTSFORNEUTRAL + POINTSFOROWNCOLOR)) - 1U;
     } else {
-        points1 = teamNeutral;
-        points2 = teamNeutral;
+		points.team1=teamNeutral;
+		points.type=ptTeam1;
 
-        points1MaxVal = (PHASE0 * POINTSFORNEUTRAL) - 1U;
-        points2MaxVal = (PHASE0 * POINTSFORNEUTRAL) - 1U;
-
-        showOnePoints(team[teamNeutral].points);
+		points.maxPoints=(PHASE0 * POINTSFORNEUTRAL) - 1U;
     }
 
     //0 -> no leds
     //76 -> all leds
     //1-75 -> >=one led on, >=1 led off
-    for (i = 0; i < number; i++) {
-       if(((i * points1MaxVal)/(numberMax - 1U)) < (team[points1].points)){
-            rgb_set(i, team[points1].teamColor);
-        } else {
-            rgb_set(i, clBlack);
-        }
-    }
-    for (i = 0; i < number; i++) {
-        if(((i * points2MaxVal)/(numberMax - 1U)) < (team[points2].points)){
-            rgb_set(LEDBOX_COUNT_MAX-1-i, team[points2].teamColor);
-        } else {
-            rgb_set(LEDBOX_COUNT_MAX-1-i, clBlack);
-        }
-    }
+	points.color1=team[team1].teamColor;
+	points.color2=team[team2].teamColor;
+	return points;
 }
 
 //Game priate

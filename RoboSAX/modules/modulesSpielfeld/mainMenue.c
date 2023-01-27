@@ -173,6 +173,7 @@ int main () {
 	uint32_t currentTime = systick_get();
 	enum eRunningState menuemode=rsNone;
 	uint32_t starttime = currentTime;
+	uint32_t pointstime = currentTime;
 	uint32_t rainbowStartTime = currentTime;
 	uint32_t submode = 0;
 	enum eMasterModes masterMode = 0;
@@ -184,6 +185,10 @@ int main () {
 	uint8_t pointsMode = 1;
 	uint8_t invalidMode = 0;
 	while (1) {
+		if (currentTime>(SWITCHTIME+pointstime)){
+			pointstime=currentTime;
+			pointsMode++;
+		}
 		switch (menuemode){
 			case rsNone:
 			case rsSelectMasterMode:
@@ -257,6 +262,7 @@ int main () {
 					if(master_button_state1() && master_button_state2()){
 						menuemode = rsGameModeFinished;
 						pointsMode = 0;
+						pointstime=currentTime;
 					}
 					else{
 						gameRunningShowPoints=!gameRunningShowPoints;
@@ -318,6 +324,7 @@ int main () {
 							break;
 						case mmOldGameMode:
 							pointsMode = 0;
+							pointstime=currentTime;
 							menuemode=rsGameModeFinished;
 							break;
 						case mmScanMode:
@@ -361,10 +368,13 @@ int main () {
 				}
 				if(!gameRunningShowPoints){
 					showtime((ROUNDTIME+starttime-currentTime)/(1000UL),1);
+				}else{
+					pointMagic(gamemode_points(pointsMode));
 				}
 				if(ROUNDTIME+starttime<currentTime){
 					menuemode=rsGameModeFinished;
 					pointsMode = 0;
+					pointstime=currentTime;
 					default_display();
 				}
 			break;
@@ -372,13 +382,7 @@ int main () {
 				gamemode_update();
 			break;
 			case rsGameModeFinished:
-				if (currentTime>(SWITCHTIME+starttime)){
-					starttime=currentTime;
-					pointsMode++;
-				}
-				else{
-					gamemode_finalize((currentTime-starttime) / UPDATETIME, pointsMode);
-				}
+				pointLedMagic(gamemode_points(pointsMode), (currentTime-starttime) / UPDATETIME);
 			break;
 			case rsNone:
 			default:

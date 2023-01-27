@@ -186,34 +186,16 @@ void gamemode_update_2020(){
 	showPoints(team[team1].points, team[team2].points);
 }
 
-void gamemode_finalize_2020(uint8_t count, uint8_t mode){
-	//game end
+struct Points gamemode_points_2020(uint8_t mode){
 
-	uint8_t points1MaxVal= MAX_TRYS * POINTS_PER_PRESS;
-	uint8_t points2MaxVal= MAX_TRYS * POINTS_PER_PRESS;
-	
-	uint8_t i;
-	uint8_t numberMax = (full_field)? ledbox_count_current / 2 : ledbox_count_current;
-	uint8_t number = (count > numberMax)? numberMax: count;
-
-	showPoints(team[team1].points, team[team2].points);
-
-	for (i = 0; i < number; i++) {
-		if(((i * points1MaxVal)/(numberMax - 1U)) < (team[team1].points)){
-			rgb_set(shift_num(i), team[team1].teamColor);
-		} else {
-			rgb_set(shift_num(i), clBlack);
-		}
-	}
-	if(ledbox_state == full_field){
-		for (i = 0; i < number; i++) {
-			if(((i * points2MaxVal)/(numberMax - 1U)) < (team[team2].points)){
-				rgb_set(shift_num(i), team[team2].teamColor);
-			} else {
-				rgb_set(shift_num(i), clBlack);
-			}
-		}
-	}
+	struct Points points;
+	points.team1=team[team1].points;
+	points.team2=team[team2].points;
+	points.color1=team[team1].teamColor;
+	points.color2=team[team2].teamColor;
+	points.maxPoints=MAX_TRYS * POINTS_PER_PRESS;
+	points.type=ptBeide;
+	return points;
 }
 
 void gamemode_to_display_2020(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){

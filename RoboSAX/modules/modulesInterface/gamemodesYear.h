@@ -48,7 +48,7 @@ enum eBaseSystem {
 void gamemode_init_##YEAR(void);\
 uint8_t gamemode_start_##YEAR(uint8_t gameMode, enum eOperationModes operationMode, enum eBaseSystem system);\
 void gamemode_update_##YEAR(void);\
-void gamemode_finalize_##YEAR(uint8_t count, uint8_t mode);\
+struct Points gamemode_points_##YEAR(uint8_t mode);\
 \
 void gamemode_to_display_##YEAR(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2);
 

@@ -111,26 +111,20 @@ void gamemode_update_2022(){
 	showOnePoints(team.points);
 }
 
-void gamemode_finalize_2022(uint8_t count, uint8_t mode){
+struct Points gamemode_points_2022(uint8_t mode){
 	//game end
 
 	uint8_t points1MaxVal= ledbox_count_current * POINTS_PER_PRESS;
-
 	
-	uint8_t i;
-	uint8_t numberMax = ledbox_count_current;
-	
-	uint8_t number = (count > numberMax)? numberMax: count;
+	struct Points points;
+	points.team1=team.points;
+	points.color1=TEAMFLASHCOLOR;
+	points.maxPoints=points1MaxVal;
+	points.type=ptTeam1;
+	// bälle?
 
-	showOnePoints(team.points);
+	return points;
 
-	for (i = 0; i < number; i++) {
-		if(((i * points1MaxVal)/(numberMax - 1U)) < (team.points)){
-			rgb_set(shift_num(i), TEAMFLASHCOLOR);
-		} else {
-			rgb_set(shift_num(i), NOCOLOR);
-		}
-	}
 }
 
 void gamemode_to_display_2022(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){

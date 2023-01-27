@@ -13,6 +13,29 @@
 
 
 //**************************<Methods>******************************************
+
+void pointMagic(struct Points points){
+	if(points.type==ptBeide){
+			showPoints(points.team1,points.team2);
+	}else{
+			showOnePoints(points.team1);
+	}
+}
+void pointLedMagic(struct Points points, uint8_t count){
+	uint8_t numberMax = ledbox_count_current;
+   	uint8_t number = (count > numberMax)? numberMax: count;
+	if(points.type==ptBeide){
+			showPoints(points.team1,points.team2);
+			showPointsLed (points.team1, points.color1,
+						   points.team2, points.color2,
+						   points.maxPoints, number);
+	}else{
+			showOnePoints(points.team1);
+			showOnePointsLed(points.team1, points.color1,
+						   points.maxPoints, number);
+	}
+}
+
 void waitAndUpdate () {
 	waitMsAndUpdate(0);
 }

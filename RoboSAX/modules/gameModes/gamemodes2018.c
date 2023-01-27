@@ -163,24 +163,28 @@ void gamemode_update_2018(){
        	setLEDs();
 }
 
-void gamemode_finalize_2018(uint8_t count, uint8_t mode){
+struct Points gamemode_points_2018(uint8_t mode){
     //game end
 
-    uint8_t points1 = 0;
-    uint8_t points2 = 0;
-    
     uint8_t i;
 
+	struct Points points;
+	points.team1=0;
+	points.team2=0;
     for(i=0;i<LED_PER_TEAM;i++){
         if (team1.activate_LEDS[i]){
-	    points1+=3;
+	    points.team1+=3;
         }
         if (team2.error_timer){
-	    points2+=3;
+	    points.team2+=3;
         }
     }
 
-    showPoints(points1, points2);
+	points.color1=TEAM1COLOR;
+	points.color2=TEAM2COLOR;
+	points.maxPoints=LEDBOX_COUNT_MAX/2*3;
+	points.type=ptBeide;
+	return points;
 }
 
 void gamemode_to_display_2018(uint8_t gameMode, uint8_t const** displayOut1, uint8_t const** displayOut2){

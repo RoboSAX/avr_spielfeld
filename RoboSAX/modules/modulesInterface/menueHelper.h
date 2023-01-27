@@ -15,6 +15,7 @@
 #include "display_chars.h"
 #include "systick.h"
 #include "ledbox.h"
+#include "gamemodes.h"
 
 //**************************<Prototypes>***************************************
 enum eMasterModes {
@@ -33,6 +34,8 @@ enum eScanModes {
 void waitAndUpdate(void);
 void waitMsAndUpdate(uint16_t msecs);
 
+void pointMagic(struct Points points);
+void pointLedMagic(struct Points points, uint8_t count);
 void showtime (uint16_t time,uint8_t dot);
 void showPoints (uint8_t team1Points,uint8_t team2Points);
 void showOnePoints (uint8_t teamPoints);

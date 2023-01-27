@@ -137,13 +137,13 @@ int main () {
 	uint8_t gamemode = 0;
 	//ledbox_count_current=12;
 	//ledbox_state=half_field;
-	if (!master_button_ok_state()){
+	if (/*!master_button_ok_state()*/1){
 		Modus1();
 		gamemode_start(gamemode, omTest, bsTeamprobe);
 	}else{
-		gamemode = 1;
 		Modus2();
 		gamemode_start(gamemode, omGame, bsTeamprobe);
+		gamemode = 1;
 	}
 	buttons_reset();
 	while (1) {

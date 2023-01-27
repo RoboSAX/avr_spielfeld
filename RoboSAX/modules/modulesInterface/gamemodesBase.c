@@ -17,7 +17,7 @@
 gamemode_init_pointer gamemode_init;
 gamemode_start_pointer gamemode_start;
 gamemode_update_pointer gamemode_update;
-gamemode_finalize_pointer gamemode_finalize;
+gamemode_points_pointer gamemode_points;
 gamemode_to_display_pointer gamemode_to_display;
 
 uint8_t maxGameModes;
@@ -56,7 +56,7 @@ void change_gameNr(uint8_t gameNr){
 					gamemode_init=gamemode_init_##YEAR;\
 					gamemode_start=gamemode_start_##YEAR;\
 					gamemode_update=gamemode_update_##YEAR;\
-					gamemode_finalize=gamemode_finalize_##YEAR;\
+					gamemode_points=gamemode_points_##YEAR;\
 					gamemode_to_display=gamemode_to_display_##YEAR;\
 					break;	
 
