@@ -30,6 +30,7 @@ extern uint8_t maxGameModes;
 
 enum ePType{
 	ptBeide,
+	ptMaxIstSumme,
 	ptTeam1,
 };
 struct Points{

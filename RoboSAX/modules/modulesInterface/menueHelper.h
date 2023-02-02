@@ -40,6 +40,7 @@ void showtime (uint16_t time,uint8_t dot);
 void showPoints (uint8_t team1Points,uint8_t team2Points);
 void showOnePoints (uint8_t teamPoints);
 void showPointsLed (uint8_t team1Points,enum eColor color1, uint8_t team2Points, enum eColor color2, uint8_t maxPoints, uint8_t numberLeds);
+void showPointsLedVs (uint8_t team1Points,enum eColor color1, uint8_t team2Points, enum eColor color2, uint8_t maxPoints, uint8_t numberLeds);
 void showOnePointsLed (uint8_t teamPoints,uint8_t maxPoints, enum eColor color, uint8_t numberLeds);
 void writeModesToDisplay (enum eMasterModes masterMode, int8_t subMode);
 #endif

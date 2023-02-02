@@ -104,46 +104,34 @@ void default_display(){
 }
 
 void scanmode_start(enum eScanModes scanMode){
-	switch (scanMode){
-	case scLedboxCount:
+	if (scanMode==scLedboxCount){
 		ledbox_setup_module_count();
 		showPoints(ledbox_count_current,LEDBOX_COUNT_MAX);
-		waitMsAndUpdate(333);	
-		break;
-		
-	case scTesting:
-		{
-			static uint8_t number=0;
-			//rainbow LED
-			static uint8_t rainbowNumber=0;
-			uint32_t currentTime = systick_get();
-			uint32_t rainbowStartTime = currentTime;
-			if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)
-							||(currentTime<rainbowStartTime)){
-				rainbowNumber++;
-				rainbowNumber %= NUM_RAINBOWS;
-				rainbowStartTime = currentTime;
-			}
-			rgb_clearAll();
-            rgb_set(number,clRainbows[rainbowNumber]);
-			//IR LED
-			ir_clearAll();
-            ir_set(number,1);
-			//Buttontest&next
-			if (buttons_get(number)){
-				   number++;
-				   if(number>=ledbox_count_current) number=0;
-			}
-			if (master_button_up()) {
-				if (number<ledbox_count_current-1) number++;
-			}
-			if (master_button_down()) {
-				if (number>0)	number--;
-			}
+		//waitMsAndUpdate(50);	
+	}else{
+		static uint8_t number=0;
+		//rainbow LED
+		static uint8_t rainbowNumber=0;
+		uint32_t currentTime = systick_get();
+		uint32_t rainbowStartTime = currentTime;
+		if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)
+						||(currentTime<rainbowStartTime)){
+			rainbowNumber++;
+			rainbowNumber %= NUM_RAINBOWS;
+			rainbowStartTime = currentTime;
 		}
-		break;
-	default:
-		break;
+		rgb_clearAll();
+        rgb_set(number,clRainbows[rainbowNumber]);
+		//IR LED
+		ir_clearAll();
+        ir_set(number,1);
+		//Buttontest&next
+		if (buttons_get(number)){
+		   number++;
+		   if(number>=ledbox_count_current) number=0;
+		}
+		if (master_button_up()) if (number<ledbox_count_current-1) number++;
+		if (master_button_down()) if (number>0)	number--;
 	}
  }
 //**************************[main]*********************LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS************************

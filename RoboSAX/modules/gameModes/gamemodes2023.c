@@ -23,7 +23,7 @@
 
 
 //**************************<Macros>*******************************************
-#define LED_PER_TEAM LEDBOX_COUNT_MAX/2
+#define LED_PER_TEAM 6
 #define TEAM1COLOR clGreen
 #define TEAM2COLOR clBlue
 #define TEAM1NOCOLOR clBlack
@@ -45,6 +45,25 @@ static struct sTeam team1,team2;
 static enum eGamemodes gamemode;
 //**************************<Methods>******************************************
 static void switchLED(struct sTeam *myteam,struct sTeam *enemy,uint8_t mynumber);
+
+uint8_t team1NrToLEDNr(uint8_t nr){
+	if(nr<3)return nr;
+	return nr+14;
+}
+uint8_t team2NrToLEDNr(uint8_t nr){
+	if(nr<3)return nr+12;
+	return nr+2;
+}
+//		0,1,2,3  		4,5,6,7
+//20,21,22,23		         8,9,10,11
+//		19,18,17,16 	15,14,13,12
+int8_t LEDToTeamNr(uint8_t nr){
+	if(nr<3)return nr+1;
+	if(nr>16&& nr<=19)return nr-14+1;
+	if(nr>4 && nr<=7) return -(nr-2+1);
+	if(nr>11&& nr<=14)return -(nr-12+1);
+	return 0;
+}
 
 void gamemode_init_2023(void){
     maxGameModes=MaxGameModes;
@@ -72,8 +91,10 @@ uint8_t gamemode_start_2023(uint8_t gameMode, enum eOperationModes operationMode
 
 static void setLEDs(void){
     uint8_t i;
+	rgb_setAll(NEUTRALCOLOR);
+    ir_setAll(0);
     for(i=0;i<LED_PER_TEAM;i++){
-        uint8_t number1=(i<(LED_PER_TEAM-LED_TEAM1_0_to))?(i+(LED_PER_TEAM+LED_TEAM1_0_to)):(i-(LED_PER_TEAM-LED_TEAM1_0_to));
+        uint8_t number1=team1NrToLEDNr(i);
         if (team1.activate_LEDS[i]){
             rgb_set(number1,TEAM1COLOR);
             ir_set(number1,1);
@@ -81,9 +102,8 @@ static void setLEDs(void){
             if ((gamemode!=gm1P)&&(team2.activate_LEDS[i]))rgb_set(number1,TEAM1NOCOLOR);
             else rgb_set(number1,NEUTRALCOLOR);
             ir_set(number1,0);
-
         }
-        uint8_t number2=i+LED_TEAM1_0_to;
+        uint8_t number2=team2NrToLEDNr(i);
 		if (team2.activate_LEDS[i]){
 			rgb_set(number2,TEAM2COLOR);
 			ir_set(number2,1);
@@ -95,24 +115,19 @@ static void setLEDs(void){
     }
 }
 
-static void pushButton(uint8_t number){
+static void pushButton(uint8_t rawNumber){
     struct sTeam *myteam,*enemy;
     uint8_t mynumber;
-    if (number<LED_TEAM1_0_to){
+	int8_t number=LEDToTeamNr(rawNumber);
+    if (number>0){
         myteam=&team1;
         enemy=&team2;
-        mynumber=number+(LED_PER_TEAM-LED_TEAM1_0_to);
-    }else{
-        number-=LED_TEAM1_0_to;
-        if (number>=LED_PER_TEAM){
-            myteam=&team1;
-            enemy=&team2;
-            mynumber=number-LED_PER_TEAM;
-        }else{
-            myteam=&team2;
-            enemy=&team1;
-            mynumber=number;
-        }
+        mynumber=number-1;
+    }else if (number<0){
+        number=-number;
+        myteam=&team2;
+        enemy=&team1;
+        mynumber=number-1;
     }
     switchLED(myteam,enemy,mynumber);
 }
@@ -164,9 +179,9 @@ struct Points gamemode_points_2023(uint8_t mode){
 		}
 
 		points.color1=TEAM1COLOR;
-		points.color1=TEAM2COLOR;
+		points.color2=TEAM2COLOR;
 		points.maxPoints=3*LED_PER_TEAM;
-		points.type=ptBeide;
+		points.type=ptMaxIstSumme;
 		// bälle?
 	}
 	return points;

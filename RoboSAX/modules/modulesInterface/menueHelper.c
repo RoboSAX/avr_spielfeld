@@ -15,24 +15,30 @@
 //**************************<Methods>******************************************
 
 void pointMagic(struct Points points){
-	if(points.type==ptBeide){
-			showPoints(points.team1,points.team2);
-	}else{
+	if(points.type==ptTeam1){
 			showOnePoints(points.team1);
+	}else{
+			showPoints(points.team1,points.team2);
 	}
 }
 void pointLedMagic(struct Points points, uint8_t count){
 	uint8_t numberMax = ledbox_count_current;
    	uint8_t number = (count > numberMax)? numberMax: count;
-	if(points.type==ptBeide){
-			showPoints(points.team1,points.team2);
-			showPointsLed (points.team1, points.color1,
-						   points.team2, points.color2,
-						   points.maxPoints, number);
+	if(points.type==ptTeam1){
+		showOnePoints(points.team1);
+		showOnePointsLed(points.team1, points.color1,
+					   points.maxPoints, number);
 	}else{
-			showOnePoints(points.team1);
-			showOnePointsLed(points.team1, points.color1,
-						   points.maxPoints, number);
+		showPoints(points.team1,points.team2);
+		if(points.type==ptBeide){
+			showPointsLed (points.team1, points.color1,
+					   points.team2, points.color2,
+					   points.maxPoints, number);
+		}else{
+			showPointsLedVs(points.team1, points.color1,
+					   points.team2, points.color2,
+					   points.maxPoints, number);
+		}
 	}
 }
 
@@ -161,6 +167,21 @@ void showPointsLed (uint8_t team1Points,enum eColor color1, uint8_t team2Points,
             rgb_set(ledbox_count_current-1-i, color2);
         } else {
             rgb_set(ledbox_count_current-1-i, clBlack);
+        }
+    }
+}
+void showPointsLedVs (uint8_t team1Points,enum eColor color1, uint8_t team2Points, enum eColor color2, uint8_t maxPoints, uint8_t numberLeds){
+	showPoints(team1Points,team2Points);
+	rgb_setAll(clBlack);
+	if(numberLeds>ledbox_count_current)numberLeds=ledbox_count_current;
+    for (uint8_t i = 0; i < numberLeds; i++) {
+       if(((i * maxPoints)/(numberLeds - 1U)) < (team1Points)){
+            rgb_set(i, color1);
+        }
+    }
+    for (uint8_t i = 0; i < numberLeds; i++) {
+       if(((i * maxPoints)/(numberLeds - 1U)) < (team2Points)){
+            rgb_set(ledbox_count_current-1-i, color2);
         }
     }
 }
