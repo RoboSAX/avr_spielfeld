@@ -156,17 +156,20 @@ void showPointsLed (uint8_t team1Points,enum eColor color1, uint8_t team2Points,
 	showPoints(team1Points,team2Points);
 	if(numberLeds>ledbox_count_current/2)numberLeds=ledbox_count_current/2;
     for (uint8_t i = 0; i < numberLeds; i++) {
-       if(((i * maxPoints)/(numberLeds - 1U)) < (team1Points)){
-            rgb_set(i, color1);
+		int8_t pos=-i+3;
+		if(pos<0) pos+=ledbox_count_current;
+        if(((i * maxPoints)/(numberLeds - 1U)) < (team1Points)){
+            rgb_set(pos, color1);
         } else {
-            rgb_set(i, clBlack);
+            rgb_set(pos, clBlack);
         }
     }
     for (uint8_t i = 0; i < numberLeds; i++) {
-       if(((i * maxPoints)/(numberLeds - 1U)) < (team2Points)){
-            rgb_set(ledbox_count_current-1-i, color2);
+		uint8_t pos=(i+4) % ledbox_count_current;
+        if(((i * maxPoints)/(numberLeds - 1U)) < (team2Points)){
+        	rgb_set(pos, color2);
         } else {
-            rgb_set(ledbox_count_current-1-i, clBlack);
+            rgb_set(pos, clBlack);
         }
     }
 }
@@ -175,13 +178,16 @@ void showPointsLedVs (uint8_t team1Points,enum eColor color1, uint8_t team2Point
 	rgb_setAll(clBlack);
 	if(numberLeds>ledbox_count_current)numberLeds=ledbox_count_current;
     for (uint8_t i = 0; i < numberLeds; i++) {
-       if(((i * maxPoints)/(numberLeds - 1U)) < (team1Points)){
-            rgb_set(i, color1);
-        }
+		if(((i * maxPoints)/(numberLeds - 1U)) < (team1Points)){
+			int8_t pos=3-i;
+			if(pos<0) pos+=ledbox_count_current;
+        	rgb_set(pos, color1);
+		}
     }
     for (uint8_t i = 0; i < numberLeds; i++) {
        if(((i * maxPoints)/(numberLeds - 1U)) < (team2Points)){
-            rgb_set(ledbox_count_current-1-i, color2);
+			uint8_t pos=(i+4)%ledbox_count_current;
+            rgb_set(pos, color2);
         }
     }
 }

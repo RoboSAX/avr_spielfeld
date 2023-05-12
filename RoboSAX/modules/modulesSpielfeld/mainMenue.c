@@ -10,6 +10,7 @@
 //ms per round
 #define ROUNDTIME ((uint32_t)(3UL*60UL*1000UL))
 #define STARTTIME ((uint32_t)(10UL*1000UL))
+#define YEARTIME ((uint32_t)(1234UL))
 #define LASTSEC ((uint32_t)(15UL*1000UL))
 
 #define SWITCHTIME ((uint32_t)(5UL*1000UL))
@@ -41,6 +42,7 @@ enum eRunningState {
 	rsSelectMasterMode ,
 	rsSelectSubMode ,
 	rsStartMode ,
+	rsYearMode ,
 	rsTestModeRunning ,
 	rsGameModeStarting ,
 	rsGameModeRunning ,
@@ -109,29 +111,34 @@ void scanmode_start(enum eScanModes scanMode){
 		showPoints(ledbox_count_current,LEDBOX_COUNT_MAX);
 		//waitMsAndUpdate(50);	
 	}else{
-		static uint8_t number=0;
-		//rainbow LED
-		static uint8_t rainbowNumber=0;
-		uint32_t currentTime = systick_get();
-		uint32_t rainbowStartTime = currentTime;
-		if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)
-						||(currentTime<rainbowStartTime)){
-			rainbowNumber++;
-			rainbowNumber %= NUM_RAINBOWS;
-			rainbowStartTime = currentTime;
+		while(1){
+			static uint8_t number=0;
+			//rainbow LED
+			static uint8_t rainbowNumber=0;
+			uint32_t currentTime = systick_get();
+			uint32_t rainbowStartTime = currentTime;
+			if((rainbowStartTime + LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS < currentTime)
+							||(currentTime<rainbowStartTime)){
+				rainbowNumber++;
+				rainbowNumber %= NUM_RAINBOWS;
+				rainbowStartTime = currentTime;
+			}
+			rgb_clearAll();
+			rgb_set(number,clRainbows[rainbowNumber]);
+			//IR LED
+			ir_clearAll();
+			ir_set(number,1);
+			//Buttontest&next
+			if (buttons_get(number)){
+			   number++;
+			   if(number>=ledbox_count_current) number=0;
+			}
+			if (master_button_up()) if (number<ledbox_count_current-1) number++;else number=0;
+			if (master_button_down()) if (number>0)	number--;else number=ledbox_count_current-1;
+			if (master_button_ok()) break;
+			showPoints(number,ledbox_count_current);
+			waitAndUpdate();
 		}
-		rgb_clearAll();
-        rgb_set(number,clRainbows[rainbowNumber]);
-		//IR LED
-		ir_clearAll();
-        ir_set(number,1);
-		//Buttontest&next
-		if (buttons_get(number)){
-		   number++;
-		   if(number>=ledbox_count_current) number=0;
-		}
-		if (master_button_up()) if (number<ledbox_count_current-1) number++;
-		if (master_button_down()) if (number>0)	number--;
 	}
  }
 //**************************[main]*********************LEDBOX_ROLLING_RAINBOW_SWITCH_TIME_MS************************
@@ -193,6 +200,8 @@ int main () {
 					//display_setSegment(qestM,1);
 					display_setSegment(space,0);
 					display_setSegment(space,1);
+					display_setSegment(space,2);
+					display_setSegment(space,3);
 					display_blink_status = 0;
 					display_next_blink_time = currentTime+BLINKTIMEOFF;
 				}else if(menuemode==rsSelectSubMode){
@@ -296,15 +305,11 @@ int main () {
 						menuemode = rsSelectMasterMode;
 					}
 				}else if(masterMode==mmGameMode){
-					menuemode=rsGameModeStarting;
-					itteration = 0;
-					systick_reset();
-					currentTime = systick_get();
-					display_next_blink_time = currentTime;
-					endtime = currentTime + STARTTIME;
-					rainbowSwitchTime = currentTime + STARTTIME / ledbox_count_current;
+					menuemode=rsYearMode;
+					endtime = currentTime + YEARTIME;
 				}else if(masterMode==mmTestMode){
-					menuemode=rsTestModeRunning;
+					menuemode=rsYearMode;
+					endtime = currentTime + YEARTIME;
 				}else if(masterMode==mmOldGameMode){
 					pointsMode = 0;
 					pointsNextTime = currentTime + SWITCHTIME;
@@ -349,7 +354,28 @@ int main () {
 			}
 		}
 		//(Re)aktionen
-		if(menuemode==rsGameModeStarting){
+		if(menuemode==rsYearMode){
+			if (currentTime<endtime){
+				uint8_t const* year[4];
+				curr_game_to_display(&year[0], &year[1], &year[2], &year[3]);
+				display_clearSuperSegment(0);
+				display_addRight(year[0],0,1);
+				display_addRight(year[1],0,1);
+				display_clearSuperSegment(1);
+				display_addRight(year[2],1,1);
+				display_addRight(year[3],1,1);
+			}else if(masterMode==mmGameMode){
+				menuemode=rsGameModeStarting;
+				itteration = 0;
+				systick_reset();
+				currentTime = systick_get();
+				display_next_blink_time = currentTime;
+				endtime = currentTime + STARTTIME;
+				rainbowSwitchTime = currentTime + STARTTIME / ledbox_count_current;
+			}else if(masterMode==mmTestMode){
+				menuemode=rsTestModeRunning;
+			}else menuemode=rsSelectSubMode;
+		}else if(menuemode==rsGameModeStarting){
 			if (currentTime<endtime){
 				showtime((endtime-currentTime)/10,0);
 			}else{
