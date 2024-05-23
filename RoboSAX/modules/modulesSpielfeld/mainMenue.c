@@ -8,7 +8,6 @@
 *                                                                             *
 ******************************************************************************/
 //ms per round
-#define ROUNDTIME ((uint32_t)(3UL*60UL*1000UL))
 #define STARTTIME ((uint32_t)(10UL*1000UL))
 #define YEARTIME ((uint32_t)(1234UL))
 #define LASTSEC ((uint32_t)(15UL*1000UL))
@@ -382,9 +381,10 @@ int main () {
 				menuemode=rsGameModeRunning;
 				gameRunningShowPoints=0;
 				buttons_reset();
-				endtime=currentTime+ROUNDTIME;
+				endtime=currentTime+gameTimeMax;
 			}
 		}else if(menuemode==rsGameModeRunning){
+				gameTimeLeft=endtime-currentTime;
 				gamemode_update();
 				if(endtime<currentTime){
 					menuemode=rsGameModeFinished;
@@ -392,7 +392,7 @@ int main () {
 					pointsNextTime = currentTime + SWITCHTIME;
 					default_display();
 				}else if(!gameRunningShowPoints||(endtime-LASTSEC<currentTime)){
-					showtime((endtime-currentTime)/(1000UL),1);
+					showtime(gameTimeLeft/(1000UL),1);
 				}else{
 					pointMagic(gamemode_points(pointsMode));
 				}

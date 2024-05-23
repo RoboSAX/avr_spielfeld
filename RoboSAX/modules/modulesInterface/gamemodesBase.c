@@ -23,6 +23,7 @@ gamemode_to_display_pointer gamemode_to_display;
 uint8_t maxGameModes;
 uint8_t currGameNr;
 
+#define ROUNDTIME ((uint32_t)(3UL*60UL*1000UL))
 #define YEAR_ACTION(YEAR) YEAR,
 const uint16_t availibleYears[]={ProcessYears};
 #undef YEAR_ACTION
@@ -64,5 +65,7 @@ void change_gameNr(uint8_t gameNr){
 #undef YEAR_ACTION
 	
 	}
+	// default time might be overriden by specific year init
+	gameTimeMax=ROUNDTIME;
 	gamemode_init();
 }

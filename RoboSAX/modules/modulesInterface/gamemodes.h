@@ -28,6 +28,9 @@
 
 extern uint8_t maxGameModes;
 
+uint32_t gameTimeMax;
+uint32_t gameTimeLeft;
+
 enum ePType{
 	ptBeide,
 	ptMaxIstSumme,
