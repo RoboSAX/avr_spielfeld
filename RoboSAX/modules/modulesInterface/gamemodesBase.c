@@ -21,6 +21,8 @@ gamemode_points_pointer gamemode_points;
 gamemode_to_display_pointer gamemode_to_display;
 
 uint8_t maxGameModes;
+uint32_t gameTimeMax;
+uint32_t gameTimeLeft;
 uint8_t currGameNr;
 
 #define ROUNDTIME ((uint32_t)(3UL*60UL*1000UL))
