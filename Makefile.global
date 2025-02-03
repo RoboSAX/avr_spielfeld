@@ -3,8 +3,8 @@
 # Makefile                                                                    #
 # ========                                                                    #
 #                                                                             #
-# Version: 1.2.5                                                              #
-# Date   : 07.02.18                                                           #
+# Version: 1.2.6                                                              #
+# Date   : 03.02.25                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # Source code was taken from:                                                 #
@@ -16,10 +16,6 @@
 
 NAME_GIT_THIS=spielfeld
 
-export ccred=$(echo -e "\033[0;31m")
-export ccyellow=$(echo -e "\033[0;33m")
-export cchead=@$(echo -e "\033[0;33m")
-export ccend=@$ (echo -e "\033[0m")
 define echoHeader
       @tput setaf 6
       @echo $1
