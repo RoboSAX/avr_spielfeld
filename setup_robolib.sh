@@ -2,11 +2,11 @@
 
 ###############################################################################
 #                                                                             #
-# .robolib.sh                                                                 #
-# ===========                                                                 #
+# setup_robolib.sh                                                            #
+# ================                                                            #
 #                                                                             #
-# Version: 1.2.1                                                              #
-# Date   : 09.02.18                                                           #
+# Version: 1.2.2                                                              #
+# Date   : 03.02.25                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # See also:                                                                   #
@@ -32,8 +32,7 @@ fi
 echo ""
 echo "### Configuring robolib"
 echo ""
-cd robolib
-make install_prerequisites
+cd robolib && make install_prerequisites
 if [ $? -ne 0 ]; then return -1; exit -1; fi
 
 
