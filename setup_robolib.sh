@@ -2,11 +2,11 @@
 
 ###############################################################################
 #                                                                             #
-# .travis.sh                                                                  #
-# ==========                                                                  #
+# setup_robolib.sh                                                            #
+# ================                                                            #
 #                                                                             #
 # Version: 1.2.2                                                              #
-# Date   : 09.02.18                                                           #
+# Date   : 03.02.25                                                           #
 # Author : Peter Weissig                                                      #
 #                                                                             #
 # See also:                                                                   #
@@ -15,42 +15,34 @@
 
 
 
-### config
-PWD_temp="$(pwd)"
-
-
-
-### robolib
+### download
 echo ""
-echo "###### robolib"
+echo "### Downloading robolib"
 echo ""
-if [ "${ROBOLIB_MAKEFILE}" != "" ]; then
-    echo "robolib already sourced :-)"
+if [ -d robolib ]; then
+    echo "robolib already downloaded"
 else
-    . .robolib.sh
-    if [ $? -ne 0 ]; then cd "${PWD_temp}"; return -1; exit -1; fi
+    git clone https://github.com/RoboAG/avr_robolib robolib
+    if [ $? -ne 0 ]; then return -1; exit -1; fi
 fi
 
 
 
-### build
+### install
 echo ""
-echo "###### Building"
+echo "### Configuring robolib"
 echo ""
-cd "${PWD_temp}"
-make
+cd robolib && make install_prerequisites
+if [ $? -ne 0 ]; then return -1; exit -1; fi
 
 
 
-### done
-if [ $? -ne 0 ]; then
-    echo ""
-    echo "###### errors occurred  :-("
-    echo ""
-    return -1
-    exit   -1
-else
-    echo ""
-    echo "###### all done :-)"
-    echo ""
-fi
+### source
+echo ""
+echo "### Sourcing robolib"
+echo ""
+. scripts/bashrc.sh
+if [ $? -ne 0 ]; then return -1; exit -1; fi
+echo "  ROBOLIB_MAKEFILE = \"$ROBOLIB_MAKEFILE\""
+
+

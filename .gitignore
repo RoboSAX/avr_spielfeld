@@ -3,3 +3,6 @@
 
 # temporary directories
 /robolib/
+
+# generated headers
+robolib.h

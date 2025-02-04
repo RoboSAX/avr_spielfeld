@@ -5,21 +5,22 @@
             "browse": {
                 "path": [
                     "${workspaceFolder}",
-                    "${workspaceFolder}/../../robolib/include",
+                    "${workspaceFolder}/robolib/include",
+                    "${workspaceFolder}/../../../roboag/library/include",
                     "/usr/lib/avr/include"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/../../library/include",
+                "${workspaceFolder}/robolib/include",
+                "${workspaceFolder}/../../../roboag/library/include",
                 "/usr/lib/avr/include"
-        ],
-            "defines": [],
+    ],
+            "defines": ["__AVR_ATmega328P__"],
             "compilerPath": "/usr/bin/avr-gcc",
-            "cStandard": "c11",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
+            "cStandard": "gnu99",
+            "intelliSenseMode": "linux-gcc-x86"
         }
     ],
     "version": 4
