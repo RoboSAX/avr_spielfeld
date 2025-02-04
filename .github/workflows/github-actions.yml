@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: ./setup_robolib.sh
-      #- run: sed -i robolib/make/Makefile -e "s/ -Wall / -Wall -Werror /g"
+      - run: sed -i robolib/make/Makefile -e "s/ -Wall / -Wall -Werror /g"
       - run: TERM=xterm make
 
   clang-format-changed-files:
