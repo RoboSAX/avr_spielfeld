@@ -3,9 +3,9 @@
 # Makefile                                                                    #
 # ========                                                                    #
 #                                                                             #
-# Version: 1.2.5                                                              #
-# Date   : 07.02.18                                                           #
-# Author : Peter Weissig                                                      #
+# Version: 1.3.0                                                              #
+# Date   : 22.02.25                                                           #
+# Author : Peter Weissig, Leander Herr                                        #
 #                                                                             #
 # Source code was taken from:                                                 #
 #   https://github.com/RoboAG/avr_robolib                                     #
@@ -17,7 +17,11 @@
 SUBDIRS = RoboSAX
 include Makefile.global
 
+
+
 ###############################################################################
+.PHONY: all_init clean clang-format-all
+
 all_init:
 	$(call echoHeader,)
 	$(call echoHeader, "### building $(NAME_GIT_THIS) ###")
@@ -32,4 +36,12 @@ clean:
 	@for dir in $(SUBDIRS); do \
 	    $(MAKE) -C $$dir clean; \
 	done
+
+clang-format-all:
+	@echo
+	@echo "### clang-format ###"
+	@find RoboSAX/ -type f -iname "*.[ch]" -exec clang-format --verbose -i {} \;
+
+
+
 ###############################################################################
