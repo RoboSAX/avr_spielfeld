@@ -1,37 +1,36 @@
 /******************************************************************************
-* Test/tht/lichter_test.c                                                     *
-* =======================                                                     *
-*                                                                             *
-* Version: 1.0.0                                                              *
-* Date   : 26.01.18                                                           *
-* Author : Peter Weissig, Tina Lenk                                           *
-*                                                                             *
-******************************************************************************/
-
+ * Test/tht/lichter_test.c                                                    *
+ * =======================                                                    *
+ *                                                                            *
+ * Version: 1.0.0                                                             *
+ * Date   : 26.01.18                                                          *
+ * Author : Peter Weissig, Tina Lenk                                          *
+ *                                                                            *
+ *****************************************************************************/
 
 //**************************<Included files>***********************************
+// clang-format off
 #include <avr/io.h>
 #include <inttypes.h>
 
 #include "lichter.h"
-
+// clang-format on
 
 //**************************<Macros>*******************************************
-#define led1_setRed(x)   ( x ? (PORTB|= _BV(1)) : (PORTB&= ~_BV(1)))
-#define led1_setGreen(x) ( x ? (PORTB|= _BV(2)) : (PORTB&= ~_BV(2)))
-#define led1_setBlue(x)  ( x ? (PORTD|= _BV(5)) : (PORTD&= ~_BV(5)))
-#define led1_setIr(x)    ( x ? (PORTD|= _BV(3)) : (PORTD&= ~_BV(3)))
+#define led1_setRed(x)   (x ? (PORTB |= _BV(1)) : (PORTB &= ~_BV(1)))
+#define led1_setGreen(x) (x ? (PORTB |= _BV(2)) : (PORTB &= ~_BV(2)))
+#define led1_setBlue(x)  (x ? (PORTD |= _BV(5)) : (PORTD &= ~_BV(5)))
+#define led1_setIr(x)    (x ? (PORTD |= _BV(3)) : (PORTD &= ~_BV(3)))
 
 #define led1_readRed()   ((PORTB & _BV(1)) != 0x00)
 #define led1_readGreen() ((PORTB & _BV(2)) != 0x00)
 #define led1_readBlue()  ((PORTD & _BV(5)) != 0x00)
 #define led1_readIr()    ((PORTD & _BV(3)) != 0x00)
 
-
-#define led2_setRed(x)   ( x ? (PORTC|= _BV(0)) : (PORTC&= ~_BV(0)))
-#define led2_setGreen(x) ( x ? (PORTC|= _BV(1)) : (PORTC&= ~_BV(1)))
-#define led2_setBlue(x)  ( x ? (PORTC|= _BV(2)) : (PORTC&= ~_BV(2)))
-#define led2_setIr(x)    ( x ? (PORTB|= _BV(3)) : (PORTB&= ~_BV(3)))
+#define led2_setRed(x)   (x ? (PORTC |= _BV(0)) : (PORTC &= ~_BV(0)))
+#define led2_setGreen(x) (x ? (PORTC |= _BV(1)) : (PORTC &= ~_BV(1)))
+#define led2_setBlue(x)  (x ? (PORTC |= _BV(2)) : (PORTC &= ~_BV(2)))
+#define led2_setIr(x)    (x ? (PORTB |= _BV(3)) : (PORTB &= ~_BV(3)))
 
 #define led2_readRed()   ((PORTC & _BV(0)) != 0x00)
 #define led2_readGreen() ((PORTC & _BV(1)) != 0x00)
@@ -48,7 +47,7 @@
 void init_hardware(void);
 void leds_clearAll(void);
 void leds_initTest(void);
-int main (void);
+int  main(void);
 
 
 //**************************<Methods>******************************************
@@ -70,15 +69,15 @@ void init_hardware(void) {
 //**************************[leds_clearAll]************************************
 void leds_clearAll(void) {
 
-    led1_setRed  (0);
+    led1_setRed(0);
     led1_setGreen(0);
-    led1_setBlue (0);
-    led1_setIr   (0);
+    led1_setBlue(0);
+    led1_setIr(0);
 
-    led2_setRed  (0);
+    led2_setRed(0);
     led2_setGreen(0);
-    led2_setBlue (0);
-    led2_setIr   (0);
+    led2_setBlue(0);
+    led2_setIr(0);
 }
 
 //**************************[leds_initTest]************************************
@@ -87,31 +86,57 @@ void leds_initTest(void) {
     leds_clearAll();
 
     // RGB 1
-    led1_setRed  (1);                   delay_ms(500);
-    led1_setGreen(1); led1_setRed  (0); delay_ms(500);
-    led1_setBlue (1); led1_setGreen(0); delay_ms(500);
-                      led1_setBlue (0);
+    led1_setRed(1);
+    delay_ms(500);
+
+    led1_setGreen(1);
+    led1_setRed(0);
+    delay_ms(500);
+
+    led1_setBlue(1);
+    led1_setGreen(0);
+    delay_ms(500);
+
+    led1_setBlue(0);
 
     // RGB 2
-    led2_setRed  (1);                   delay_ms(500);
-    led2_setGreen(1); led2_setRed  (0); delay_ms(500);
-    led2_setBlue (1); led2_setGreen(0); delay_ms(500);
-                      led2_setBlue (0);
+    led2_setRed(1);
+    delay_ms(500);
+
+    led2_setGreen(1);
+    led2_setRed(0);
+    delay_ms(500);
+
+    led2_setBlue(1);
+    led2_setGreen(0);
+    delay_ms(500);
+
+    led2_setBlue(0);
 
     // IR1 && IR2
-    led1_setIr   (1);                   delay_ms(500);
-    led2_setIr   (1); led1_setIr   (0); delay_ms(500);
-    led1_setIr   (1); led2_setIr   (0); delay_ms(500);
-    led2_setIr   (1); led1_setIr   (0); delay_ms(500);
-                      led2_setIr   (0);
+    led1_setIr(1);
+    delay_ms(500);
+
+    led2_setIr(1);
+    led1_setIr(0);
+    delay_ms(500);
+
+    led1_setIr(1);
+    led2_setIr(0);
+    delay_ms(500);
+
+    led2_setIr(1);
+    led1_setIr(0);
+    delay_ms(500);
+
+    led2_setIr(0);
 }
 
 //**************************[main]*********************************************
-int main (void) {
+int main(void) {
 
     // initialize hardware
     init_hardware();
-
 
     // initial test
     leds_initTest();
@@ -175,12 +200,13 @@ int main (void) {
         }
 
         i++;
-        if (i > 100) { i = 0;}
+        if (i > 100) {
+            i = 0;
+        }
 
         // main delay
         delay_ms(10);
     }
 
     return (0);
-
 }

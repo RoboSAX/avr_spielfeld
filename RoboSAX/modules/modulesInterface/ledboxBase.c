@@ -1,12 +1,12 @@
 /******************************************************************************
-* ledbox.c                                                                    *
-* ========                                                                    *
-*                                                                             *
-* Version: 1.2.0                                                              *
-* Date   : 02.06.18                                                           *
-* Author : Peter Weissig, Leander Herr                                        *
-*                                                                             *
-******************************************************************************/
+ * ledboxBase.c                                                               *
+ * ============                                                               *
+ *                                                                            *
+ * Version: 1.2.1                                                             *
+ * Date   : 22.02.25                                                          *
+ * Author : Peter Weissig, Leander Herr                                       *
+ *                                                                            *
+ *****************************************************************************/
 
 
 //**************************<Included files>***********************************
@@ -14,7 +14,7 @@
 
 //**************************<Types and Variables>******************************
 
-volatile uint8_t ledbox_count_current;
+volatile uint8_t         ledbox_count_current;
 volatile enum fieldState ledbox_state;
 
 volatile uint8_t firstNumber;
@@ -26,10 +26,11 @@ volatile uint8_t teamprobeIncrementPerMasterPress;
 //**************************[rgb_set]******************************************
 void rgb_set(uint8_t number, enum eColor color) {
 
-	if (number >= LEDBOX_COUNT_MAX) {
-		return;
-	}
+    if (number >= LEDBOX_COUNT_MAX) {
+        return;
+    }
 
+    // clang-format off
 	#define H2 30
 	switch (color) {
 		case clPurple: rgb_set2(number, 255,   0, 255); break;
@@ -68,53 +69,51 @@ void rgb_set(uint8_t number, enum eColor color) {
 		case clRain9 : rgb_set (number,(number + 2)%12); break;
 		case clRain10: rgb_set (number,(number + 1)%12); break;
 		case clRain11: rgb_set (number,(number + 0)%12); break;
-		default		 :									break;
+		default		 :                                   break;
 	}
+    // clang-format on
 }
 
 //**************************[rgb_setAll]***************************************
 void rgb_setAll(enum eColor color) {
 
-	uint8_t i;
+    uint8_t i;
 
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set(i, color);
-	}
+    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+        rgb_set(i, color);
+    }
 }
 
 //**************************[rgb_setAll2]**************************************
 void rgb_setAll2(uint8_t r, uint8_t g, uint8_t b) {
 
-	uint8_t i;
+    uint8_t i;
 
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set2(i, r, g, b);
-	}
+    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+        rgb_set2(i, r, g, b);
+    }
 }
 
 //**************************[rgb_clearAll]*************************************
 void rgb_clearAll() {
 
-	uint8_t i;
+    uint8_t i;
 
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		rgb_set2(i, 0, 0, 0);
-	}
+    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+        rgb_set2(i, 0, 0, 0);
+    }
 }
 
 
 //**************************[ir_setAll]****************************************
 void ir_setAll(uint8_t x) {
 
-	uint8_t i;
+    uint8_t i;
 
-	for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
-		ir_set(i, x);
-	}
+    for (i = 0; i < LEDBOX_COUNT_MAX; i++) {
+        ir_set(i, x);
+    }
 }
 
 //**************************[ir_clearAll]**************************************
-void ir_clearAll(void) {
-
-	ir_setAll(0);
-}
+void ir_clearAll(void) { ir_setAll(0); }

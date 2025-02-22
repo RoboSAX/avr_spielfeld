@@ -1,17 +1,17 @@
 /******************************************************************************
-* lichter_intern.c                                                            *
-* ================                                                            *
-*                                                                             *
-* Version: 1.1.0                                                              *
-* Date   : 07.02.19                                                           *
-* Author : Peter Weissig, Daniel Gunkel, Tina Lenk, Leander Herr              *
-*                                                                             *
-* Original source code was taken and modified from:                           *
-*   https://github.com/RoboAG/projekt_gluecksrad                              *
-*                                                                             *
-* See also:                                                                   *
-*   https://github.com/RoboSAX/avr_spielfeld                                  *
-******************************************************************************/
+ * lichter_intern.c                                                           *
+ * ================                                                           *
+ *                                                                            *
+ * Version: 1.1.0                                                             *
+ * Date   : 07.02.19                                                          *
+ * Author : Peter Weissig, Daniel Gunkel, Tina Lenk, Leander Herr             *
+ *                                                                            *
+ * Original source code was taken and modified from:                          *
+ *   https://github.com/RoboAG/projekt_gluecksrad                             *
+ *                                                                            *
+ * See also:                                                                  *
+ *   https://github.com/RoboSAX/avr_spielfeld                                 *
+ *****************************************************************************/
 
 
 //**************************<Included files>***********************************
@@ -19,8 +19,8 @@
 
 
 //**************************<Macros>*******************************************
-#define leds_setIr1(x)    ( x ? (PORTD|= _BV(3)) : (PORTD&= ~_BV(3)))
-#define leds_setIr2(x)    ( x ? (PORTB|= _BV(3)) : (PORTB&= ~_BV(3)))
+#define leds_setIr1(x) (x ? (PORTD |= _BV(3)) : (PORTD &= ~_BV(3)))
+#define leds_setIr2(x) (x ? (PORTB |= _BV(3)) : (PORTB &= ~_BV(3)))
 
 #define buttons_getBtnMode() ((PIND & _BV(4)) == 0x00)
 #define buttons_getBtn1()    ((PINB & _BV(0)) == 0x00)
@@ -29,24 +29,24 @@
 
 //**************************<Types and Variables>******************************
 struct sButtonState {
-    uint8_t state1    : 1;
-    uint8_t state2    : 1;
+    uint8_t state1 : 1;
+    uint8_t state2 : 1;
     uint8_t stateMode : 1;
 
-    uint8_t flank1    : 1;
-    uint8_t flank2    : 1;
+    uint8_t flank1 : 1;
+    uint8_t flank2 : 1;
     uint8_t flankMode : 1;
 
-    uint8_t countdown1   ;
-    uint8_t countdown2   ;
+    uint8_t countdown1;
+    uint8_t countdown2;
     uint8_t countdownMode;
 };
 struct sButtonState buttons;
 
 struct sIrLeds {
-    uint8_t state1    : 1;
-    uint8_t state2    : 1;
-    uint8_t counter   : 1;
+    uint8_t state1 : 1;
+    uint8_t state2 : 1;
+    uint8_t counter : 1;
 };
 volatile struct sIrLeds ir_leds;
 
@@ -76,12 +76,12 @@ void init_hardware(void) {
     DDRD &= ~_BV(4);
 
     // Timer 2 (IR-led)
-    TCCR2A = _BV(WGM21);  // Output-Mode: none
-                          // Operation-Mode: CTC til OCRA
-    TCCR2B = _BV(CS20);   // Operation-Mode: CTC til OCRA
-                          // Prescaler: 1
-    OCR2A = 210;          // Top: 210 ==> 76KHz
-    TIMSK2 = _BV(OCIE2A); // enable compare match interrupt
+    TCCR2A = _BV(WGM21);   // Output-Mode: none
+                           // Operation-Mode: CTC til OCRA
+    TCCR2B = _BV(CS20);    // Operation-Mode: CTC til OCRA
+                           // Prescaler: 1
+    OCR2A  = 210;          // Top: 210 ==> 76KHz
+    TIMSK2 = _BV(OCIE2A);  // enable compare match interrupt
 
     // startup time
     delay_ms(50);
@@ -114,18 +114,18 @@ void leds_clearLED(uint8_t led_num) {
 
     // schaltet LED in Farbe an
     // led_num: 1, 2
-    
-    switch(led_num) {
+
+    switch (led_num) {
         case 1:
             led1_setGreen(0);
-            led1_setRed  (0);
-            led1_setBlue (0);
+            led1_setRed(0);
+            led1_setBlue(0);
             led1_setIr(0);
             break;
         case 2:
             led2_setGreen(0);
-            led2_setRed  (0);
-            led2_setBlue (0);
+            led2_setRed(0);
+            led2_setBlue(0);
             led2_setIr(0);
             break;
     }
@@ -138,116 +138,116 @@ void leds_setLED(uint8_t led_num, uint8_t color, uint8_t invert) {
     // led_num: 1, 2
     // color: Green = 0, Red = 1, Blue = 2, Weiß = 3
 
-    switch(led_num) {
+    switch (led_num) {
         case 1:
-            switch(color) {
-                case 0: 
-                    if (invert){
-                        led1_setRed  (1); 
-                        led1_setGreen(0); 
-                        led1_setBlue (1); 
-                        break; 
+            switch (color) {
+                case 0:
+                    if (invert) {
+                        led1_setRed(1);
+                        led1_setGreen(0);
+                        led1_setBlue(1);
+                        break;
                     } else {
-                        led1_setRed  (0); 
-                        led1_setGreen(1); 
-                        led1_setBlue (0); 
-                        led1_setIr(1); 
-                        break; 
+                        led1_setRed(0);
+                        led1_setGreen(1);
+                        led1_setBlue(0);
+                        led1_setIr(1);
+                        break;
                     }
-                case 1: 
-                    if (invert){
-                        led1_setRed  (1); 
-                        led1_setGreen(1); 
-                        led1_setBlue (1); 
-                        break; 
+                case 1:
+                    if (invert) {
+                        led1_setRed(1);
+                        led1_setGreen(1);
+                        led1_setBlue(1);
+                        break;
                     } else {
-                        led1_setRed  (1); 
-                        led1_setGreen(0); 
-                        led1_setBlue (0); 
-                        led1_setIr(1); 
-                        break; 
+                        led1_setRed(1);
+                        led1_setGreen(0);
+                        led1_setBlue(0);
+                        led1_setIr(1);
+                        break;
                     }
-                case 2: 
-                    if (invert){
-                        led1_setRed  (1); 
-                        led1_setGreen(1); 
-                        led1_setBlue (0); 
-                        break; 
+                case 2:
+                    if (invert) {
+                        led1_setRed(1);
+                        led1_setGreen(1);
+                        led1_setBlue(0);
+                        break;
                     } else {
-                        led1_setRed  (0); 
-                        led1_setGreen(0); 
-                        led1_setBlue (1); 
-                        led1_setIr(1); 
-                        break; 
+                        led1_setRed(0);
+                        led1_setGreen(0);
+                        led1_setBlue(1);
+                        led1_setIr(1);
+                        break;
                     }
-                case 3: 
-                    if (invert){
-                        led1_setRed  (0); 
-                        led1_setGreen(0); 
-                        led1_setBlue (0); 
-                        break; 
+                case 3:
+                    if (invert) {
+                        led1_setRed(0);
+                        led1_setGreen(0);
+                        led1_setBlue(0);
+                        break;
                     } else {
-                        led1_setRed  (1); 
-                        led1_setGreen(1); 
-                        led1_setBlue (1); 
-                        break; 
+                        led1_setRed(1);
+                        led1_setGreen(1);
+                        led1_setBlue(1);
+                        break;
                     }
             }
             break;
-            
+
         case 2:
-            switch(color) {
-                case 0: 
-                    if (invert){
-                        led2_setRed  (1); 
-                        led2_setGreen(0); 
-                        led2_setBlue (1); 
-                        break; 
+            switch (color) {
+                case 0:
+                    if (invert) {
+                        led2_setRed(1);
+                        led2_setGreen(0);
+                        led2_setBlue(1);
+                        break;
                     } else {
-                        led2_setRed  (0); 
-                        led2_setGreen(1); 
-                        led2_setBlue (0); 
-                        led2_setIr(1); 
-                        break; 
+                        led2_setRed(0);
+                        led2_setGreen(1);
+                        led2_setBlue(0);
+                        led2_setIr(1);
+                        break;
                     }
-                case 1: 
-                    if (invert){
-                        led2_setRed  (1); 
-                        led2_setGreen(1); 
-                        led2_setBlue (1); 
-                        break; 
+                case 1:
+                    if (invert) {
+                        led2_setRed(1);
+                        led2_setGreen(1);
+                        led2_setBlue(1);
+                        break;
                     } else {
-                        led2_setRed  (1); 
-                        led2_setGreen(0); 
-                        led2_setBlue (0); 
-                        led2_setIr(1); 
-                        break; 
+                        led2_setRed(1);
+                        led2_setGreen(0);
+                        led2_setBlue(0);
+                        led2_setIr(1);
+                        break;
                     }
-                case 2: 
-                    if (invert){
-                        led2_setRed  (1); 
-                        led2_setGreen(1); 
-                        led2_setBlue (0); 
-                        break; 
+                case 2:
+                    if (invert) {
+                        led2_setRed(1);
+                        led2_setGreen(1);
+                        led2_setBlue(0);
+                        break;
                     } else {
-                        led2_setRed  (0); 
-                        led2_setGreen(0); 
-                        led2_setBlue (1); 
-                        led2_setIr(1); 
-                        break; 
+                        led2_setRed(0);
+                        led2_setGreen(0);
+                        led2_setBlue(1);
+                        led2_setIr(1);
+                        break;
                     }
-                case 3: 
-                    if (invert){
-                        led2_setRed  (0); 
-                        led2_setGreen(0); 
-                        led2_setBlue (0); 
-                        break; 
+                case 3:
+                    if (invert) {
+                        led2_setRed(0);
+                        led2_setGreen(0);
+                        led2_setBlue(0);
+                        break;
                     } else {
-                        led2_setRed  (1); 
-                        led2_setGreen(1); 
-                        led2_setBlue (1); 
-                        break; 
-                    }            
+                        led2_setRed(1);
+                        led2_setGreen(1);
+                        led2_setBlue(1);
+                        break;
+                    }
             }
     }
 }
@@ -259,40 +259,50 @@ void leds_initTest(void) {
 
 
     // RGB 1 & IR1
-    led1_setIr   (1);
+    led1_setIr(1);
 
-    led1_setRed  (1);                   delay_licht(500);
-    led1_setGreen(1); led1_setRed  (0); delay_licht(500);
-    led1_setBlue (1); led1_setGreen(0); delay_licht(500);
-                      led1_setBlue (0);
+    led1_setRed(1);
+    delay_licht(500);
 
-                      led1_setIr   (0);
+    led1_setGreen(1);
+    led1_setRed(0);
+    delay_licht(500);
+
+    led1_setBlue(1);
+    led1_setGreen(0);
+    delay_licht(500);
+
+    led1_setBlue(0);
+
+    led1_setIr(0);
 
 
     // RGB 2 & IR2
-    led2_setIr   (1);
+    led2_setIr(1);
 
-    led2_setRed  (1);                   delay_licht(500);
-    led2_setGreen(1); led2_setRed  (0); delay_licht(500);
-    led2_setBlue (1); led2_setGreen(0); delay_licht(500);
-                      led2_setBlue (0);
+    led2_setRed(1);
+    delay_licht(500);
 
-                      led2_setIr   (0);
+    led2_setGreen(1);
+    led2_setRed(0);
+    delay_licht(500);
+
+    led2_setBlue(1);
+    led2_setGreen(0);
+    delay_licht(500);
+
+    led2_setBlue(0);
+
+    led2_setIr(0);
 
     leds_clearAll();
 }
 
 //**************************[led1_setIr]***************************************
-void led1_setIr(uint8_t state) {
-
-    ir_leds.state1 = state;
-}
+void led1_setIr(uint8_t state) { ir_leds.state1 = state; }
 
 //**************************[led2_setIr]***************************************
-void led2_setIr(uint8_t state) {
-
-    ir_leds.state2 = state;
-}
+void led2_setIr(uint8_t state) { ir_leds.state2 = state; }
 
 //**************************[buttons_reset]************************************
 void buttons_reset(void) {
@@ -337,7 +347,7 @@ uint8_t button2_readFlank(void) {
 //**************************[buttonMode_readFlank]*****************************
 uint8_t buttonMode_readFlank(void) {
 
-    uint8_t result = buttons.flankMode;
+    uint8_t result    = buttons.flankMode;
     buttons.flankMode = 0;
 
     return result;
@@ -348,7 +358,7 @@ void delay_licht(uint16_t mseconds) {
 
     uint8_t state;
 
-    mseconds/= 10;
+    mseconds /= 10;
     do {
         // button1
         state = buttons_getBtn1();
