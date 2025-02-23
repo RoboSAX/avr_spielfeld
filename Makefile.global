@@ -46,7 +46,7 @@ warn_only:
 clang-format:
 	@echo
 	@echo "### clang-format ###"
-	@git clang-format master
+	@git clang-format-18 master
 
 
 

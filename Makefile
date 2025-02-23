@@ -40,7 +40,7 @@ clean:
 clang-format-all:
 	@echo
 	@echo "### clang-format ###"
-	@find RoboSAX/ -type f -iname "*.[ch]" -exec clang-format --verbose -i {} \;
+	@find RoboSAX/ -type f -iname "*.[ch]" -exec clang-format-18 --verbose -i {} \;
 
 
 
