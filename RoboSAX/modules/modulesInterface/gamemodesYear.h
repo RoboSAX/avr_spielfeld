@@ -31,7 +31,7 @@
     YEAR_ACTION(2022) \
     YEAR_ACTION(2023) \
     YEAR_ACTION(2024) \
-    YEAR_ACTION(2025) \
+    YEAR_ACTION(2025)
 
 enum eOperationModes {
     omGame,

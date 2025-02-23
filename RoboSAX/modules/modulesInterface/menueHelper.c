@@ -198,34 +198,35 @@ void writeModesToDisplay(enum eMasterModes masterMode, int8_t subMode) {
     display_double_dot = 0;
     switch (masterMode) {
         case mmBlokMode:
-		if (subMode >= 0){
-			display_clearSuperSegment(0);
-			display_addRight(alpaB,0,1);
-			display_addRight(alpaL,0,1);
-  
-			display_clearSuperSegment(1);
-			if (subMode==maxGameModes){
-				uint8_t const* display4Chars[4];
-				curr_game_to_display(&display4Chars[0], &display4Chars[1], &display4Chars[2], &display4Chars[3]);
-				display_addRight(display4Chars[2],1,1);
-				display_addRight(display4Chars[3],1,1);
-			}
-			else{
-				uint8_t const* displayLast2Chars[2];
-				gamemode_to_display(subMode, &displayLast2Chars[0], &displayLast2Chars[1]);
-				display_addRight(displayLast2Chars[0],1,1);
-				display_addRight(displayLast2Chars[1],1,1);
-			}
-		} else {
-			display_clearSuperSegment(0);
-			display_addRight(alpaB,0,1);
-			display_addRight(alpaL,0,1);
-			display_clearSuperSegment(1);
-			display_addRight(alpaO,1,1);
-			display_addRight(alpaK,1,1);
-		}
-	break;
-            case mmGameMode:
+            if (subMode >= 0) {
+                display_clearSuperSegment(0);
+                display_addRight(alpaB, 0, 1);
+                display_addRight(alpaL, 0, 1);
+
+                display_clearSuperSegment(1);
+                if (subMode == maxGameModes) {
+                    uint8_t const* display4Chars[4];
+                    curr_game_to_display(&display4Chars[0], &display4Chars[1],
+                                         &display4Chars[2], &display4Chars[3]);
+                    display_addRight(display4Chars[2], 1, 1);
+                    display_addRight(display4Chars[3], 1, 1);
+                } else {
+                    uint8_t const* displayLast2Chars[2];
+                    gamemode_to_display(subMode, &displayLast2Chars[0],
+                                        &displayLast2Chars[1]);
+                    display_addRight(displayLast2Chars[0], 1, 1);
+                    display_addRight(displayLast2Chars[1], 1, 1);
+                }
+            } else {
+                display_clearSuperSegment(0);
+                display_addRight(alpaB, 0, 1);
+                display_addRight(alpaL, 0, 1);
+                display_clearSuperSegment(1);
+                display_addRight(alpaO, 1, 1);
+                display_addRight(alpaK, 1, 1);
+            }
+            break;
+        case mmGameMode:
             if (subMode >= 0) {
                 display_clearSuperSegment(0);
                 display_addRight(alpaG, 0, 1);
