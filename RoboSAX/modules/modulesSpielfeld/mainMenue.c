@@ -186,6 +186,8 @@ int main() {
     uint32_t currentTime       = systick_get();
     uint32_t endtime           = currentTime;
     uint32_t pointsNextTime    = currentTime + SWITCHTIME;
+    uint32_t endtimeBlok       = currentTime + blokPauseTime;
+    uint32_t endtimeBlok2      = currentTime + blokPauseTime/2;
     uint32_t rainbowSwitchTime = currentTime;
 
     uint32_t display_next_blink_time = currentTime + BLINKTIMEOFF;
@@ -281,6 +283,8 @@ int main() {
                 case rsGameModeFinished:
                     if (master_button_state1() && master_button_state2()) {
                         menuemode = rsSelectMasterMode;
+                    } else {
+                        gameRunningShowPoints = !gameRunningShowPoints;
                     }
                     break;
                 case rsSelectMasterMode:
@@ -417,6 +421,8 @@ int main() {
                 menuemode      = rsGameModeFinished;
                 pointsMode     = 0;
                 pointsNextTime = currentTime + SWITCHTIME;
+                endtimeBlok    = currentTime + blokPauseTime;
+                endtimeBlok2   = currentTime + blokPauseTime/2;
                 default_display();
             } else if (!gameRunningShowPoints ||
                        (endtime - LASTSEC < currentTime)) {
@@ -429,7 +435,10 @@ int main() {
             pointMagic(gamemode_points(pointsMode));
         } else if (menuemode == rsGameModeFinished) {
             if(masterMode==mmBlokMode){
-                if(points) pointLedMagic(gamemode_points(pointsMode),(currentTime-endtime)/UPDATETIME);
+                if(endtimeBlok2<currentTime){
+                    gameRunningShowPoints=0;
+                }
+                if(gameRunningShowPoints) pointLedMagic(gamemode_points(pointsMode),(currentTime-endtime)/UPDATETIME);
                 else{
                     showtime((endtimeBlok-currentTime)/(1000UL),1);
                     rgb_setAllPercentageTime(clGreen,endtimeBlok-currentTime,blokPauseTime,clBlack);

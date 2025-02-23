@@ -11,6 +11,7 @@
 
 //**************************<Included files>***********************************
 #include "modulesInterface/gamemodes.h"
+#include "modulesInterface/gamemodesGeneric.h"
 #include "modulesInterface/random.h"
 #include "modulesInterface/master.h"
 
@@ -47,8 +48,9 @@ enum eGamemodes {
 	MaxGameModes,
 };
 
-uint8_t points;
+uint8_t currentPoints;
 uint8_t trys;
+enum eOperationModes operationMode;
 
 
 //**************************<Methods>******************************************
@@ -58,8 +60,7 @@ void gamemode_init_2025(void){
 	maxGameModes=MaxGameModes;
 	random_init();
 
-	usedGamemode=gm1P;
-	gamemode_start(usedGamemode, omTest, bsSpielfeld);
+	gamemode_start(gm1P, omTest, bsSpielfeld);
 
 }
 
@@ -67,6 +68,7 @@ uint8_t gamemode_start_2025(uint8_t gameMode, enum eOperationModes oM, enum eBas
 	if ((ledbox_state == full_field && gameMode == gm1P)){
 		setPairsToWall();
 		reandomSetLEDActiveForBlocksStable(1,groupLed4|groupLed5);
+		operationMode=oM;
 		return 0;
 	}else{
 		return 1;
@@ -82,18 +84,18 @@ void gamemode_update_2025(){
 	}
 	//code to update RGB and IR LED
 	setLEDsGameGeneric();
-	showPoints(team[team1].points, team[team2].points);
+	showOnePoints(currentPoints);
 }
 
 struct Points gamemode_points_2025(uint8_t mode){
 
 	struct Points points;
-	points.team1=team[team1].points;
-	points.team2=team[team2].points;
-	points.color1=team[team1].teamColor;
-	points.color2=team[team2].teamColor;
+	points.team1=currentPoints;
+	points.team2=currentPoints;
+	points.color1=TEAM1COLOR;
+	points.color2=TEAM1COLOR;
 	points.maxPoints=MAX_TRYS * POINTS_PER_PRESS;
-	points.type=ptBeide;
+	points.type=ptTeam1;
 	return points;
 }
 
@@ -123,7 +125,7 @@ void pushButton(uint8_t number){
 	const uint8_t error = status && (LEDToBlock[number].LEDNr & (groupLed4|groupLed5));
 
 	if(correct){
-		points += POINTS_PER_PRESS;
+		currentPoints += POINTS_PER_PRESS;
 		BlockToLED[GroupNr].special_color=TEAM1FLASHCOLOR;
 	}else if(error){
 		BlockToLED[GroupNr].special_color=ERRORCOLOR;
@@ -134,6 +136,7 @@ void pushButton(uint8_t number){
 		BlockToLED[GroupNr].special_timer = SPECIAL_TIMER;
 
 		if ((operationMode == omGame) && (trys>=MAX_TRYS)){
+			uint8_t i;
 			for(i=0;i<3;i++){
 				BlockToLED[GroupNr].status = groupOff;
 			}

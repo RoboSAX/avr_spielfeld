@@ -8,14 +8,16 @@
 *                                                                             *
 ******************************************************************************/
 
-#ifndef __GAMEMODES_YEARS_H
-#define __GAMEMODES_YEARS_H
+#ifndef __GAMEMODES_GENERIC_H
+#define __GAMEMODES_GENERIC_H
 
 
 //**************************<Included files>***********************************
 
 #include <avr/io.h>
 #include <inttypes.h>
+
+#include "modulesInterface/ledbox.h"
 
 
 //**************************<PORTDEF>*******************************************
@@ -36,7 +38,7 @@
 #define SPECIAL_TIMER (LEDBOX_BUTTONS_DEBOUNCE_TIME*4)
 
 //**************************<Types and Variables>******************************
-enum eStatus :uint8_t {
+enum eStatus {
 	groupOff = 0,
 	groupLed1 = 1,
 	groupLed2 = 2,
@@ -66,12 +68,12 @@ static struct sGlobalBlock BlockToLED[BLOCK_COUNT_MAX];
 
 uint8_t numberOfBlocks;
 //**************************<Prototypes>***************************************
-static void setCrossPairs(void);
-static void setPairsToSection(void);
-static void setPairsToWall(void);
-static void setLEDsGameGeneric(void);
-static void reandomSetLEDActiveForBlock(uint8_t blockNr, uint8_t numberLedsPerBlock,enum eStatus validLedsPerBlock);
-static void reandomSetLEDActiveForBlocks(uint8_t numberLedsPerBlock,enum eStatus validLedsPerBlock);
-static void reandomSetLEDActiveForBlocksStable(uint8_t numberLedsPerBlock,enum eStatus validLedsPerBlock);
+void setCrossPairs(void);
+void setPairsToSection(void);
+void setPairsToWall(void);
+void setLEDsGameGeneric(void);
+void reandomSetLEDActiveForBlock(uint8_t blockNr, uint8_t numberLedsPerBlock,enum eStatus validLedsPerBlock);
+void reandomSetLEDActiveForBlocks(uint8_t numberLedsPerBlock,enum eStatus validLedsPerBlock);
+void reandomSetLEDActiveForBlocksStable(uint8_t numberLedsPerBlock,enum eStatus validLedsPerBlock);
 
 #endif //#ifndef __GAMEMODES_H
