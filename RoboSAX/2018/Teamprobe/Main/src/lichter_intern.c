@@ -1,12 +1,12 @@
 /******************************************************************************
-* Teamprobe/tht/lichter_intern.c                                              *
-* ==============================                                              *
-*                                                                             *
-* Version: 1.0.2                                                              *
-* Date   : 09.02.18                                                           *
-* Author : Peter Weissig, Tina Lenk, Leander Herr                             *
-*                                                                             *
-******************************************************************************/
+ * Teamprobe/tht/lichter_intern.c                                             *
+ * ==============================                                             *
+ *                                                                            *
+ * Version: 1.0.2                                                             *
+ * Date   : 09.02.18                                                          *
+ * Author : Peter Weissig, Tina Lenk, Leander Herr                            *
+ *                                                                            *
+ *****************************************************************************/
 
 
 //**************************<Included files>***********************************
@@ -14,8 +14,8 @@
 
 
 //**************************<Macros>*******************************************
-#define leds_setIr1(x)    ( x ? (PORTD|= _BV(3)) : (PORTD&= ~_BV(3)))
-#define leds_setIr2(x)    ( x ? (PORTB|= _BV(3)) : (PORTB&= ~_BV(3)))
+#define leds_setIr1(x) (x ? (PORTD |= _BV(3)) : (PORTD &= ~_BV(3)))
+#define leds_setIr2(x) (x ? (PORTB |= _BV(3)) : (PORTB &= ~_BV(3)))
 
 #define buttons_getBtnMode() ((PIND & _BV(4)) == 0x00)
 #define buttons_getBtn1()    ((PINB & _BV(0)) == 0x00)
@@ -24,24 +24,24 @@
 
 //**************************<Types and Variables>******************************
 struct sButtonState {
-    uint8_t state1    : 1;
-    uint8_t state2    : 1;
+    uint8_t state1 : 1;
+    uint8_t state2 : 1;
     uint8_t stateMode : 1;
 
-    uint8_t flank1    : 1;
-    uint8_t flank2    : 1;
+    uint8_t flank1 : 1;
+    uint8_t flank2 : 1;
     uint8_t flankMode : 1;
 
-    uint8_t countdown1   ;
-    uint8_t countdown2   ;
+    uint8_t countdown1;
+    uint8_t countdown2;
     uint8_t countdownMode;
 };
 struct sButtonState buttons;
 
 struct sIrLeds {
-    uint8_t state1    : 1;
-    uint8_t state2    : 1;
-    uint8_t counter   : 1;
+    uint8_t state1 : 1;
+    uint8_t state2 : 1;
+    uint8_t counter : 1;
 };
 volatile struct sIrLeds ir_leds;
 
@@ -71,12 +71,12 @@ void init_hardware(void) {
     DDRD &= ~_BV(4);
 
     // Timer 2 (IR-led)
-    TCCR2A = _BV(WGM21);  // Output-Mode: none
-                          // Operation-Mode: CTC til OCRA
-    TCCR2B = _BV(CS20);   // Operation-Mode: CTC til OCRA
-                          // Prescaler: 1
-    OCR2A = 210;          // Top: 210 ==> 76KHz
-    TIMSK2 = _BV(OCIE2A); // enable compare match interrupt
+    TCCR2A = _BV(WGM21);   // Output-Mode: none
+                           // Operation-Mode: CTC til OCRA
+    TCCR2B = _BV(CS20);    // Operation-Mode: CTC til OCRA
+                           // Prescaler: 1
+    OCR2A  = 210;          // Top: 210 ==> 76KHz
+    TIMSK2 = _BV(OCIE2A);  // enable compare match interrupt
 
     // startup time
     delay_ms(50);
@@ -111,40 +111,50 @@ void leds_initTest(void) {
 
 
     // RGB 1 & IR1
-    led1_setIr   (1);
+    led1_setIr(1);
 
-    led1_setRed  (1);                   delay_licht(500);
-    led1_setGreen(1); led1_setRed  (0); delay_licht(500);
-    led1_setBlue (1); led1_setGreen(0); delay_licht(500);
-                      led1_setBlue (0);
+    led1_setRed(1);
+    delay_licht(500);
 
-                      led1_setIr   (0);
+    led1_setGreen(1);
+    led1_setRed(0);
+    delay_licht(500);
+
+    led1_setBlue(1);
+    led1_setGreen(0);
+    delay_licht(500);
+
+    led1_setBlue(0);
+
+    led1_setIr(0);
 
 
     // RGB 2 & IR2
-    led2_setIr   (1);
+    led2_setIr(1);
 
-    led2_setRed  (1);                   delay_licht(500);
-    led2_setGreen(1); led2_setRed  (0); delay_licht(500);
-    led2_setBlue (1); led2_setGreen(0); delay_licht(500);
-                      led2_setBlue (0);
+    led2_setRed(1);
+    delay_licht(500);
 
-                      led2_setIr   (0);
+    led2_setGreen(1);
+    led2_setRed(0);
+    delay_licht(500);
+
+    led2_setBlue(1);
+    led2_setGreen(0);
+    delay_licht(500);
+
+    led2_setBlue(0);
+
+    led2_setIr(0);
 
     leds_clearAll();
 }
 
 //**************************[led1_setIr]***************************************
-void led1_setIr(uint8_t state) {
-
-    ir_leds.state1 = state;
-}
+void led1_setIr(uint8_t state) { ir_leds.state1 = state; }
 
 //**************************[led2_setIr]***************************************
-void led2_setIr(uint8_t state) {
-
-    ir_leds.state2 = state;
-}
+void led2_setIr(uint8_t state) { ir_leds.state2 = state; }
 
 //**************************[buttons_reset]************************************
 void buttons_reset(void) {
@@ -189,7 +199,7 @@ uint8_t button2_readFlank(void) {
 //**************************[buttonMode_readFlank]*****************************
 uint8_t buttonMode_readFlank(void) {
 
-    uint8_t result = buttons.flankMode;
+    uint8_t result    = buttons.flankMode;
     buttons.flankMode = 0;
 
     return result;
@@ -200,7 +210,7 @@ void delay_licht(uint16_t mseconds) {
 
     uint8_t state;
 
-    mseconds/= 10;
+    mseconds /= 10;
     do {
         // button1
         state = buttons_getBtn1();

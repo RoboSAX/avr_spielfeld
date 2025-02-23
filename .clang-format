@@ -1,0 +1,17 @@
+---
+Language:        Cpp
+BasedOnStyle:  Google
+
+AlignConsecutiveAssignments:  true
+AlignConsecutiveDeclarations: true
+AlignConsecutiveMacros:       true
+
+ColumnLimit:     80
+TabWidth:        4
+IndentWidth:     4
+ContinuationIndentWidth: 2
+
+KeepEmptyLinesAtTheStartOfBlocks: true
+MaxEmptyLinesToKeep: 3
+...
+

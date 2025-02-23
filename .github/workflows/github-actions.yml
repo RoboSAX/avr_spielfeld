@@ -2,6 +2,7 @@ name: build-all
 run-name: Build all
 on: [push]
 jobs:
+
   build-ubuntu:
     strategy:
       matrix:
@@ -9,4 +10,16 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - run: ./setup_robolib.sh && TERM=xterm make
+      - run: ./setup_robolib.sh
+      #- run: sed -i robolib/make/Makefile -e "s/ -Wall / -Wall -Werror /g"
+      - run: TERM=xterm make
+
+  clang-format-changed-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: sudo apt install clang-format-18
+      - run: git clang-format-18 origin/master
+      - run: if [ "$(git status --porcelain)" != "" ]; then git diff; return -1; fi
