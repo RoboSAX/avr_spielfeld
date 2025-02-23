@@ -166,6 +166,7 @@ int main() {
     uint8_t i;
     for (i = 0; i < maxMasterModes; i++) {
         switch (i) {
+            case mmBlokMode:
             case mmGameMode:
             case mmTestMode:
                 maxModes[i] = maxGameModes;
@@ -341,6 +342,7 @@ int main() {
                     change_gameNr(masterMode - DefaultMasterModes + 1);
                     for (i = 0; i < maxMasterModes; i++) {
                         switch (i) {
+							case mmBlokMode:
                             case mmGameMode:
                             case mmTestMode:
                                 maxModes[i] = maxGameModes + 1;
@@ -386,7 +388,7 @@ int main() {
                 display_clearSuperSegment(1);
                 display_addRight(year[2], 1, 1);
                 display_addRight(year[3], 1, 1);
-            } else if (masterMode == mmGameMode) {
+            } else if (masterMode == mmGameMode || masterMode==mmBlokMode) {
                 menuemode  = rsGameModeStarting;
                 itteration = 0;
                 systick_reset();
@@ -426,7 +428,17 @@ int main() {
             gamemode_update();
             pointMagic(gamemode_points(pointsMode));
         } else if (menuemode == rsGameModeFinished) {
-            pointLedMagic(gamemode_points(pointsMode),
+            if(masterMode==mmBlokMode){
+                if(points) pointLedMagic(gamemode_points(pointsMode),(currentTime-endtime)/UPDATETIME);
+                else{
+                    showtime((endtimeBlok-currentTime)/(1000UL),1);
+                    rgb_setAllPercentageTime(clGreen,endtimeBlok-currentTime,blokPauseTime,clBlack);
+                }
+                if(endtimeBlok<currentTime){
+                    menuemode=rsYearMode;
+                    endtime = currentTime + YEARTIME;
+                }
+            }else pointLedMagic(gamemode_points(pointsMode),
                           (currentTime - endtime) / UPDATETIME);
         }
 

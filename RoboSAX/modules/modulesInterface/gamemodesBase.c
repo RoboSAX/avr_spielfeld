@@ -22,10 +22,12 @@ gamemode_to_display_pointer gamemode_to_display;
 
 uint8_t  maxGameModes;
 uint32_t gameTimeMax;
+uint32_t blokPauseTime;
 uint32_t gameTimeLeft;
 uint8_t  currGameNr;
 
 #define ROUNDTIME         ((uint32_t)(3UL * 60UL * 1000UL))
+#define PAUSETIME ((uint32_t)(2UL*60UL*1000UL))
 #define YEAR_ACTION(YEAR) YEAR,
 const uint16_t availibleYears[] = {ProcessYears};
 #undef YEAR_ACTION
@@ -70,5 +72,6 @@ void change_gameNr(uint8_t gameNr) {
     }
     // default time might be overriden by specific year init
     gameTimeMax = ROUNDTIME;
+	blokPauseTime=PAUSETIME;
     gamemode_init();
 }

@@ -121,8 +121,8 @@ static void setLEDs(void) {
 }
 
 static void pushButton(uint8_t rawNumber) {
-    struct sTeam *myteam, *enemy;
-    uint8_t       mynumber;
+    struct sTeam *myteam=&team1,*enemy=&team2;
+    uint8_t mynumber=0;
     int8_t        number = LEDToTeamNr(rawNumber);
     if (number > 0) {
         myteam   = &team1;
