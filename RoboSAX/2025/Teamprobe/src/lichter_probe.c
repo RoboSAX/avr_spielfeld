@@ -22,10 +22,6 @@
 
 //**************************<Definitions>**************************************
 
-#define LED_GREEN 0
-#define LED_RED   1
-#define LED_BLUE  2
-#define LED_WHITE 3
 
 //**************************<Prototypes>***************************************
 void led_control(uint8_t color_led1, uint8_t color_led2);
@@ -69,6 +65,7 @@ void led_control(uint8_t color_led1, uint8_t color_led2) {
                 leds_setLED(1, 3);  // red
                 leds_setLED(2, 3);
             }
+            break;
         }
 
         // check if led2 is pushed
@@ -82,6 +79,7 @@ void led_control(uint8_t color_led1, uint8_t color_led2) {
                 leds_setLED(1, 3);  // red
                 leds_setLED(2, 3);
             }
+            break;
         }
 
         delay_licht(0);  // 10ms ;-)
