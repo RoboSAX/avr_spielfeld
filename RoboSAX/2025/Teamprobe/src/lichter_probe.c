@@ -21,10 +21,11 @@
 
 
 //**************************<Definitions>**************************************
+enum eLedColor { clOff = 0, clWhite, clGreen, clRed };
 
 
 //**************************<Prototypes>***************************************
-void led_control(uint8_t color_led1, uint8_t color_led2);
+void led_control(uint8_t const selected_led);
 void modus_random_led(void);
 
 void blink_multicolored_alternating(void);
@@ -37,16 +38,11 @@ int main(void);
 //**************************<Methods>******************************************
 
 //**************************[led_control]**************************************
-void led_control(uint8_t color_led1, uint8_t color_led2) {
-
-    // color_led: Aus = 0, Weiß = 1, Grün = 2, Rot = 3
-
-    uint8_t state_led1 = color_led1;
-    uint8_t state_led2 = color_led2;
+void led_control(uint8_t const selected_led) {
 
     buttons_clearAll();
-    leds_setLED(1, color_led1);
-    leds_setLED(2, color_led2);
+    leds_setLED(1, selected_led == 1 ? clWhite : clOff);
+    leds_setLED(2, selected_led == 2 ? clWhite : clOff);
     delay_ms(100);
     while (!buttonMode_readFlank()) {
 
@@ -56,28 +52,28 @@ void led_control(uint8_t color_led1, uint8_t color_led2) {
 
         // check if led1 is pushed
         if (flank_led1) {
-            if (state_led1) {
+            if (selected_led == 1) {
                 // correct push
-                leds_setLED(1, 2);  // green
-                leds_setLED(2, 2);
+                leds_setLED(1, clGreen);
+                leds_setLED(2, clGreen);
             } else {
                 // incorrect push
-                leds_setLED(1, 3);  // red
-                leds_setLED(2, 3);
+                leds_setLED(1, clRed);
+                leds_setLED(2, clRed);
             }
             break;
         }
 
         // check if led2 is pushed
         if (flank_led2) {
-            if (state_led2) {
+            if (selected_led == 2) {
                 // correct push
-                leds_setLED(1, 2);  // green
-                leds_setLED(2, 2);
+                leds_setLED(1, clGreen);
+                leds_setLED(2, clGreen);
             } else {
                 // incorrect push
-                leds_setLED(1, 3);  // red
-                leds_setLED(2, 3);
+                leds_setLED(1, clRed);
+                leds_setLED(2, clRed);
             }
             break;
         }
@@ -93,13 +89,10 @@ void led_control(uint8_t color_led1, uint8_t color_led2) {
 //**************************[modus_random_led]**************************
 void modus_random_led() {
 
-    uint16_t rnd_num  = random();
-    uint8_t  comb_num = rnd_num % 2;
-    if (comb_num) {
-        led_control(0, 1);
-    } else {
-        led_control(1, 0);
-    }
+    uint16_t const rnd_num  = random();
+    uint8_t const  comb_num = (rnd_num % 2U) + 1U;
+
+    led_control(comb_num);
 }
 
 //**************************[main]*********************************************
