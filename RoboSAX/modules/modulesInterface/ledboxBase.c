@@ -94,6 +94,26 @@ void rgb_setAll2(uint8_t r, uint8_t g, uint8_t b) {
     }
 }
 
+//**************************[rgb_setAllPercentage]*****************************
+void rgb_setAllPercentage(enum eColor color, uint8_t percentageColor,
+                          enum eColor colorFill) {
+    uint8_t colorLast = (uint8_t)(((uint16_t)(ledbox_count_current) *
+                                   (uint16_t)(percentageColor)) /
+                                  (uint16_t)(100U));
+    for (uint8_t i = 0; i < ledbox_count_current; i++) {
+        if (i > colorLast)
+            rgb_set(i, colorFill);
+        else
+            rgb_set(i, color);
+    }
+}
+void rgb_setAllPercentageTime(enum eColor color, uint32_t timeLeft,
+                              uint32_t maxTime, enum eColor colorFill) {
+    uint8_t percentage = (uint8_t)(((uint32_t)(100U) * timeLeft) / maxTime);
+}
+
+
+
 //**************************[rgb_clearAll]*************************************
 void rgb_clearAll() {
 

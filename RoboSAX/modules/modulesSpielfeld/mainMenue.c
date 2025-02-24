@@ -166,6 +166,7 @@ int main() {
     uint8_t i;
     for (i = 0; i < maxMasterModes; i++) {
         switch (i) {
+            case mmBlokMode:
             case mmGameMode:
             case mmTestMode:
                 maxModes[i] = maxGameModes;
@@ -185,6 +186,8 @@ int main() {
     uint32_t currentTime       = systick_get();
     uint32_t endtime           = currentTime;
     uint32_t pointsNextTime    = currentTime + SWITCHTIME;
+    uint32_t endtimeBlok       = currentTime + blokPauseTime;
+    uint32_t endtimeBlok2      = currentTime + blokPauseTime / 2;
     uint32_t rainbowSwitchTime = currentTime;
 
     uint32_t display_next_blink_time = currentTime + BLINKTIMEOFF;
@@ -280,6 +283,8 @@ int main() {
                 case rsGameModeFinished:
                     if (master_button_state1() && master_button_state2()) {
                         menuemode = rsSelectMasterMode;
+                    } else {
+                        gameRunningShowPoints = !gameRunningShowPoints;
                     }
                     break;
                 case rsSelectMasterMode:
@@ -341,6 +346,7 @@ int main() {
                     change_gameNr(masterMode - DefaultMasterModes + 1);
                     for (i = 0; i < maxMasterModes; i++) {
                         switch (i) {
+                            case mmBlokMode:
                             case mmGameMode:
                             case mmTestMode:
                                 maxModes[i] = maxGameModes + 1;
@@ -386,7 +392,7 @@ int main() {
                 display_clearSuperSegment(1);
                 display_addRight(year[2], 1, 1);
                 display_addRight(year[3], 1, 1);
-            } else if (masterMode == mmGameMode) {
+            } else if (masterMode == mmGameMode || masterMode == mmBlokMode) {
                 menuemode  = rsGameModeStarting;
                 itteration = 0;
                 systick_reset();
@@ -415,6 +421,8 @@ int main() {
                 menuemode      = rsGameModeFinished;
                 pointsMode     = 0;
                 pointsNextTime = currentTime + SWITCHTIME;
+                endtimeBlok    = currentTime + blokPauseTime;
+                endtimeBlok2   = currentTime + blokPauseTime / 2;
                 default_display();
             } else if (!gameRunningShowPoints ||
                        (endtime - LASTSEC < currentTime)) {
@@ -426,8 +434,25 @@ int main() {
             gamemode_update();
             pointMagic(gamemode_points(pointsMode));
         } else if (menuemode == rsGameModeFinished) {
-            pointLedMagic(gamemode_points(pointsMode),
-                          (currentTime - endtime) / UPDATETIME);
+            if (masterMode == mmBlokMode) {
+                if (endtimeBlok2 < currentTime) {
+                    gameRunningShowPoints = 0;
+                }
+                if (gameRunningShowPoints)
+                    pointLedMagic(gamemode_points(pointsMode),
+                                  (currentTime - endtime) / UPDATETIME);
+                else {
+                    showtime((endtimeBlok - currentTime) / (1000UL), 1);
+                    rgb_setAllPercentageTime(clGreen, endtimeBlok - currentTime,
+                                             blokPauseTime, clBlack);
+                }
+                if (endtimeBlok < currentTime) {
+                    menuemode = rsYearMode;
+                    endtime   = currentTime + YEARTIME;
+                }
+            } else
+                pointLedMagic(gamemode_points(pointsMode),
+                              (currentTime - endtime) / UPDATETIME);
         }
 
         waitAndUpdate();
