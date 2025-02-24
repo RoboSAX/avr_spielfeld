@@ -44,6 +44,8 @@ void led_control(uint8_t const selected_led) {
     leds_setLED(1, selected_led == 1 ? clWhite : clOff);
     leds_setLED(2, selected_led == 2 ? clWhite : clOff);
     delay_ms(100);
+
+    uint8_t active = 1;
     while (!buttonMode_readFlank()) {
 
         // check buttons
@@ -51,7 +53,7 @@ void led_control(uint8_t const selected_led) {
         uint8_t flank_led2 = button2_readFlank();
 
         // check if led1 is pushed
-        if (flank_led1) {
+        if (active && flank_led1) {
             if (selected_led == 1) {
                 // correct push
                 leds_setLED(1, clGreen);
@@ -61,11 +63,13 @@ void led_control(uint8_t const selected_led) {
                 leds_setLED(1, clRed);
                 leds_setLED(2, clRed);
             }
-            break;
+            active = 0;
+            delay_ms(250);
+            leds_clearAll();
         }
 
         // check if led2 is pushed
-        if (flank_led2) {
+        if (active && flank_led2) {
             if (selected_led == 2) {
                 // correct push
                 leds_setLED(1, clGreen);
@@ -75,14 +79,13 @@ void led_control(uint8_t const selected_led) {
                 leds_setLED(1, clRed);
                 leds_setLED(2, clRed);
             }
-            break;
+            active = 0;
+            delay_ms(250);
+            leds_clearAll();
         }
 
         delay_licht(0);  // 10ms ;-)
     }
-    delay_ms(250);
-    leds_clearAll();
-    buttons_reset();
 }
 
 
