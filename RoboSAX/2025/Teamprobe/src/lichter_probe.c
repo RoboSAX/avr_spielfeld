@@ -45,8 +45,8 @@ void led_control(uint8_t color_led1, uint8_t color_led2) {
 
     // color_led: Aus = 0, Weiß = 1, Grün = 2, Rot = 3
 
-    uint8_t  state_led1     = color_led1;
-    uint8_t  state_led2     = color_led2;
+    uint8_t state_led1 = color_led1;
+    uint8_t state_led2 = color_led2;
 
     buttons_clearAll();
     leds_setLED(1, color_led1);
@@ -65,7 +65,7 @@ void led_control(uint8_t color_led1, uint8_t color_led2) {
                 leds_setLED(1, 2);  // green
                 leds_setLED(2, 2);
             } else {
-                //incorrect push
+                // incorrect push
                 leds_setLED(1, 3);  // red
                 leds_setLED(2, 3);
             }
@@ -78,7 +78,7 @@ void led_control(uint8_t color_led1, uint8_t color_led2) {
                 leds_setLED(1, 2);  // green
                 leds_setLED(2, 2);
             } else {
-                //incorrect push
+                // incorrect push
                 leds_setLED(1, 3);  // red
                 leds_setLED(2, 3);
             }
@@ -99,8 +99,7 @@ void modus_random_led() {
     uint8_t  comb_num = rnd_num % 2;
     if (comb_num) {
         led_control(0, 1);
-    }
-    else {
+    } else {
         led_control(1, 0);
     }
 }
