@@ -80,7 +80,7 @@ void led_control(uint8_t const selected_led) {
 
         delay_licht(0);  // 10ms ;-)
     }
-    delay_ms(500);
+    delay_ms(250);
     leds_clearAll();
     buttons_reset();
 }
