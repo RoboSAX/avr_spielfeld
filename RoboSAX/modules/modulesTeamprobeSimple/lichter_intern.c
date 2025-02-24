@@ -2,9 +2,9 @@
  * lichter_intern.c                                                           *
  * ================                                                           *
  *                                                                            *
- * Version: 1.1.0                                                             *
- * Date   : 07.02.19                                                          *
- * Author : Peter Weissig, Daniel Gunkel, Tina Lenk, Leander Herr , Janik Kaden*
+ * Version: 1.2.0                                                             *
+ * Date   : 24.02.25                                                          *
+ * Author : Peter Weissig, Daniel Gunkel, Tina Lenk, Leander Herr, Janik Kaden*
  *                                                                            *
  * Original source code was taken and modified from:                          *
  *   https://github.com/RoboAG/projekt_gluecksrad                             *

@@ -2,8 +2,8 @@
  * lichter_intern.h                                                           *
  * ================                                                           *
  *                                                                            *
- * Version: 1.1.0                                                             *
- * Date   : 07.02.19                                                          *
+ * Version: 1.2.0                                                             *
+ * Date   : 24.02.25                                                          *
  * Author : Peter Weissig, Daniel Gunkel, Tina Lenk, Leander Herr             *
  *                                                                            *
  * Original source code was taken and modified from:                          *
