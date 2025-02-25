@@ -15,9 +15,9 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-#include "modulesTeamprobeSimple/lichter_intern.h"
-#include "modulesTeamprobeSimple/random.h"
 #include "robolib.h"
+#include "robosax/common/random.h"
+#include "robosax/teamprobe_simple/teamprobe_simple.h"
 
 
 //**************************<Definitions>**************************************

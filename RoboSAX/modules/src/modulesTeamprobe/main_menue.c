@@ -23,13 +23,13 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-#include "../modulesInterface/display.h"
-#include "../modulesInterface/display_chars.h"
-#include "../modulesInterface/gamemodes.h"
-#include "../modulesInterface/ledbox.h"
-#include "../modulesInterface/master.h"
-#include "../modulesInterface/menueHelper.h"
-#include "../modulesInterface/systick.h"
+#include "robosax/game_modes/game_modes.h"
+#include "robosax/interface/display.h"
+#include "robosax/interface/ledbox.h"
+#include "robosax/interface/master_buttons.h"
+#include "robosax/interface/menue_helper.h"
+#include "robosax/interface/systick.h"
+#include "robosax/spielfeld/display_chars.h"
 
 //**************************<Prototypes>***************************************
 int  main(void);

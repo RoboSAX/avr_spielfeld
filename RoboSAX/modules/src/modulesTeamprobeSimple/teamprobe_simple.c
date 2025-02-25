@@ -15,7 +15,7 @@
 
 
 //**************************<Included files>***********************************
-#include "lichter_intern.h"
+#include "robosax/teamprobe_simple/teamprobe_simple.h"
 
 
 //**************************<Macros>*******************************************

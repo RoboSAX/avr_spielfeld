@@ -16,7 +16,6 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-#include "global.h"
 #include "robolib.h"
 
 

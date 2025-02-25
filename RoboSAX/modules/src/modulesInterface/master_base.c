@@ -10,7 +10,8 @@
 
 
 //**************************<Included files>***********************************
-#include "master.h"
+#include "robosax/common/time_constants.h"
+#include "robosax/interface/master_buttons.h"
 
 
 //**************************<Macros>*******************************************

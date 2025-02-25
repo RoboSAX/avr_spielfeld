@@ -10,9 +10,9 @@
 
 
 //**************************<Included files>***********************************
-#include "../modulesInterface/display.h"
+#include "robosax/interface/display.h"
 
-#include "../modulesInterface/systick.h"
+#include "robosax/interface/systick.h"
 
 
 //**************************<Macros>*******************************************

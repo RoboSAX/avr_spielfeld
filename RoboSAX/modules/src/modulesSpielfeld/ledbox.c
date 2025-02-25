@@ -10,9 +10,10 @@
 
 
 //**************************<Included files>***********************************
-#include "../modulesInterface/ledbox.h"
+#include "robosax/interface/ledbox.h"
 
-#include "../modulesInterface/systick.h"
+#include "robosax/common/time_constants.h"
+#include "robosax/interface/systick.h"
 
 
 //**************************<Macros>*******************************************

@@ -11,10 +11,10 @@
  *****************************************************************************/
 
 //*********************************<Included files>****************************
-#include "display.h"
-#include "ledbox.h"
-#include "master.h"
-#include "systick.h"
+#include "robosax/interface/display.h"
+#include "robosax/interface/ledbox.h"
+#include "robosax/interface/master_buttons.h"
+#include "robosax/interface/systick.h"
 
 
 

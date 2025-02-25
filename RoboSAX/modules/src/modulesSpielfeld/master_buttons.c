@@ -10,7 +10,7 @@
 
 
 //**************************<Included files>***********************************
-#include "../modulesInterface/master.h"
+#include "robosax/interface/master_buttons.h"
 
 
 //**************************<Macros>*******************************************

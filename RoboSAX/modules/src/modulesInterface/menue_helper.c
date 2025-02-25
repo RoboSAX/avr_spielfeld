@@ -8,9 +8,10 @@
  *                                                                            *
  *****************************************************************************/
 //**************************<Included files>***********************************
-#include "menueHelper.h"
+#include "robosax/interface/menue_helper.h"
 
-#include "gamemodes.h"
+#include "robosax/game_modes/game_modes.h"
+#include "robosax/spielfeld/display_chars.h"
 
 
 //**************************<Methods>******************************************

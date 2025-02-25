@@ -16,8 +16,6 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-#include "global.h"
-
 
 //**************************<Macros>*******************************************
 // buttons

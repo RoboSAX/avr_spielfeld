@@ -16,8 +16,8 @@
 #include <inttypes.h>
 
 #include "lichter_intern.h"
-#include "random.h"
 #include "robolib.h"
+#include "robosax/common/random.h"
 
 
 //**************************<Definitions>**************************************

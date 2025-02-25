@@ -10,12 +10,14 @@
 
 
 //**************************<Included files>***********************************
-#include "modulesInterface/gamemodes.h"
-#include "modulesInterface/global.h"
-#include "modulesInterface/ledbox.h"
-#include "modulesInterface/master.h"
-#include "modulesInterface/menueHelper.h"
-#include "modulesInterface/random.h"
+#include "robosax/common/random.h"
+#include "robosax/common/time_constants.h"
+#include "robosax/game_modes/game_modes.h"
+#include "robosax/interface/ledbox.h"
+#include "robosax/interface/master_buttons.h"
+#include "robosax/interface/menue_helper.h"
+#include "robosax/spielfeld/display_chars.h"
+
 // optics:
 // blink if pressed correct
 // blink red[/color] if error

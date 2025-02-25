@@ -17,8 +17,8 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-#include "gamemodesYear.h"
-#include "ledbox.h"
+#include "robosax/game_modes/year.h"
+#include "robosax/interface/ledbox.h"
 
 
 //**************************<PORTDEF>******************************************

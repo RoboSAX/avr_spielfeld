@@ -11,11 +11,10 @@
 #define __MENUE_HELPER_H
 
 //**************************<Included files>***********************************
-#include "display.h"
-#include "display_chars.h"
-#include "gamemodes.h"
-#include "ledbox.h"
-#include "systick.h"
+#include "robosax/game_modes/game_modes.h"
+#include "robosax/interface/display.h"
+#include "robosax/interface/ledbox.h"
+#include "robosax/interface/systick.h"
 
 //**************************<Prototypes>***************************************
 enum eMasterModes {

@@ -10,7 +10,7 @@
 
 
 //**************************<Included files>***********************************
-#include "ledbox.h"
+#include "robosax/interface/ledbox.h"
 
 //**************************<Types and Variables>******************************
 

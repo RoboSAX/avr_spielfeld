@@ -10,8 +10,9 @@
 
 //**************************<Included files>***********************************
 #include "currentYear.h"
-#include "gamemodes.h"
-#include "menueHelper.h"
+#include "robosax/game_modes/game_modes.h"
+#include "robosax/interface/menue_helper.h"
+#include "robosax/spielfeld/display_chars.h"
 
 //**************************<Types and Variables>******************************
 gamemode_init_pointer       gamemode_init;
