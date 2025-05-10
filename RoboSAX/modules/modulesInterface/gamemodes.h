@@ -29,6 +29,7 @@
 extern uint8_t maxGameModes;
 
 extern uint32_t gameTimeMax;
+extern uint32_t blokPauseTime;
 extern uint32_t gameTimeLeft;
 
 enum ePType {

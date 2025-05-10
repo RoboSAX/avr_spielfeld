@@ -114,6 +114,16 @@ static const uint8_t alpaA[8]={
     (7<<4)|4
 };
 
+ static const uint8_t alpaB[8]={
+0b00001110,
+0b00001001,
+0b00001001,
+0b00001110,
+0b00001001,
+0b00001001,
+0b00001110,
+(7<<4)|4};
+
 static const uint8_t alpaC[8]={
     0b00000111,
     0b00001000,
@@ -169,6 +179,16 @@ static const uint8_t alpaI[8]={
     (7<<4)|4
 };
 
+static const uint8_t alpaK[8]={
+    0b00001001,
+    0b00001010,
+    0b00001010,
+    0b00001100,
+    0b00001010,
+    0b00001010,
+    0b00001001,
+    (7<<4)|4};
+    
 static const uint8_t alpaL[8]={
     0b00001000,
     0b00001000,
@@ -201,6 +221,16 @@ static const uint8_t alpaN[8]={
     0b00010001,
     (7<<4)|5
 };
+
+static const uint8_t alpaO[8]={
+    0b00000110,
+    0b00001001,
+    0b00001001,
+    0b00001001,
+    0b00001001,
+    0b00001001,
+    0b00000110,
+    (7<<4)|4};
 
 static const uint8_t alpaP[8]={
     0b00001110,

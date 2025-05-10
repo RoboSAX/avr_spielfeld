@@ -106,6 +106,10 @@ void rgb_set2(uint8_t number, uint8_t r, uint8_t g, uint8_t b);
 void rgb_setAll(enum eColor color);
 void rgb_setAll2(uint8_t r, uint8_t g, uint8_t b);
 void rgb_clearAll(void);
+void rgb_setAllPercentage(enum eColor color, uint8_t percentageColor,
+                          enum eColor colorFill);
+void rgb_setAllPercentageTime(enum eColor color, uint32_t timeLeft,
+                              uint32_t maxTime, enum eColor colorFill);
 
 // ir leds
 void ir_set(uint8_t number, uint8_t x);
