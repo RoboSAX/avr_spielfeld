@@ -66,7 +66,6 @@ struct sGlobalBlock {
 };
 static struct sGlobalBlock BlockToLED[BLOCK_COUNT_MAX];
 
-uint8_t numberOfBlocks;
 //**************************<Prototypes>***************************************
 void setCrossPairs(void);
 void setPairsToSection(void);
