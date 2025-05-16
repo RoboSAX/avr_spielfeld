@@ -19,8 +19,8 @@
 
 //**************************<Prototypes>***************************************
 enum eMasterModes {
-    mmBlokMode = 0,
-    mmGameMode,
+    mmBlokMode = 99,
+    mmGameMode = 0,
     mmTestMode,
     mmOldGameMode,
     mmScanMode,

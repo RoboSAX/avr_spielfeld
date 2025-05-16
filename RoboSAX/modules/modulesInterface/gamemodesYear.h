@@ -25,12 +25,12 @@
 
 // the last Year in the list counts as the current Year
 #define ProcessYears  \
-    YEAR_ACTION(2018) \
+    /*YEAR_ACTION(2018) \
     YEAR_ACTION(2019) \
     YEAR_ACTION(2020) \
     YEAR_ACTION(2022) \
     YEAR_ACTION(2023) \
-    YEAR_ACTION(2024) \
+    YEAR_ACTION(2024)*/ \
     YEAR_ACTION(2025)
 
 enum eOperationModes {

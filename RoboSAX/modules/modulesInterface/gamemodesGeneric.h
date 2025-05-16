@@ -33,12 +33,13 @@
 #define BLINKCOUNTDOWNMAX 3
 #define BLINKCOUNTMULTI   6
 
-#define BLOCK_COUNT_MAX LEDBOX_COUNT_MAX / 2
+#define BLOCK_COUNT_MAX 4
+// LEDBOX_COUNT_MAX / 2
 
 #define SPECIAL_TIMER (LEDBOX_BUTTONS_DEBOUNCE_TIME * 4)
 
 //**************************<Types and Variables>******************************
-enum eStatus {
+enum eStatus:uint8_t {
     groupOff  = 0,
     groupLed1 = 1,
     groupLed2 = 2,
@@ -50,21 +51,6 @@ enum eStatus {
     groupLed8 = 0x80,
 };
 
-struct sGlobalLED {
-    uint8_t GroupNr : 3;
-    uint8_t LEDNr : 3;
-};
-static struct sGlobalLED LEDToBlock[LEDBOX_COUNT_MAX];
-
-struct sGlobalBlock {
-    uint8_t      ledCount;
-    uint8_t      LEDNr[8];
-    enum eStatus status;
-    enum eColor  color;
-    uint8_t      special_timer;
-    enum eColor  special_color;
-};
-static struct sGlobalBlock BlockToLED[BLOCK_COUNT_MAX];
 
 //**************************<Prototypes>***************************************
 void setCrossPairs(void);

@@ -51,7 +51,7 @@ void random_init(void) {
     // Bit 2-3 (  -   ) =      reserved
     // Bit 0-1 (WGM1x ) =   00 select timer mode [WGM1x in TCCR1B]
 
-    TCCR1B = _BV(CS10);
+    TCCR1B = _BV(CS01);
     // Bit 7   (ICNC1 ) =    0 input capture noise canceler
     // Bit 6   (ICES1 ) =    0 input capture edge select
     // Bit 5   (  -   ) =      reserved

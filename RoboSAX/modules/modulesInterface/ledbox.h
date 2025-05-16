@@ -31,7 +31,7 @@
 
 //**************************<Types and Variables>******************************
 // leds
-enum eColor {
+enum eColor :uint8_t {
     clPurple = 0,
     clPB,
     clBlue,
@@ -94,6 +94,16 @@ volatile extern uint8_t teamprobeIncrementPerMasterPress;
             ? LEDBOX_HALF_FIELD                                            \
             : (number + LEDBOX_HALF_FIELD - LEDBOX_HALF_FIELD_ABNORMITY) % \
                 LEDBOX_HALF_FIELD)                                         \
+       : number)
+#define unshift_num(number)                                                \
+    ((ledbox_state == full_field)                                          \
+       ? ((number >= LEDBOX_FULL_FIELD)                                    \
+            ? LEDBOX_FULL_FIELD                                            \
+            : (number + LEDBOX_FULL_FIELD_ABNORMITY) % LEDBOX_FULL_FIELD)  \
+     : (ledbox_state == half_field)                                        \
+       ? ((number >= LEDBOX_HALF_FIELD)                                    \
+            ? LEDBOX_HALF_FIELD                                            \
+            : (number + LEDBOX_HALF_FIELD_ABNORMITY) % LEDBOX_HALF_FIELD)  \
        : number)
 
 // init
